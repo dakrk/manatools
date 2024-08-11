@@ -1,0 +1,17 @@
+MDB: MIDI Drum Bank
+MTB: MIDI Tone Bank
+MPB: MIDI Program Bank
+MSB: MIDI Sequence Bank
+
+MLT: Multi-Unit
+
+FOB: FX Output Bank
+FPB: FX Program Bank
+FPD: FX Program Data
+FPW: FX Program Work
+
+OSB: One Shot Bank (SFX)
+
+PSR: PCM Stream Ring Buffer
+
+DRV: Sound Driver

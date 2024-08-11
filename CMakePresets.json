@@ -1,0 +1,69 @@
+{
+	"version": 3,
+	"configurePresets": [
+		{
+			"hidden": true,
+			"name": "common",
+			"binaryDir": "${sourceDir}/build"
+		},
+		{
+			"hidden": true,
+			"name": "clang-common",
+			"inherits": "common",
+			"cacheVariables": {
+				"CMAKE_C_COMPILER": "clang",
+				"CMAKE_CXX_COMPILER": "clang++"
+			}
+		},
+		{
+			"name": "release",
+			"inherits": "common",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release"
+			}
+		},
+		{
+			"name": "debug",
+			"inherits": "common",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug"
+			}
+		},
+		{
+			"name": "clang-release",
+			"inherits": "clang-common",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release"
+			}
+		},
+		{
+			"name": "clang-debug",
+			"inherits": "clang-common",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug"
+			}
+		}
+	],
+	"buildPresets": [
+		{
+			"name": "release",
+			"configurePreset": "release",
+			"configuration": "Release"
+		},
+		{
+			"name": "debug",
+			"configurePreset": "debug",
+			"configuration": "Debug"
+		},
+		{
+			"name": "clang-release",
+			"configurePreset": "clang-release",
+			"configuration": "Release"
+		},
+		{
+			"name": "clang-debug",
+			"configurePreset": "clang-debug",
+			"configuration": "Debug"
+		}
+	]
+}

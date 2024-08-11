@@ -1,0 +1,2249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SplitEditor</class>
+ <widget class="QDialog" name="SplitEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Edit split</string>
+  </property>
+  <widget class="QGroupBox" name="groupVelocity">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>210</y>
+     <width>251</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="title">
+    <string>Velocity</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="1" column="2">
+     <widget class="QSpinBox" name="spinVelLow">
+      <property name="maximum">
+       <number>127</number>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="lblVelLow">
+      <property name="text">
+       <string>Low</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>spinVelLow</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QPushButton" name="btnVelCurveEdit">
+      <property name="maximumSize">
+       <size>
+        <width>50</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Edit</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="lblVelCurve">
+      <property name="text">
+       <string>Curve</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>comboVelCurve</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="lblVelHigh">
+      <property name="text">
+       <string>High</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>spinVelHigh</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="lblOscLvl">
+      <property name="toolTip">
+       <string>Oscillator Level</string>
+      </property>
+      <property name="text">
+       <string>Osc. Level</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>spinOscLvl</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QSpinBox" name="spinVelHigh">
+      <property name="maximum">
+       <number>127</number>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QSlider" name="sliderVelLow">
+      <property name="maximum">
+       <number>127</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QSlider" name="sliderVelHigh">
+      <property name="maximum">
+       <number>127</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QSpinBox" name="spinOscLvl">
+      <property name="maximum">
+       <number>255</number>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QSlider" name="sliderOscLvl">
+      <property name="maximum">
+       <number>255</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QComboBox" name="comboVelCurve"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupAmpEnv">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>270</y>
+     <width>251</width>
+     <height>321</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="title">
+    <string>Amp Envelope</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QPushButton" name="placeholderAmpEnv">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>110</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>pretend this is an envelope visualisation</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="4" column="1">
+       <widget class="QSlider" name="sliderAmpRelease">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QSlider" name="sliderAmpKeyRateScaling">
+        <property name="maximum">
+         <number>15</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QSpinBox" name="spinAmpDecayLvl">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="lblAmpAttack">
+        <property name="text">
+         <string>Attack Rate</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinAmpAttack</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="lblAmpDecay1">
+        <property name="text">
+         <string>Decay Rate 1</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinAmpDecay1</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QSpinBox" name="spinAmpRelease">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="lblAmpDecayLvl">
+        <property name="text">
+         <string>Decay Level</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinAmpDecayLvl</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSlider" name="sliderAmpDecay1">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="lblAmpKeyRateScaling">
+        <property name="text">
+         <string>Key Rate Scaling</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinAmpKeyRateScaling</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="lblAmpDecay2">
+        <property name="text">
+         <string>Decay Rate 2</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinAmpDecay2</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSlider" name="sliderAmpAttack">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="lblAmpRelease">
+        <property name="text">
+         <string>Release Rate</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinAmpRelease</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2">
+       <widget class="QSpinBox" name="spinAmpKeyRateScaling">
+        <property name="maximum">
+         <number>15</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QSlider" name="sliderAmpDecayLvl">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QSpinBox" name="spinAmpAttack">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QSpinBox" name="spinAmpDecay1">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QSpinBox" name="spinAmpDecay2">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QSlider" name="sliderAmpDecay2">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupLFO">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>380</y>
+     <width>251</width>
+     <height>211</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>LFO</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="1" column="1">
+     <widget class="QSlider" name="sliderLFOFreq">
+      <property name="maximum">
+       <number>31</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="lblLFOFreq">
+      <property name="text">
+       <string>Frequency</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>spinLFOFreq</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="lblLFOPitchDepth">
+      <property name="text">
+       <string>Pitch LFO Depth</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>spinLFOPitchDepth</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1" colspan="2">
+     <widget class="QComboBox" name="comboLFOAmpWave"/>
+    </item>
+    <item row="3" column="1" colspan="2">
+     <widget class="QComboBox" name="comboLFOPitchWave">
+      <property name="editable">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="lblLFOAmpDepth">
+      <property name="text">
+       <string>Amp LFO Depth</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>spinLFOAmpDepth</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QSlider" name="sliderLFOAmpDepth">
+      <property name="maximum">
+       <number>7</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="3">
+     <widget class="QCheckBox" name="checkLFOSync">
+      <property name="text">
+       <string>LFO Sync</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QSpinBox" name="spinLFOFreq">
+      <property name="maximum">
+       <number>31</number>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QSpinBox" name="spinLFOPitchDepth">
+      <property name="maximum">
+       <number>7</number>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="lblLFOPitchWave">
+      <property name="text">
+       <string>Pitch LFO Wave</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>comboLFOPitchWave</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QSlider" name="sliderLFOPitchDepth">
+      <property name="maximum">
+       <number>7</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QSpinBox" name="spinLFOAmpDepth">
+      <property name="maximum">
+       <number>7</number>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="lblLFOAmpWave">
+      <property name="text">
+       <string>Amp LFO Wave</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>comboLFOAmpWave</cstring>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupFilterEnv">
+   <property name="geometry">
+    <rect>
+     <x>530</x>
+     <y>10</y>
+     <width>261</width>
+     <height>511</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Filter Envelope</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QPushButton" name="placeholderFilterEnv">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>110</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>pretend this is an envelope visualisation</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="6" column="2">
+       <widget class="QSpinBox" name="spinFilterDecayRate1">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="2">
+       <widget class="QSpinBox" name="spinFilterReleaseLvl">
+        <property name="maximum">
+         <number>8184</number>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="2">
+       <widget class="QSpinBox" name="spinFilterReleaseRate">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QSpinBox" name="spinFilterAttackLvl">
+        <property name="maximum">
+         <number>8184</number>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="0">
+       <widget class="QLabel" name="lblFilterReleaseRate">
+        <property name="text">
+         <string>Release Rate</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterReleaseRate</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QSlider" name="sliderFilterDecayLvl1">
+        <property name="maximum">
+         <number>8184</number>
+        </property>
+        <property name="singleStep">
+         <number>100</number>
+        </property>
+        <property name="pageStep">
+         <number>500</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QSlider" name="sliderFilterAttackRate">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="lblFilterDecayRate2">
+        <property name="text">
+         <string>Decay Rate 2</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterDecayRate2</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="1">
+       <widget class="QSlider" name="sliderFilterReleaseRate">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="1">
+       <widget class="QSlider" name="sliderFilterReleaseLvl">
+        <property name="maximum">
+         <number>8184</number>
+        </property>
+        <property name="singleStep">
+         <number>100</number>
+        </property>
+        <property name="pageStep">
+         <number>500</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSlider" name="sliderFilterStartLvl">
+        <property name="maximum">
+         <number>8184</number>
+        </property>
+        <property name="singleStep">
+         <number>100</number>
+        </property>
+        <property name="pageStep">
+         <number>500</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="2">
+       <widget class="QSpinBox" name="spinFilterDecayRate2">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="1">
+       <widget class="QSlider" name="sliderFilterDecayLvl2">
+        <property name="maximum">
+         <number>8184</number>
+        </property>
+        <property name="singleStep">
+         <number>100</number>
+        </property>
+        <property name="pageStep">
+         <number>500</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QSlider" name="sliderFilterDecayRate1">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="0">
+       <widget class="QLabel" name="lblFilterQ">
+        <property name="text">
+         <string>Q (Resonance)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterQ</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="3">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="lblFilterAttackRate">
+        <property name="text">
+         <string>Attack Rate</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterAttackRate</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QSpinBox" name="spinFilterAttackRate">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="2">
+       <widget class="QSpinBox" name="spinFilterQ">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="QLabel" name="lblFilterDecayLvl2">
+        <property name="text">
+         <string>Decay Filter Lev. 2</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterDecayLvl2</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="1">
+       <widget class="QSlider" name="sliderFilterQ">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="3">
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2">
+       <widget class="QSpinBox" name="spinFilterDecayLvl1">
+        <property name="maximum">
+         <number>8184</number>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="lblFilterDecayRate1">
+        <property name="text">
+         <string>Decay Rate 1</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterDecayRate1</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QSpinBox" name="spinFilterStartLvl">
+        <property name="maximum">
+         <number>8184</number>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0" colspan="3">
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkFilterOn">
+        <property name="text">
+         <string>Filter On</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="lblFilterAttackLvl">
+        <property name="text">
+         <string>Attack Filter Lev.</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterAttackLvl</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="0">
+       <widget class="QLabel" name="lblFilterReleaseLvl">
+        <property name="text">
+         <string>Release Filter Lev.</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterReleaseLvl</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="0" colspan="3">
+       <widget class="Line" name="line_4">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="2">
+       <widget class="QSpinBox" name="spinFilterDecayLvl2">
+        <property name="maximum">
+         <number>8184</number>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QSlider" name="sliderFilterDecayRate2">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="lblFilterDecayLvl1">
+        <property name="text">
+         <string>Decay Filter Lev. 1</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterDecayLvl1</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QSlider" name="sliderFilterAttackLvl">
+        <property name="maximum">
+         <number>8184</number>
+        </property>
+        <property name="singleStep">
+         <number>100</number>
+        </property>
+        <property name="pageStep">
+         <number>500</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="lblFilterStartLvl">
+        <property name="text">
+         <string>Start Filter Lev.</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterStartLvl</cstring>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Orientation::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupGeneral">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>251</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>General</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_5">
+    <item row="1" column="3">
+     <widget class="QSpinBox" name="spinFineTune">
+      <property name="minimum">
+       <number>-64</number>
+      </property>
+      <property name="maximum">
+       <number>63</number>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QLabel" name="lblFineTune">
+      <property name="text">
+       <string>Fine Tune</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>spinFineTune</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QSpinBox" name="spinDrumGroupID">
+      <property name="maximum">
+       <number>255</number>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QSpinBox" name="spinBaseNote">
+      <property name="suffix">
+       <string/>
+      </property>
+      <property name="maximum">
+       <number>127</number>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0" colspan="2">
+     <widget class="QLabel" name="lblPanPot">
+      <property name="text">
+       <string>Pan Pot</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>spinPanPot</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="2">
+     <widget class="QSlider" name="sliderDirectLevel">
+      <property name="maximum">
+       <number>15</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="3">
+     <widget class="QSpinBox" name="spinPanPot">
+      <property name="minimum">
+       <number>-15</number>
+      </property>
+      <property name="maximum">
+       <number>15</number>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="3">
+     <widget class="QCheckBox" name="checkDrumModeOn">
+      <property name="text">
+       <string>On</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="2">
+     <widget class="QSlider" name="sliderPanPot">
+      <property name="minimum">
+       <number>-15</number>
+      </property>
+      <property name="maximum">
+       <number>15</number>
+      </property>
+      <property name="tracking">
+       <bool>true</bool>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+      <property name="invertedAppearance">
+       <bool>false</bool>
+      </property>
+      <property name="invertedControls">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="3">
+     <widget class="QSpinBox" name="spinDirectLevel">
+      <property name="maximum">
+       <number>15</number>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="QLabel" name="lblBaseNoteVal">
+      <property name="font">
+       <font>
+        <family>Monospace</family>
+       </font>
+      </property>
+      <property name="text">
+       <string>C-0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="2">
+     <widget class="QLabel" name="lblBaseNote">
+      <property name="text">
+       <string>Base Note</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>spinBaseNote</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QSlider" name="sliderFineTune">
+      <property name="minimum">
+       <number>-64</number>
+      </property>
+      <property name="maximum">
+       <number>63</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QLabel" name="lblDrumGroupID">
+      <property name="text">
+       <string>Drum Group ID</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>spinDrumGroupID</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0" colspan="2">
+     <widget class="QLabel" name="lblDirectLevel">
+      <property name="text">
+       <string>Direct Level</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>spinDirectLevel</cstring>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupTone">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>10</y>
+     <width>251</width>
+     <height>251</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Tone</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <property name="spacing">
+     <number>3</number>
+    </property>
+    <item>
+     <widget class="QLabel" name="lblToneInfo">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="textInteractionFlags">
+       <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByMouse</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="placeholderWaveform">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>100</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>pretend this is a waveform</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="iHateThis" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QCheckBox" name="checkLoopOn">
+         <property name="text">
+          <string>Loop On</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnTonePlay">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset theme="media-playback-start"/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnToneEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Edit</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <property name="verticalSpacing">
+       <number>3</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="lblLoopStart">
+        <property name="text">
+         <string>Loop Start</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinLoopStart</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="2">
+       <widget class="QSpinBox" name="spinLoopStart">
+        <property name="maximum">
+         <number>65535</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>samples</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="lblLoopEnd">
+        <property name="text">
+         <string>Loop End</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinLoopEnd</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="2">
+       <widget class="QSpinBox" name="spinLoopEnd">
+        <property name="maximum">
+         <number>65535</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>samples</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>520</x>
+     <y>560</y>
+     <width>271</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+   </property>
+   <property name="centerButtons">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnEditUnk">
+   <property name="geometry">
+    <rect>
+     <x>530</x>
+     <y>530</y>
+     <width>261</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Edit unknown properties</string>
+   </property>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>spinBaseNote</tabstop>
+  <tabstop>sliderFineTune</tabstop>
+  <tabstop>spinFineTune</tabstop>
+  <tabstop>spinDrumGroupID</tabstop>
+  <tabstop>checkDrumModeOn</tabstop>
+  <tabstop>sliderPanPot</tabstop>
+  <tabstop>spinPanPot</tabstop>
+  <tabstop>sliderDirectLevel</tabstop>
+  <tabstop>spinDirectLevel</tabstop>
+  <tabstop>sliderOscLvl</tabstop>
+  <tabstop>spinOscLvl</tabstop>
+  <tabstop>sliderVelLow</tabstop>
+  <tabstop>spinVelLow</tabstop>
+  <tabstop>sliderVelHigh</tabstop>
+  <tabstop>spinVelHigh</tabstop>
+  <tabstop>comboVelCurve</tabstop>
+  <tabstop>btnVelCurveEdit</tabstop>
+  <tabstop>checkLFOSync</tabstop>
+  <tabstop>sliderLFOFreq</tabstop>
+  <tabstop>spinLFOFreq</tabstop>
+  <tabstop>sliderLFOPitchDepth</tabstop>
+  <tabstop>spinLFOPitchDepth</tabstop>
+  <tabstop>comboLFOPitchWave</tabstop>
+  <tabstop>sliderLFOAmpDepth</tabstop>
+  <tabstop>spinLFOAmpDepth</tabstop>
+  <tabstop>comboLFOAmpWave</tabstop>
+  <tabstop>placeholderWaveform</tabstop>
+  <tabstop>checkLoopOn</tabstop>
+  <tabstop>btnTonePlay</tabstop>
+  <tabstop>btnToneEdit</tabstop>
+  <tabstop>spinLoopStart</tabstop>
+  <tabstop>spinLoopEnd</tabstop>
+  <tabstop>placeholderAmpEnv</tabstop>
+  <tabstop>sliderAmpAttack</tabstop>
+  <tabstop>spinAmpAttack</tabstop>
+  <tabstop>sliderAmpDecay1</tabstop>
+  <tabstop>spinAmpDecay1</tabstop>
+  <tabstop>sliderAmpDecayLvl</tabstop>
+  <tabstop>spinAmpDecayLvl</tabstop>
+  <tabstop>sliderAmpDecay2</tabstop>
+  <tabstop>spinAmpDecay2</tabstop>
+  <tabstop>sliderAmpRelease</tabstop>
+  <tabstop>spinAmpRelease</tabstop>
+  <tabstop>sliderAmpKeyRateScaling</tabstop>
+  <tabstop>spinAmpKeyRateScaling</tabstop>
+  <tabstop>placeholderFilterEnv</tabstop>
+  <tabstop>checkFilterOn</tabstop>
+  <tabstop>sliderFilterStartLvl</tabstop>
+  <tabstop>spinFilterStartLvl</tabstop>
+  <tabstop>sliderFilterAttackRate</tabstop>
+  <tabstop>spinFilterAttackRate</tabstop>
+  <tabstop>sliderFilterAttackLvl</tabstop>
+  <tabstop>spinFilterAttackLvl</tabstop>
+  <tabstop>sliderFilterDecayRate1</tabstop>
+  <tabstop>spinFilterDecayRate1</tabstop>
+  <tabstop>sliderFilterDecayLvl1</tabstop>
+  <tabstop>spinFilterDecayLvl1</tabstop>
+  <tabstop>sliderFilterDecayRate2</tabstop>
+  <tabstop>spinFilterDecayRate2</tabstop>
+  <tabstop>sliderFilterDecayLvl2</tabstop>
+  <tabstop>spinFilterDecayLvl2</tabstop>
+  <tabstop>sliderFilterReleaseRate</tabstop>
+  <tabstop>spinFilterReleaseRate</tabstop>
+  <tabstop>sliderFilterReleaseLvl</tabstop>
+  <tabstop>spinFilterReleaseLvl</tabstop>
+  <tabstop>sliderFilterQ</tabstop>
+  <tabstop>spinFilterQ</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>sliderFilterStartLvl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinFilterStartLvl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>717</x>
+     <y>199</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>777</x>
+     <y>203</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinFilterStartLvl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderFilterStartLvl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>777</x>
+     <y>203</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>717</x>
+     <y>199</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderFilterAttackRate</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinFilterAttackRate</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>717</x>
+     <y>236</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>777</x>
+     <y>240</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderFilterAttackLvl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinFilterAttackLvl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>717</x>
+     <y>264</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>777</x>
+     <y>268</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderFilterDecayRate1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinFilterDecayRate1</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>717</x>
+     <y>301</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>777</x>
+     <y>305</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderFilterDecayLvl1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinFilterDecayLvl1</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>717</x>
+     <y>329</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>777</x>
+     <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderFilterDecayRate2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinFilterDecayRate2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>717</x>
+     <y>357</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>777</x>
+     <y>361</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderFilterDecayLvl2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinFilterDecayLvl2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>717</x>
+     <y>385</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>777</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderFilterReleaseRate</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinFilterReleaseRate</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>717</x>
+     <y>422</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>777</x>
+     <y>426</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderFilterReleaseLvl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinFilterReleaseLvl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>717</x>
+     <y>450</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>777</x>
+     <y>454</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderFilterQ</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinFilterQ</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>717</x>
+     <y>487</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>777</x>
+     <y>491</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinFilterAttackRate</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderFilterAttackRate</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>777</x>
+     <y>240</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>717</x>
+     <y>236</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinFilterAttackLvl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderFilterAttackLvl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>777</x>
+     <y>268</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>717</x>
+     <y>264</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinFilterDecayRate1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderFilterDecayRate1</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>777</x>
+     <y>305</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>717</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinFilterDecayLvl1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderFilterDecayLvl1</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>777</x>
+     <y>333</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>717</x>
+     <y>329</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinFilterDecayRate2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderFilterDecayRate2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>777</x>
+     <y>361</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>717</x>
+     <y>357</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinFilterDecayLvl2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderFilterDecayLvl2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>777</x>
+     <y>389</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>717</x>
+     <y>385</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinFilterReleaseRate</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderFilterReleaseRate</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>777</x>
+     <y>426</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>717</x>
+     <y>422</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinFilterReleaseLvl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderFilterReleaseLvl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>777</x>
+     <y>454</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>717</x>
+     <y>450</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinFilterQ</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderFilterQ</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>777</x>
+     <y>491</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>717</x>
+     <y>487</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderOscLvl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinOscLvl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>258</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>248</x>
+     <y>262</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderVelLow</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinVelLow</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>288</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>248</x>
+     <y>292</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderVelHigh</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinVelHigh</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>318</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>248</x>
+     <y>322</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderLFOFreq</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinLFOFreq</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>201</x>
+     <y>454</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>248</x>
+     <y>458</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderLFOPitchDepth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinLFOPitchDepth</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>201</x>
+     <y>483</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>248</x>
+     <y>487</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderLFOAmpDepth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinLFOAmpDepth</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>201</x>
+     <y>541</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>248</x>
+     <y>545</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinOscLvl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderOscLvl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>262</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>258</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinVelLow</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderVelLow</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>292</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>288</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinVelHigh</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderVelHigh</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>322</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinLFOFreq</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderLFOFreq</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>458</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>201</x>
+     <y>454</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinLFOPitchDepth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderLFOPitchDepth</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>487</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>201</x>
+     <y>483</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinLFOAmpDepth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderLFOAmpDepth</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>545</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>201</x>
+     <y>541</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinAmpKeyRateScaling</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderAmpKeyRateScaling</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>507</x>
+     <y>577</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>460</x>
+     <y>573</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderAmpKeyRateScaling</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinAmpKeyRateScaling</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>460</x>
+     <y>573</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>507</x>
+     <y>577</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinAmpDecay2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderAmpDecay2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>507</x>
+     <y>521</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>460</x>
+     <y>517</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderAmpDecay2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinAmpDecay2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>460</x>
+     <y>517</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>507</x>
+     <y>521</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderAmpDecayLvl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinAmpDecayLvl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>460</x>
+     <y>489</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>507</x>
+     <y>493</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinAmpDecayLvl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderAmpDecayLvl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>507</x>
+     <y>493</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>460</x>
+     <y>489</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinAmpAttack</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderAmpAttack</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>507</x>
+     <y>437</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>460</x>
+     <y>433</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderAmpAttack</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinAmpAttack</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>460</x>
+     <y>433</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>507</x>
+     <y>437</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinAmpRelease</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderAmpRelease</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>507</x>
+     <y>549</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>460</x>
+     <y>545</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderAmpRelease</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinAmpRelease</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>460</x>
+     <y>545</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>507</x>
+     <y>549</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderAmpDecay1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinAmpDecay1</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>460</x>
+     <y>461</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>507</x>
+     <y>465</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinAmpDecay1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderAmpDecay1</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>507</x>
+     <y>465</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>460</x>
+     <y>461</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderFineTune</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinFineTune</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>165</x>
+     <y>79</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>217</x>
+     <y>78</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinFineTune</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderFineTune</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>166</x>
+     <y>75</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderPanPot</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinPanPot</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>197</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>215</x>
+     <y>136</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinPanPot</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderPanPot</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>152</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>197</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderDirectLevel</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinDirectLevel</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>197</x>
+     <y>178</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>229</x>
+     <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinDirectLevel</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderDirectLevel</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>182</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>197</x>
+     <y>178</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>SplitEditor</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>665</x>
+     <y>573</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>664</x>
+     <y>551</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>SplitEditor</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>749</x>
+     <y>569</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>748</x>
+     <y>548</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

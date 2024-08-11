@@ -1,0 +1,8 @@
+[submodule "third_party/sf2cute"]
+	path = third_party/sf2cute
+	url = https://github.com/gocha/sf2cute
+	shallow = true
+[submodule "third_party/portaudio"]
+	path = third_party/portaudio
+	url = https://github.com/PortAudio/portaudio
+	shallow = true
