@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
 invalid:
 	fprintf(
 		stderr,
-		"mlttool - Dreamcast Multi-Unit file tool [version 0.0.1]\n"
+		"mlttool - Dreamcast Multi-Unit file tool [version 0.1.0]\n"
 		"https://github.com/dakrk/manatools\n"
 		"\n"
 		"Usage: %s extract <in.mlt> <outdir>\n"

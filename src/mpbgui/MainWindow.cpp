@@ -31,6 +31,10 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	ui.statusbar->hide();
 
+	// Fix program list at a sensible size across resizes
+	ui.splitProgramList->setSizes({ 190, 810 });
+	ui.splitProgramList->setStretchFactor(1, 1);
+
 	ui.splitProgramPanes->setStretchFactor(0, 1);
 	ui.splitProgramPanes->setStretchFactor(1, 6);
 	ui.splitProgramPanes->setCollapsible(0, false);

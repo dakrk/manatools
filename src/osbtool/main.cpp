@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
 invalid:
 	fprintf(
 		stderr,
-		"osbtool - Dreamcast One Shot Bank tool [version 0.0.1]\n"
+		"osbtool - Dreamcast One Shot Bank tool [version 0.1.0]\n"
 		"https://github.com/dakrk/manatools\n"
 		"\n"
 		"Usage: %s extract <format> <in.osb> <outdir>\n"

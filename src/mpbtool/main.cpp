@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
 invalid:
 	fprintf(
 		stderr,
-		"mpbtool - Dreamcast MIDI Program Bank tool [version 0.0.1]\n"
+		"mpbtool - Dreamcast MIDI Program Bank tool [version 0.1.0]\n"
 		"https://github.com/dakrk/manatools\n"
 		"\n"
 		"Usage: %s convert <in.mpb> <out.sf2>\n"
