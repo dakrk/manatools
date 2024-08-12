@@ -6,6 +6,7 @@
 #include <QMimeData>
 #include <stdexcept>
 #include <manatools/sf2.hpp>
+#include <manatools/wav.hpp>
 
 #include "MainWindow.hpp"
 #include "BankPropertiesDialog.hpp"
@@ -174,6 +175,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	connect(ui.btnLayerEdit, &QPushButton::clicked, this, &MainWindow::editLayer);
 	connect(ui.btnSplitEdit, &QPushButton::clicked, this, &MainWindow::editSplit);
+	connect(ui.btnToneExport, &QPushButton::clicked, this, &MainWindow::exportTone);
 
 	connect(ui.btnSplitPlay, &QPushButton::clicked, this, [this](bool checked) {
 		checked ? tonePlayer.play() : tonePlayer.stop();
@@ -255,6 +257,60 @@ bool MainWindow::exportSF2File(const QString& path) {
 	}
 
 	return true;
+}
+
+bool MainWindow::exportToneFile(const manatools::mpb::Split& split, const QString& path, ToneExportType type) {
+	CursorOverride cursor(Qt::WaitCursor);
+
+	if (!split.tone.data) {
+		cursor.restore();
+		QMessageBox::warning(this, "", tr("Selected split has no tone data."));
+		return false;
+	}
+
+	try {
+		switch (type) {
+			case ToneExportType::WAV: {
+				manatools::wav::WAV<s16> wav(1, 22050);
+
+				if (split.loop) {
+					wav.sampler = {
+						.midiUnityNote = 60,
+						.midiPitchFraction = 0,
+						.loops = {
+							{
+								.start = split.loopStart,
+								.end = split.loopEnd - 1u
+							}
+						}
+					};
+				}
+
+				manatools::tone::Decoder decoder(&split.tone);
+				wav.data.resize(split.tone.samples());
+				decoder.decode(wav.data);
+				
+				wav.save(path.toStdString());
+				break;
+			}
+
+			case ToneExportType::DAT: {
+				manatools::io::FileIO file(path.toStdString(), "wb");
+				file.writeVec(*split.tone.data);
+				break;
+			}
+
+			default: {
+				return false;
+			}
+		}
+	} catch (const std::runtime_error& err) {
+		cursor.restore();
+		QMessageBox::warning(this, "", tr("Failed to export tone: %1").arg(err.what()));
+		return false;
+	}
+
+	return true;	
 }
 
 /**
@@ -370,6 +426,46 @@ bool MainWindow::exportSF2() {
 		return false;
 
 	return exportSF2File(path);
+}
+
+bool MainWindow::exportTone() {
+	auto* split = bank.split(programIdx, layerIdx, splitIdx);
+	if (!split)
+		return false;
+
+	const QStringList filters = {
+		tr("WAV file (*.wav)"),
+		tr("Raw tone data (*.dat)")
+	};
+
+	QString selectedFilter;
+
+	const QString defPath = QDir(getOutPath(true)).filePath(
+		QString("%1_%2-%3-%4.wav")
+			.arg(curFile.isEmpty() ? "untitled" : QFileInfo(curFile).baseName())
+			.arg(programIdx)
+			.arg(layerIdx)
+			.arg(splitIdx)
+	);
+
+	const QString path = QFileDialog::getSaveFileName(
+		this,
+		tr("Save split tone"),
+		defPath,
+		filters.join(";;"),
+		&selectedFilter
+	);
+
+	if (path.isEmpty())
+		return false;
+
+	ToneExportType type;
+	if (selectedFilter == filters[0])
+		type = ToneExportType::WAV;
+	else
+		type = ToneExportType::DAT;
+
+	return exportToneFile(*split, path, type);
 }
 
 void MainWindow::editBankProperties() {
