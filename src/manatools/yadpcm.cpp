@@ -30,6 +30,30 @@ static s16 step(u8 step, s16* history, s16* stepSize) {
 	return newVal;
 }
 
+void encode(const s16* in, u8* out, size_t len, u8* nibble, s16* history, s16* stepSize) {
+	u8 bufSample = 0;
+
+	for (size_t i = 0; i < len; i++) {
+		// we remove a few bits of accuracy to reduce some noise.
+		s32 step = ((*in++) & -8) - *history;
+
+		uint adpcmSample = (abs(step) << 16) / (*stepSize << 14);
+		adpcmSample = std::clamp(adpcmSample, 0u, 7u);
+
+		if (step < 0)
+			adpcmSample |= 8;
+
+		if (!*nibble)
+			*out++ = bufSample | (adpcmSample << 4);
+		else
+			bufSample = adpcmSample & 15;
+
+		*nibble ^= 1;
+
+		yadpcm::step(adpcmSample, history, stepSize);
+	}
+}
+
 size_t decode(const u8* in, s16* out, size_t len, u8* nibble, s16* history, s16* stepSize, bool highPass) {
 	const u8* start = in;
 
