@@ -6,3 +6,23 @@
 	path = third_party/portaudio
 	url = https://github.com/PortAudio/portaudio
 	shallow = true
+[submodule "third_party/ogg"]
+	path = third_party/ogg
+	url = https://gitlab.xiph.org/xiph/ogg
+	shallow = true
+[submodule "third_party/vorbis"]
+	path = third_party/vorbis
+	url = https://gitlab.xiph.org/xiph/vorbis
+	shallow = true
+[submodule "third_party/flac"]
+	path = third_party/flac
+	url = https://gitlab.xiph.org/xiph/flac
+	shallow = true
+[submodule "third_party/opus"]
+	path = third_party/opus
+	url = https://gitlab.xiph.org/xiph/opus
+	shallow = true
+[submodule "third_party/libsndfile"]
+	path = third_party/libsndfile
+	url = https://github.com/libsndfile/libsndfile
+	shallow = true

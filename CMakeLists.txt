@@ -21,6 +21,7 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 include(GNUInstallDirs)
 include(CompilerFlags)
 include(ProjectFuncs)
+include(FindPkgConfigModule)
 
 add_subdirectory(third_party)
 add_subdirectory(src)
