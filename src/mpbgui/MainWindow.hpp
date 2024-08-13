@@ -21,7 +21,6 @@ public:
 	bool loadFile(const QString& path);
 	bool saveFile(const QString& path);
 	bool exportSF2File(const QString& path);
-	bool exportToneFile(const manatools::mpb::Split& split, const QString& path, ToneExportType type);
 
 	void setProgram(size_t newProgramIdx);
 	void setLayer(size_t newLayerIdx);

@@ -139,6 +139,10 @@ namespace manatools::mpb {
 		 * Convenience methods that return nullptr if bounds checks don't pass, as to avoid
 		 * having the same bounds checks littered around everywhere
 		 */
+		const Program* program(size_t programIdx) const;
+		const Layer* layer(size_t programIdx, size_t layerIdx) const;
+		const Split* split(size_t programIdx, size_t layerIdx, size_t splitIdx) const;
+
 		Program* program(size_t programIdx);
 		Layer* layer(size_t programIdx, size_t layerIdx);
 		Split* split(size_t programIdx, size_t layerIdx, size_t splitIdx);

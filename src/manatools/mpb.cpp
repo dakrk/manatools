@@ -4,6 +4,7 @@
 #include <map>
 #include <stdexcept>
 #include <unordered_map>
+#include <utility>
 
 #include "mpb.hpp"
 #include "io.hpp"
@@ -590,14 +591,14 @@ void Bank::save(const fs::path& path) {
 	file.writeVec(io.vec());
 }
 
-Program* Bank::program(size_t programIdx) {
+const Program* Bank::program(size_t programIdx) const {
 	if (programIdx < programs.size())
 		return &programs[programIdx];
 
 	return nullptr;
 }
 
-Layer* Bank::layer(size_t programIdx, size_t layerIdx) {
+const Layer* Bank::layer(size_t programIdx, size_t layerIdx) const {
 	if (auto* p = program(programIdx)) {
 		if (layerIdx >= MAX_LAYERS)
 			return nullptr;
@@ -610,12 +611,25 @@ Layer* Bank::layer(size_t programIdx, size_t layerIdx) {
 	return nullptr;
 }
 
-Split* Bank::split(size_t programIdx, size_t layerIdx, size_t splitIdx) {
+const Split* Bank::split(size_t programIdx, size_t layerIdx, size_t splitIdx) const {
 	if (auto* l = layer(programIdx, layerIdx))
 		if (splitIdx < l->splits.size())
 			return &l->splits[splitIdx];
 
 	return nullptr;
+}
+
+// Do a little dance in order to use these in both const and non-const contexts
+Program* Bank::program(size_t programIdx) {
+	return const_cast<Program*>(std::as_const(*this).program(programIdx));
+}
+
+Layer* Bank::layer(size_t programIdx, size_t layerIdx) {
+	return const_cast<Layer*>(std::as_const(*this).layer(programIdx, layerIdx));
+}
+
+Split* Bank::split(size_t programIdx, size_t layerIdx, size_t splitIdx) {
+	return const_cast<Split*>(std::as_const(*this).split(programIdx, layerIdx, splitIdx));
 }
 
 uint Program::usedLayers() const {
