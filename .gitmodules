@@ -16,7 +16,7 @@
 	shallow = true
 [submodule "third_party/flac"]
 	path = third_party/flac
-	url = https://gitlab.xiph.org/xiph/flac
+	url = https://github.com/xiph/flac
 	shallow = true
 [submodule "third_party/opus"]
 	path = third_party/opus
