@@ -6,21 +6,6 @@
 
 namespace manatools::tone {
 
-Decoder::Decoder() : tone_(nullptr) {
-	reset();
-}
-
-Decoder::Decoder(const Tone* tone) : tone_(tone) {
-	reset();
-}
-
-void Decoder::reset() {
-	pos = 0;
-	adpcmNibble = 4;
-	adpcmHistory = 0;
-	adpcmStepSize = 127;
-}
-
 size_t Decoder::decode(s16* out, size_t numSamples) {
 	Data* toneData = tone_->data.get();
 	if (!toneData)
@@ -34,7 +19,7 @@ size_t Decoder::decode(s16* out, size_t numSamples) {
 	switch (tone_->format) {
 		case ADPCM: {
 			size_t len = std::min(numSamples, (toneSize - pos) * 2);
-			pos += yadpcm::decode(toneData->data() + pos, out, len, &adpcmNibble, &adpcmHistory, &adpcmStepSize);
+			pos += adpcmCtx.decode(toneData->data() + pos, out, len);
 			return len;
 		}
 

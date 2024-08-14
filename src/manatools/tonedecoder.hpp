@@ -4,6 +4,7 @@
 #include "tone.hpp"
 #include "types.hpp"
 #include "utils.hpp"
+#include "yadpcm.hpp"
 
 namespace manatools::tone {
 	/**
@@ -12,10 +13,13 @@ namespace manatools::tone {
 	 */
 	class Decoder {
 	public:
-		Decoder();
-		Decoder(const Tone* tone);
+		Decoder() : tone_(nullptr) {};
+		Decoder(const Tone* tone) : tone_(tone) {};
 
-		void reset();
+		void reset() {
+			pos = 0;
+			adpcmCtx.reset();
+		}
 
 		const Tone* tone() const {
 			return tone_;
@@ -37,9 +41,7 @@ namespace manatools::tone {
 
 		const Tone* tone_;
 
-		size_t pos;
-		u8 adpcmNibble;
-		s16 adpcmHistory;
-		s16 adpcmStepSize;
+		size_t pos = 0;
+		yadpcm::Context adpcmCtx;
 	};
 } // namespace manatools::tone
