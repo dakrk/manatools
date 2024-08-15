@@ -21,6 +21,10 @@ namespace manatools::tone {
 	typedef std::vector<u8> Data;
 	typedef std::shared_ptr<Data> DataPtr;
 
+	inline DataPtr makeDataPtr(size_t bytes) {
+		return std::make_shared<Data>(bytes);
+	}
+
 	inline u8 bitdepth(Format format) {
 		using enum Format;
 		switch (format) {

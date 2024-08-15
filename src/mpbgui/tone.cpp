@@ -6,7 +6,17 @@
 #include "CursorOverride.hpp"
 #include "tone.hpp"
 
+// we're not in a class, and can't make aliases to a static method with default args
+constexpr auto tr = [](const char* sourceText, const char* disambiguation = nullptr, int n = -1) {
+	return QObject::tr(sourceText, disambiguation, n);
+};
+
+// well, libsndfile doesn't have a "read_s16" precisely
+static_assert(sizeof(short) == 2, "Size of short is not 2 bytes/16 bits");
+
 namespace tone {
+
+constexpr const size_t READ_SIZE = 512;
 
 bool importDialog(QWidget* parent, manatools::mpb::Bank& bank,
                   size_t programIdx, size_t layerIdx, size_t splitIdx,
@@ -18,7 +28,7 @@ bool importDialog(QWidget* parent, manatools::mpb::Bank& bank,
 
 	const QString path = QFileDialog::getOpenFileName(
 		parent,
-		QFileDialog::tr("Import split tone"),
+		tr("Import split tone"),
 		basePath
 	);
 
@@ -30,10 +40,72 @@ bool importDialog(QWidget* parent, manatools::mpb::Bank& bank,
 
 bool importFile(QWidget* parent, manatools::mpb::Split& split, const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
+	SndfileHandle sndFile(path.toStdString());
 
-	SndfileHandle file(path.toStdString());
+	/**
+	 * well... for `!sndFile` it wouldn't even be able to get a message because
+	 * it would be a null handle
+	 */
+	if (!sndFile || sndFile.error() != SF_ERR_NO_ERROR) {
+		cursor.restore();
+		QMessageBox::warning(parent, "", tr("Failed to import sound file: %1").arg(sndFile.strError()));
+		return false;
+	}
 
-	return false;
+	// TODO: Channel select dialog, as well as option to downmix multiple
+	auto channels = sndFile.channels();
+	if (channels > 1) {
+		QMessageBox::warning(
+			parent, "",
+			tr("More than 1 channel was found in the imported file. Only channel 1 will be read.")
+		);
+	}
+
+	// TODO: Ask for option if you want to convert to ADPCM?
+
+	std::vector<s16> readBuf(READ_SIZE * channels);
+
+	manatools::tone::Tone newTone;
+	newTone.format = manatools::tone::Format::PCM16,
+	newTone.data = manatools::tone::makeDataPtr(sndFile.frames() * sizeof(s16));	
+
+	sf_count_t framesRead;
+	sf_count_t totalFramesRead = 0;
+	while ((framesRead = sndFile.readf(readBuf.data(), READ_SIZE)) > 0) {
+		for (sf_count_t i = 0; i < framesRead; i++) {
+			s16* data = reinterpret_cast<s16*>(newTone.data->data());
+			data[totalFramesRead + i] = readBuf[i * channels + 0]; // 0 meaning channel 1
+		}
+		totalFramesRead += framesRead;
+	}
+
+	if (totalFramesRead != sndFile.frames()) {
+		cursor.restore();
+		QMessageBox::warning(parent, "", tr("Could not fully read audio data from imported sound file."));
+		return false;
+	}
+
+	SF_INSTRUMENT instrument;
+	if (sndFile.command(SFC_GET_INSTRUMENT, &instrument, sizeof(instrument))) {
+		if (instrument.loop_count >= 1) {
+			if (instrument.loop_count > 1)
+				QMessageBox::warning(parent, "", tr("Imported sound file has more than one loop. Using first loop."));
+
+			auto loop = instrument.loops[0];
+			split.loop = loop.mode != SF_LOOP_NONE;
+			split.loopStart = loop.start;
+			split.loopEnd = loop.end;
+		}
+	}
+
+	/**
+	 * TODO: WAV's inst chunk also has note and velocity data embedded, so
+	 * prompt to import it
+	 */
+
+	split.tone = std::move(newTone);
+
+	return true;
 }
 
 bool exportDialog(QWidget* parent, const manatools::mpb::Bank& bank,
@@ -45,8 +117,8 @@ bool exportDialog(QWidget* parent, const manatools::mpb::Bank& bank,
 		return false;
 
 	const QStringList filters = {
-		QFileDialog::tr("WAV file (*.wav)"),
-		QFileDialog::tr("Raw tone data (*.dat)")
+		tr("WAV file (*.wav)"),
+		tr("Raw tone data (*.dat)")
 	};
 
 	QString selectedFilter;
@@ -61,7 +133,7 @@ bool exportDialog(QWidget* parent, const manatools::mpb::Bank& bank,
 
 	const QString path = QFileDialog::getSaveFileName(
 		parent,
-		QFileDialog::tr("Export split tone"),
+		tr("Export split tone"),
 		defPath,
 		filters.join(";;"),
 		&selectedFilter
@@ -84,7 +156,7 @@ bool exportFile(QWidget* parent, const manatools::mpb::Split& split, const QStri
 
 	if (!split.tone.data) {
 		cursor.restore();
-		QMessageBox::warning(parent, "", QMessageBox::tr("Selected split has no tone data."));
+		QMessageBox::warning(parent, "", tr("Selected split has no tone data."));
 		return false;
 	}
 
@@ -100,7 +172,7 @@ bool exportFile(QWidget* parent, const manatools::mpb::Split& split, const QStri
 						.loops = {
 							{
 								.start = split.loopStart,
-								.end = split.loopEnd - 1u
+								.end = split.loopEnd - 1u // WAV plays last sample
 							}
 						}
 					};
@@ -126,7 +198,7 @@ bool exportFile(QWidget* parent, const manatools::mpb::Split& split, const QStri
 		}
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
-		QMessageBox::warning(parent, "", QMessageBox::tr("Failed to export tone: %1").arg(err.what()));
+		QMessageBox::warning(parent, "", tr("Failed to export tone: %1").arg(err.what()));
 		return false;
 	}
 

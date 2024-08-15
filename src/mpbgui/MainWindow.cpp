@@ -377,11 +377,16 @@ bool MainWindow::exportSF2() {
 }
 
 bool MainWindow::importTone() {
-	return tone::importDialog(
+	bool success = tone::importDialog(
 		this, bank,
 		programIdx, layerIdx, splitIdx,
 		getOutPath(true)
 	);
+
+	if (success)
+		emitRowChanged(splitsModel, splitIdx);
+
+	return success;
 }
 
 bool MainWindow::exportTone() {
@@ -406,14 +411,11 @@ void MainWindow::editLayer() {
 	if (!layer)
 		return;
 
-	auto topLeftIdx = layersModel->index(layerIdx, 0);
-	auto bottomRightIdx = layersModel->index(layerIdx, layersModel->columnCount());
-
 	LayerEditor editor(layer, this);
 	editor.setPath(programIdx, layerIdx);
 
 	if (editor.exec() == QDialog::Accepted) {
-		emit layersModel->dataChanged(topLeftIdx, bottomRightIdx, { Qt::DisplayRole, Qt::EditRole });
+		emitRowChanged(layersModel, layerIdx);
 	}
 }
 
@@ -421,9 +423,6 @@ void MainWindow::editSplit() {
 	auto* split = bank.split(programIdx, layerIdx, splitIdx);
 	if (!split)
 		return;
-
-	auto topLeftIdx = splitsModel->index(splitIdx, 0);
-	auto bottomRightIdx = splitsModel->index(splitIdx, splitsModel->columnCount());
 
 	SplitEditor editor(*split, &bank, this);
 	editor.setPath(programIdx, layerIdx, splitIdx);
@@ -435,7 +434,7 @@ void MainWindow::editSplit() {
 		 */
 		*split = std::move(editor.split());
 		// TODO: don't change windowModified if split data hasn't actually changed
-		emit splitsModel->dataChanged(topLeftIdx, bottomRightIdx, { Qt::DisplayRole, Qt::EditRole });
+		emitRowChanged(splitsModel, splitIdx);
 	}
 }
 
@@ -478,6 +477,12 @@ void MainWindow::setCommonTableProps(QTableView* table) {
 	table->setSelectionBehavior(QAbstractItemView::SelectRows);
 	table->setSelectionMode(QAbstractItemView::SingleSelection);
 	table->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+}
+
+void MainWindow::emitRowChanged(QAbstractItemModel* model, int row) {
+	auto topLeft = model->index(row, 0);
+	auto bottomRight = model->index(row, model->columnCount());
+	emit model->dataChanged(topLeft, bottomRight, { Qt::DisplayRole, Qt::EditRole });
 }
 
 void MainWindow::connectTableMutations(QAbstractTableModel* model) {
