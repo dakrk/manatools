@@ -176,6 +176,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	connect(ui.btnLayerEdit, &QPushButton::clicked, this, &MainWindow::editLayer);
 	connect(ui.btnSplitEdit, &QPushButton::clicked, this, &MainWindow::editSplit);
+	connect(ui.btnToneImport, &QPushButton::clicked, this, &MainWindow::importTone);
 	connect(ui.btnToneExport, &QPushButton::clicked, this, &MainWindow::exportTone);
 
 	connect(ui.btnSplitPlay, &QPushButton::clicked, this, [this](bool checked) {
@@ -373,6 +374,14 @@ bool MainWindow::exportSF2() {
 		return false;
 
 	return exportSF2File(path);
+}
+
+bool MainWindow::importTone() {
+	return tone::importDialog(
+		this, bank,
+		programIdx, layerIdx, splitIdx,
+		getOutPath(true)
+	);
 }
 
 bool MainWindow::exportTone() {

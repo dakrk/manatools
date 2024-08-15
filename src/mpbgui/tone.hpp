@@ -14,6 +14,12 @@ namespace tone {
 		WAV, DAT
 	};
 
+	bool importDialog(QWidget* parent, manatools::mpb::Bank& bank,
+	                  size_t programIdx, size_t layerIdx, size_t splitIdx,
+	                  const QString& basePath);
+
+	bool importFile(QWidget* parent, manatools::mpb::Split& split, const QString& path);
+
 	bool exportDialog(QWidget* parent, const manatools::mpb::Bank& bank,
 	                  size_t programIdx, size_t layerIdx, size_t splitIdx,
 	                  const QString& basePath, const QString& baseName);

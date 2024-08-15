@@ -32,6 +32,7 @@ public slots:
 	bool save();
 	bool saveAs();
 	bool exportSF2();
+	bool importTone();
 	bool exportTone();
 	void editBankProperties();
 	void editLayer();

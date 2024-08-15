@@ -1,15 +1,44 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <manatools/tonedecoder.hpp>
+#include <sndfile.hh>
 
 #include "CursorOverride.hpp"
 #include "tone.hpp"
 
 namespace tone {
 
+bool importDialog(QWidget* parent, manatools::mpb::Bank& bank,
+                  size_t programIdx, size_t layerIdx, size_t splitIdx,
+                  const QString& basePath)
+{
+	auto* split = bank.split(programIdx, layerIdx, splitIdx);
+	if (!split)
+		return false;
+
+	const QString path = QFileDialog::getOpenFileName(
+		parent,
+		QFileDialog::tr("Import split tone"),
+		basePath
+	);
+
+	if (path.isEmpty())
+		return false;
+
+	return importFile(parent, *split, path);
+}
+
+bool importFile(QWidget* parent, manatools::mpb::Split& split, const QString& path) {
+	CursorOverride cursor(Qt::WaitCursor);
+
+	SndfileHandle file(path.toStdString());
+
+	return false;
+}
+
 bool exportDialog(QWidget* parent, const manatools::mpb::Bank& bank,
-                      size_t programIdx, size_t layerIdx, size_t splitIdx,
-                      const QString& basePath, const QString& baseName)
+                  size_t programIdx, size_t layerIdx, size_t splitIdx,
+                  const QString& basePath, const QString& baseName)
 {
 	const auto* split = bank.split(programIdx, layerIdx, splitIdx);
 	if (!split)
@@ -32,7 +61,7 @@ bool exportDialog(QWidget* parent, const manatools::mpb::Bank& bank,
 
 	const QString path = QFileDialog::getSaveFileName(
 		parent,
-		QFileDialog::tr("Save split tone"),
+		QFileDialog::tr("Export split tone"),
 		defPath,
 		filters.join(";;"),
 		&selectedFilter

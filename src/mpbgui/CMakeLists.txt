@@ -28,6 +28,7 @@ target_link_libraries(mpbgui PRIVATE
 	manatools::manatools
 	Qt6::Widgets
 	PortAudio::portaudio
+	SndFile::sndfile
 )
 
 set_target_properties(mpbgui PROPERTIES
