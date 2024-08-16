@@ -22,6 +22,7 @@ add_executable(mpbgui
 	tone.cpp
 	TonePlayer.cpp
 	UIntValidator.cpp
+	InstDataDialog.cpp
 )
 
 target_link_libraries(mpbgui PRIVATE

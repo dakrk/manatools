@@ -3,8 +3,9 @@
 #include <manatools/tonedecoder.hpp>
 #include <sndfile.hh>
 
-#include "CursorOverride.hpp"
 #include "tone.hpp"
+#include "CursorOverride.hpp"
+#include "InstDataDialog.hpp"
 
 // we're not in a class, and can't make aliases to a static method with default args
 constexpr auto tr = [](const char* sourceText, const char* disambiguation = nullptr, int n = -1) {
@@ -95,6 +96,12 @@ bool importFile(QWidget* parent, manatools::mpb::Split& split, const QString& pa
 			split.loop = loop.mode != SF_LOOP_NONE;
 			split.loopStart = loop.start;
 			split.loopEnd = loop.end;
+		}
+
+		InstDataDialog instDataDlg({}, {}, parent);
+
+		if (instDataDlg.exec() == QDialog::Accepted) {
+			
 		}
 	}
 
