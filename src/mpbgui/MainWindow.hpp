@@ -14,10 +14,6 @@ class MainWindow : public QMainWindow {
 public:
 	explicit MainWindow(QWidget* parent = nullptr);
 
-	enum class ToneExportType {
-		WAV, DAT
-	};
-
 	bool loadFile(const QString& path);
 	bool saveFile(const QString& path);
 	bool exportSF2File(const QString& path);

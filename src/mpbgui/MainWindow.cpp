@@ -164,6 +164,18 @@ MainWindow::MainWindow(QWidget* parent) :
 	#undef CONNECT_BTN_DEL
 	#undef CONNECT_ROW_CHANGED
 
+	connect(splitsModel, &QAbstractTableModel::dataChanged, this,
+	        [this](const QModelIndex& tl, const QModelIndex& br, const QList<int>& roles)
+	{
+		// tad bit of a hack so tone gets reloaded after split changes
+		if (std::cmp_less_equal(tl.row(), splitIdx) &&
+		    (!br.isValid() || std::cmp_greater_equal(br.row(), splitIdx)) &&
+		    (roles.contains(Qt::DisplayRole) || roles.isEmpty())) 
+		{
+			setSplit(splitIdx);
+		}
+	});
+
 	connect(ui.tblLayers, &QTableView::activated, this, [this](const QModelIndex& index) {
 		if (index.isValid() && index.column() == 0)
 			editLayer();

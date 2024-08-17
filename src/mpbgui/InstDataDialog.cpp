@@ -8,7 +8,7 @@
 InstDataDialog::InstDataDialog(Data current, Data imported, QWidget* parent) :
 	QDialog(parent)
 {
-	resize(300, 250);
+	setFixedSize(300, 250);
 
 	// TODO: Add question mark icon just like QMessageBox does
 

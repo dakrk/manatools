@@ -75,6 +75,9 @@ bool importFile(QWidget* parent, manatools::mpb::Split& split, const QString& pa
 		);
 	}
 
+	// Otherwise reading floats would result in the output just being zeros
+	sndFile.command(SFC_SET_SCALE_FLOAT_INT_READ, nullptr, true);
+
 	// TODO: Ask for option if you want to convert to ADPCM?
 
 	std::vector<s16> readBuf(READ_SIZE * channels);
