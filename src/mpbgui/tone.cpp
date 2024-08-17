@@ -53,6 +53,19 @@ bool importFile(QWidget* parent, manatools::mpb::Split& split, const QString& pa
 		return false;
 	}
 
+	// have to use cmp_greater due to dumb signedness stuff
+	if (std::cmp_greater(sndFile.frames(), manatools::tone::MAX_SAMPLES)) {
+		cursor.restore();
+		QMessageBox::warning(
+			parent, "",
+			tr(
+				"Cannot use imported sound file as it contains more than %1 samples (%2).\n\n"
+				"Tip: Try reducing its sample rate."
+			).arg(manatools::tone::MAX_SAMPLES).arg(sndFile.frames())
+		);
+		return false;
+	}
+
 	// TODO: Channel select dialog, as well as option to downmix multiple
 	auto channels = sndFile.channels();
 	if (channels > 1) {
