@@ -98,17 +98,33 @@ bool importFile(QWidget* parent, manatools::mpb::Split& split, const QString& pa
 			split.loopEnd = loop.end;
 		}
 
-		InstDataDialog instDataDlg({}, {}, parent);
+		InstDataDialog instDataDlg(
+			{
+				.startNote = split.startNote,
+				.endNote   = split.endNote,
+				.baseNote  = split.baseNote,
+				.startVel  = split.velocityLow,
+				.endVel    = split.velocityHigh
+			},
+			{
+				// should probably just make instdatadialog take an s8 instead but... whatever
+				.startNote = static_cast<u8>(instrument.key_lo),
+				.endNote   = static_cast<u8>(instrument.key_hi),
+				.baseNote  = static_cast<u8>(instrument.basenote),
+				.startVel  = static_cast<u8>(instrument.velocity_lo),
+				.endVel    = static_cast<u8>(instrument.velocity_hi)
+			},
+			parent
+		);
 
 		if (instDataDlg.exec() == QDialog::Accepted) {
-			
+			split.startNote    = instrument.key_lo;
+			split.endNote      = instrument.key_hi;
+			split.baseNote     = instrument.basenote;
+			split.velocityLow  = instrument.velocity_lo;
+			split.velocityHigh = instrument.velocity_hi;
 		}
 	}
-
-	/**
-	 * TODO: WAV's inst chunk also has note and velocity data embedded, so
-	 * prompt to import it
-	 */
 
 	split.tone = std::move(newTone);
 

@@ -65,7 +65,7 @@ void MLT::save(const fs::path& path) {
 	io.writeU32LE(2); // TODO: 2 surely wouldn't always be right (assuming this is version)
 
 	if (units.size() >= std::numeric_limits<u32>::max()) {
-		throw std::length_error("Too many units in MLT");
+		throw std::runtime_error("Too many units in MLT");
 	}
 
 	io.writeU32LE(units.size());
@@ -95,7 +95,7 @@ void MLT::save(const fs::path& path) {
 		io.writeU32LE(0); // File Data Offset
 
 		if (unit.data.size() >= std::numeric_limits<u32>::max()) {
-			throw std::length_error("MLT unit too large");
+			throw std::runtime_error("MLT unit too large");
 		}
 
 		io.writeU32LE(unit.data.size());
@@ -122,7 +122,8 @@ void MLT::save(const fs::path& path) {
 
 		curAICAOffset += unit.aicaDataSize_;
 		if (curAICAOffset >= AICA_MAX) {
-			throw std::length_error("MLT unit exceeds available AICA RAM");
+			// TODO: what unit?
+			throw std::runtime_error("MLT unit exceeds available AICA RAM");
 		}
 	}
 

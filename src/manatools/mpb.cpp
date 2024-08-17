@@ -298,14 +298,14 @@ void Bank::save(const fs::path& path) {
 	io.writeU32LE(0);
 
 	if (programs.size() >= MAX_PROGRAMS)
-		throw std::length_error("Too many programs in MPB");
+		throw std::runtime_error("Too many programs in MPB");
 	io.writeU32LE(programs.size());
 
 	auto ptrVelocitiesPos = io.tell();
 	io.writeU32LE(0);
 
 	if (velocities.size() >= MAX_VELOCITIES)
-		throw std::length_error("Too many velocities in MPB");
+		throw std::runtime_error("Too many velocities in MPB");
 	io.writeU32LE(velocities.size());
 
 	auto ptrUnk1Pos = io.tell();
@@ -398,8 +398,8 @@ void Bank::save(const fs::path& path) {
 
 			if (layer->splits.size() >= MAX_SPLITS) {
 				char err[64];
-				snprintf(err, std::size(err), "Too many splits in MPB program layer %zu:%zu", p, l);
-				throw std::length_error(err);
+				snprintf(err, std::size(err), "Too many splits in MPB program layer %zu:%zu", p + 1, l + 1);
+				throw std::runtime_error(err);
 			}
 
 			io.writeU32LE(layer->splits.size());
@@ -548,8 +548,8 @@ void Bank::save(const fs::path& path) {
 					tonePtrs[toneData] = io.tell();
 					if (split.tone.samples() >= tone::MAX_SAMPLES) {
 						char err[96];
-						snprintf(err, std::size(err), "Too many samples (>%zu) in MPB tone %zu:%zu:%zu", tone::MAX_SAMPLES, p, l, s);
-						throw std::length_error(err);
+						snprintf(err, std::size(err), "Too many samples (>%zu) in MPB tone %zu:%zu:%zu", tone::MAX_SAMPLES, p + 1, l + 1, s + 1);
+						throw std::runtime_error(err);
 					}
 					io.writeVec(*toneData);
 				}
