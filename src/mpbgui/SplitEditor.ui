@@ -1228,7 +1228,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="btnToneEdit">
+        <widget class="QToolButton" name="toolbtnToneEdit">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
            <horstretch>0</horstretch>
@@ -1237,6 +1237,9 @@
          </property>
          <property name="text">
           <string>Edit</string>
+         </property>
+         <property name="popupMode">
+          <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
          </property>
         </widget>
        </item>
@@ -1341,6 +1344,36 @@
     <string>Edit unknown properties</string>
    </property>
   </widget>
+  <action name="actionImportTone">
+   <property name="icon">
+    <iconset theme="document-open"/>
+   </property>
+   <property name="text">
+    <string>Import</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionExportTone">
+   <property name="icon">
+    <iconset theme="document-save-as"/>
+   </property>
+   <property name="text">
+    <string>Export</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionConvertToADPCM">
+   <property name="text">
+    <string>Convert to ADPCM</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>spinBaseNote</tabstop>
@@ -1372,7 +1405,7 @@
   <tabstop>placeholderWaveform</tabstop>
   <tabstop>checkLoopOn</tabstop>
   <tabstop>btnTonePlay</tabstop>
-  <tabstop>btnToneEdit</tabstop>
+  <tabstop>toolbtnToneEdit</tabstop>
   <tabstop>spinLoopStart</tabstop>
   <tabstop>spinLoopEnd</tabstop>
   <tabstop>placeholderAmpEnv</tabstop>
@@ -1410,6 +1443,7 @@
   <tabstop>spinFilterReleaseLvl</tabstop>
   <tabstop>sliderFilterQ</tabstop>
   <tabstop>spinFilterQ</tabstop>
+  <tabstop>btnEditUnk</tabstop>
  </tabstops>
  <resources/>
  <connections>

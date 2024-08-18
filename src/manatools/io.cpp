@@ -56,6 +56,10 @@ FileIO::FileIO(const wchar_t* path, const wchar_t* mode, bool exceptions, bool e
 }
 #endif
 
+FileIO::~FileIO() {
+	close();
+}
+
 // all these damn null handle checks
 size_t FileIO::read(void* buf, size_t size, size_t count) {
 	if (!handle_) {

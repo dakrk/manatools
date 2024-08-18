@@ -18,7 +18,7 @@ namespace manatools::utils {
 		if (mul == 0)
 			return num;
 
-		int rem = num % mul;
+		T rem = num % mul;
 		if (rem == 0)
 			return num;
 

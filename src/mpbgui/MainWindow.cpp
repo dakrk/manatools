@@ -389,11 +389,11 @@ bool MainWindow::exportSF2() {
 }
 
 bool MainWindow::importTone() {
-	bool success = tone::importDialog(
-		this, bank,
-		programIdx, layerIdx, splitIdx,
-		getOutPath(true)
-	);
+	auto* split = bank.split(programIdx, layerIdx, splitIdx);
+	if (!split)
+		return false;
+
+	bool success = tone::importDialog(this, *split, getOutPath(true));
 
 	if (success)
 		emitRowChanged(splitsModel, splitIdx);
@@ -402,12 +402,12 @@ bool MainWindow::importTone() {
 }
 
 bool MainWindow::exportTone() {
-	return tone::exportDialog(
-		this, bank,
-		programIdx, layerIdx, splitIdx,
-		getOutPath(true),
-		QFileInfo(curFile).baseName()
-	);
+	auto* split = bank.split(programIdx, layerIdx, splitIdx);
+	if (!split)
+		return false;
+
+	auto tonePath = QString("%1-%2-%3").arg(programIdx + 1).arg(layerIdx + 1).arg(splitIdx + 1);
+	return tone::exportDialog(this, *split, getOutPath(true), QFileInfo(curFile).baseName(), tonePath);
 }
 
 void MainWindow::editBankProperties() {

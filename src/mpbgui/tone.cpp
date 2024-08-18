@@ -1,11 +1,13 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <manatools/tonedecoder.hpp>
+#include <manatools/wav.hpp>
 #include <sndfile.hh>
 
 #include "tone.hpp"
 #include "CursorOverride.hpp"
 #include "InstDataDialog.hpp"
+#include "manatools/tone.hpp"
 
 // we're not in a class, and can't make aliases to a static method with default args
 constexpr auto tr = [](const char* sourceText, const char* disambiguation = nullptr, int n = -1) {
@@ -19,14 +21,7 @@ namespace tone {
 
 constexpr const size_t READ_SIZE = 512;
 
-bool importDialog(QWidget* parent, manatools::mpb::Bank& bank,
-                  size_t programIdx, size_t layerIdx, size_t splitIdx,
-                  const QString& basePath)
-{
-	auto* split = bank.split(programIdx, layerIdx, splitIdx);
-	if (!split)
-		return false;
-
+bool importDialog(QWidget* parent, manatools::mpb::Split& split, const QString& basePath) {
 	const QString path = QFileDialog::getOpenFileName(
 		parent,
 		tr("Import split tone"),
@@ -36,7 +31,7 @@ bool importDialog(QWidget* parent, manatools::mpb::Bank& bank,
 	if (path.isEmpty())
 		return false;
 
-	return importFile(parent, *split, path);
+	return importFile(parent, split, path);
 }
 
 bool importFile(QWidget* parent, manatools::mpb::Split& split, const QString& path) {
@@ -147,14 +142,9 @@ bool importFile(QWidget* parent, manatools::mpb::Split& split, const QString& pa
 	return true;
 }
 
-bool exportDialog(QWidget* parent, const manatools::mpb::Bank& bank,
-                  size_t programIdx, size_t layerIdx, size_t splitIdx,
-                  const QString& basePath, const QString& baseName)
+bool exportDialog(QWidget* parent, const manatools::mpb::Split& split, const QString& basePath,
+                 const QString& baseName, const QString& tonePath)
 {
-	const auto* split = bank.split(programIdx, layerIdx, splitIdx);
-	if (!split)
-		return false;
-
 	const QStringList filters = {
 		tr("WAV file (*.wav)"),
 		tr("Raw tone data (*.dat)")
@@ -162,12 +152,10 @@ bool exportDialog(QWidget* parent, const manatools::mpb::Bank& bank,
 
 	QString selectedFilter;
 
+	const QString bankName = baseName.isEmpty() ? "untitled" : baseName;
+
 	const QString defPath = QDir(basePath).filePath(
-		QString("%1_%2-%3-%4.wav")
-			.arg(baseName.isEmpty() ? "untitled" : baseName)
-			.arg(programIdx + 1)
-			.arg(layerIdx + 1)
-			.arg(splitIdx + 1)
+		tonePath.isEmpty() ? bankName : QString("%1_%2.wav").arg(bankName).arg(tonePath)		
 	);
 
 	const QString path = QFileDialog::getSaveFileName(
@@ -187,7 +175,7 @@ bool exportDialog(QWidget* parent, const manatools::mpb::Bank& bank,
 	else
 		type = FileType::DAT;
 
-	return exportFile(parent, *split, path, type);
+	return exportFile(parent, split, path, type);
 }
 
 bool exportFile(QWidget* parent, const manatools::mpb::Split& split, const QString& path, FileType type) {
@@ -202,6 +190,7 @@ bool exportFile(QWidget* parent, const manatools::mpb::Split& split, const QStri
 	try {
 		switch (type) {
 			case FileType::WAV: {
+				// TODO: hmm. could probably replace this with libsndfile
 				manatools::wav::WAV<s16> wav(1, 22050);
 
 				if (split.loop) {
@@ -239,6 +228,30 @@ bool exportFile(QWidget* parent, const manatools::mpb::Split& split, const QStri
 		cursor.restore();
 		QMessageBox::warning(parent, "", tr("Failed to export tone: %1").arg(err.what()));
 		return false;
+	}
+
+	return true;
+}
+
+bool convertToADPCM(QWidget* parent, manatools::tone::Tone tone) {
+	if (!tone.data)
+		return false;
+
+	using enum manatools::tone::Format;
+	switch (tone.format) {
+		case ADPCM:
+			return true;
+
+		case PCM16: {
+			if (tone.data->size() % 2) {
+				QMessageBox::warning(parent, "", tr("Cannot convert tone to ADPCM: Size of PCM-16 data must be a multiple of 2 bytes."));
+				return false;
+			}
+		}
+
+		case PCM8: {
+
+		}
 	}
 
 	return true;

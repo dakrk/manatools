@@ -15,6 +15,7 @@ namespace manatools::io {
 	public:
 		DataIO(const DataIO&) = delete;
 		DataIO& operator=(const DataIO&) = delete;
+		virtual ~DataIO() = default;
 
 		enum class Seek {
 			Set,
@@ -127,7 +128,7 @@ namespace manatools::io {
 	protected:
 		DataIO(bool exceptions, bool eofErrors) :
 			exceptions_(exceptions),
-			eofErrors_(eofErrors) {};
+			eofErrors_(eofErrors) {}
 
 		/**
 		 * errors in this are a bit flawed in the sense that I planned them so
@@ -207,7 +208,7 @@ namespace manatools::io {
 			FileIO(path.c_str(), mode, exceptions, eofErrors) {}
 		#endif
 
-		~FileIO() { close(); }
+		~FileIO() override;
 
 		size_t read(void* buf, size_t size, size_t count) override;
 		size_t write(const void* buf, size_t size, size_t count) override;
@@ -229,7 +230,7 @@ namespace manatools::io {
 		size_t cur_;
 	public:
 		DynBufIO(bool exceptions = true, bool eofErrors = true) :
-			DataIO(exceptions, eofErrors), cur_(0) {};
+			DataIO(exceptions, eofErrors), cur_(0) {}
 
 		size_t read(void* buf, size_t size, size_t count) override;
 		size_t write(const void* buf, size_t size, size_t count) override;

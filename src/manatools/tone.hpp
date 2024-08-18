@@ -53,12 +53,10 @@ namespace manatools::tone {
 		}
 
 		size_t samples() const {
-			return data ? std::ceil((data->size() * 8) / bitdepth()) : 0;
+			return data ? std::ceil((data->size() * 8.) / bitdepth()) : 0;
 		}
 
 		Format format;
 		DataPtr data;
 	};
-
-	void toPCM16LE(const Tone& in, std::vector<s16>& out);
 } // namespace manatools::tone

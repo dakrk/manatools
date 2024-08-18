@@ -13,6 +13,7 @@ public:
 	typedef manatools::mpb::LFOWaveType LFOWaveType;
 	typedef manatools::mpb::Split Split;
 	typedef manatools::mpb::Bank Bank;
+	typedef manatools::tone::Tone Tone;
 
 	explicit SplitEditor(QWidget* parent = nullptr);
 	SplitEditor(const Split& split, Bank* bank, QWidget* parent = nullptr);
@@ -28,7 +29,9 @@ public:
 	}
 
 public slots:
-	void editTone();
+	bool importTone();
+	bool exportTone();
+	void convertToADPCM();
 	void editUnknownProps();
 
 protected:
@@ -54,7 +57,10 @@ private:
 
 	Ui::SplitEditor ui;
 
+	QMenu* editToneMenu;
+
 	Split split_;
+	Tone newTone;
 	Bank* bank;
 
 	// TODO: Initialising one of these each time a dialog is opened is noticeably slower

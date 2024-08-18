@@ -19,8 +19,6 @@ add_executable(mpbgui
 	SplitEditor.cpp
 	SplitUnkEditor.ui
 	SplitUnkEditor.cpp
-	ToneEditor.ui
-	ToneEditor.cpp
 	tone.cpp
 	TonePlayer.cpp
 	UIntValidator.cpp

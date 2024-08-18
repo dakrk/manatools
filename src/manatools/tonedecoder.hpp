@@ -13,8 +13,8 @@ namespace manatools::tone {
 	 */
 	class Decoder {
 	public:
-		Decoder() : tone_(nullptr) {};
-		Decoder(const Tone* tone) : tone_(tone) {};
+		Decoder() : tone_(nullptr) {}
+		Decoder(const Tone* tone) : tone_(tone) {}
 
 		void reset() {
 			pos = 0;

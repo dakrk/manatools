@@ -2,10 +2,12 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QThread>
+#include <QMenu>
 #include <utility>
 
 #include "SplitEditor.hpp"
 #include "SplitUnkEditor.hpp"
+#include "tone.hpp"
 #include "utilities.hpp"
 
 SplitEditor::SplitEditor(QWidget* parent) :
@@ -21,6 +23,7 @@ SplitEditor::SplitEditor(const Split& split, Bank* bank, QWidget* parent) :
 	QDialog(parent),
 	settings(),
 	split_(split),
+	newTone(split.tone),
 	bank(bank),
 	tonePlayer(22050, this)
 {
@@ -32,6 +35,12 @@ void SplitEditor::init() {
 	setFixedSize(size());
 
 	restoreSettings();
+
+	editToneMenu = new QMenu();
+	/*editToneMenu->addAction(ui.actionImportTone);
+	editToneMenu->addAction(ui.actionExportTone);*/
+	editToneMenu->addAction(ui.actionConvertToADPCM);
+	ui.toolbtnToneEdit->setMenu(editToneMenu);
 
 	connect(ui.spinBaseNote, &QSpinBox::valueChanged, this, [this](int i) {
 		ui.lblBaseNoteVal->setText(noteToString(i));
@@ -45,8 +54,10 @@ void SplitEditor::init() {
 		ui.btnTonePlay->setIcon(QIcon::fromTheme(checked ? "media-playback-stop" : "media-playback-start"));
 	});
 
-	connect(ui.btnToneEdit, &QPushButton::clicked, this, &SplitEditor::editTone);
-	connect(ui.btnEditUnk,  &QPushButton::clicked, this, &SplitEditor::editUnknownProps);
+	connect(ui.actionImportTone, &QAction::triggered, this, &SplitEditor::importTone);
+	connect(ui.actionExportTone, &QAction::triggered, this, &SplitEditor::exportTone);
+	connect(ui.actionConvertToADPCM, &QAction::triggered, this, &SplitEditor::convertToADPCM);
+	connect(ui.btnEditUnk, &QPushButton::clicked, this, &SplitEditor::editUnknownProps);
 
 	connect(this, &QDialog::accepted, this, &SplitEditor::setSplitData);
 	connect(this, &QDialog::finished, this, &SplitEditor::saveSettings);
@@ -56,7 +67,6 @@ void SplitEditor::init() {
 	});
 
 	ui.btnTonePlay->setCheckable(true);
-	ui.btnToneEdit->setEnabled(false); // TODO: Tone editor
 
 	addVelCurveItems(ui.comboVelCurve);
 	ui.btnVelCurveEdit->setEnabled(false); // TODO: Velocity curve editor
@@ -65,7 +75,6 @@ void SplitEditor::init() {
 	addLFOWaveItems(ui.comboLFOAmpWave);
 
 	loadSplitData();
-	tonePlayer.setTone(split_.tone);
 }
 
 void SplitEditor::addVelCurveItems(QComboBox* box) {
@@ -120,9 +129,10 @@ bool SplitEditor::setLFOWaveType(QComboBox* box, LFOWaveType type) {
 }
 
 void SplitEditor::loadToneData() {
+	tonePlayer.setTone(newTone);
 	ui.lblToneInfo->setText(
-		tr("%n samples, %1", "", split_.tone.samples())
-			.arg(manatools::tone::formatName(split_.tone.format))
+		tr("%n samples, %1", "", newTone.samples())
+			.arg(manatools::tone::formatName(newTone.format))
 	);
 }
 
@@ -228,6 +238,8 @@ void SplitEditor::setSplitData() {
 
 	split_.drumMode = ui.checkDrumModeOn->isChecked();
 	split_.drumGroupID = ui.spinDrumGroupID->value();
+
+	split_.tone = newTone;
 }
 
 void SplitEditor::setPath(size_t programIdx, size_t layerIdx, size_t splitIdx) {
@@ -240,8 +252,18 @@ void SplitEditor::setPath(size_t programIdx, size_t layerIdx, size_t splitIdx) {
 	);
 }
 
-void SplitEditor::editTone() {
-	// TODO: Tone editor
+bool SplitEditor::importTone() {
+	// TODO
+	return false;
+}
+
+bool SplitEditor::exportTone() {
+	// TODO
+	return false;
+}
+
+void SplitEditor::convertToADPCM() {
+	loadToneData();
 }
 
 void SplitEditor::editUnknownProps() {
