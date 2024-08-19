@@ -54,7 +54,6 @@ private:
 
 	bool maybeSave();
 	void setCurrentFile(const QString& path = "");
-	QString getOutPath(bool dirOnly = false, const QString& newExtension = "") const;
 
 	void restoreSettings();
 	void saveSettings();

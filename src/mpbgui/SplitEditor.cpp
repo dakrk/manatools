@@ -37,8 +37,8 @@ void SplitEditor::init() {
 	restoreSettings();
 
 	editToneMenu = new QMenu();
-	/*editToneMenu->addAction(ui.actionImportTone);
-	editToneMenu->addAction(ui.actionExportTone);*/
+	editToneMenu->addAction(ui.actionImportTone);
+	editToneMenu->addAction(ui.actionExportTone);
 	editToneMenu->addAction(ui.actionConvertToADPCM);
 	ui.toolbtnToneEdit->setMenu(editToneMenu);
 
@@ -242,6 +242,10 @@ void SplitEditor::setSplitData() {
 	split_.tone = newTone;
 }
 
+void SplitEditor::setCurFile(const QString& in) {
+	curFile = in;
+}
+
 void SplitEditor::setPath(size_t programIdx, size_t layerIdx, size_t splitIdx) {
 	setWindowTitle(
 		QString("%1 [%2:%3:%4]")
@@ -253,12 +257,16 @@ void SplitEditor::setPath(size_t programIdx, size_t layerIdx, size_t splitIdx) {
 }
 
 bool SplitEditor::importTone() {
-	// TODO
-	return false;
+	bool success = tone::importDialog(this, split_, getOutPath(curFile, true));
+
+	if (success)
+		loadSplitData();
+
+	return success;
 }
 
 bool SplitEditor::exportTone() {
-	// TODO
+	// return tone::exportDialog(this, split_, getOutPath(curFile, true), QFileInfo(curFile).baseName());
 	return false;
 }
 

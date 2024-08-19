@@ -18,6 +18,7 @@ public:
 	explicit SplitEditor(QWidget* parent = nullptr);
 	SplitEditor(const Split& split, Bank* bank, QWidget* parent = nullptr);
 
+	void setCurFile(const QString& in);
 	void setPath(size_t programIdx, size_t layerIdx, size_t splitIdx);
 
 	Split& split() {
@@ -54,6 +55,7 @@ private:
 	void saveSettings();
 
 	QSettings settings;
+	QString curFile;
 
 	Ui::SplitEditor ui;
 

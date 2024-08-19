@@ -18,6 +18,7 @@
 #include "CursorOverride.hpp"
 #include "TonePlayer.hpp"
 #include "tone.hpp"
+#include "utilities.hpp"
 
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow(parent),
@@ -316,7 +317,7 @@ bool MainWindow::open() {
 		const QString path = QFileDialog::getOpenFileName(
 			this,
 			tr("Open MIDI program/drum bank"),
-			getOutPath(true),
+			getOutPath(curFile, true),
 			tr("MIDI program/drum bank (*.mpb *.mdb);;All files (*.*)")
 		);
 
@@ -347,7 +348,7 @@ bool MainWindow::saveAs() {
 	const QString path = QFileDialog::getSaveFileName(
 		this,
 		tr("Save MIDI program/drum bank"),
-		getOutPath(),
+		getOutPath(curFile),
 		filters.join(";;"),
 		&selectedFilter
 	);
@@ -378,7 +379,7 @@ bool MainWindow::exportSF2() {
 	const QString path = QFileDialog::getSaveFileName(
 		this,
 		tr("Export as SoundFont 2"),
-		getOutPath(false, "sf2"),
+		getOutPath(curFile, false, "sf2"),
 		tr("SoundFont 2 (*.sf2)")
 	);
 
@@ -393,7 +394,7 @@ bool MainWindow::importTone() {
 	if (!split)
 		return false;
 
-	bool success = tone::importDialog(this, *split, getOutPath(true));
+	bool success = tone::importDialog(this, *split, getOutPath(curFile, true));
 
 	if (success)
 		emitRowChanged(splitsModel, splitIdx);
@@ -407,7 +408,7 @@ bool MainWindow::exportTone() {
 		return false;
 
 	auto tonePath = QString("%1-%2-%3").arg(programIdx + 1).arg(layerIdx + 1).arg(splitIdx + 1);
-	return tone::exportDialog(this, *split, getOutPath(true), QFileInfo(curFile).baseName(), tonePath);
+	return tone::exportDialog(this, *split, getOutPath(curFile, true), QFileInfo(curFile).baseName(), tonePath);
 }
 
 void MainWindow::editBankProperties() {
@@ -437,6 +438,7 @@ void MainWindow::editSplit() {
 		return;
 
 	SplitEditor editor(*split, &bank, this);
+	editor.setCurFile(curFile);
 	editor.setPath(programIdx, layerIdx, splitIdx);
 
 	if (editor.exec() == QDialog::Accepted) {
@@ -588,20 +590,6 @@ void MainWindow::setCurrentFile(const QString& path) {
 	}
 
 	setWindowModified(false);
-}
-
-QString MainWindow::getOutPath(bool dirOnly, const QString& newExtension) const {
-	if (curFile.isEmpty())
-		return QDir::homePath();
-
-	if (dirOnly)
-		return QFileInfo(curFile).path();
-
-	if (newExtension.isEmpty())
-		return curFile;
-
-	QFileInfo info(curFile);
-	return info.dir().filePath(info.baseName() += '.' + newExtension);
 }
 
 manatools::mpb::Velocity MainWindow::genDefVelCurve() {
