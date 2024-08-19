@@ -394,7 +394,7 @@ bool MainWindow::importTone() {
 	if (!split)
 		return false;
 
-	bool success = tone::importDialog(this, *split, getOutPath(curFile, true));
+	bool success = tone::importDialog(*split, getOutPath(curFile, true), this);
 
 	if (success)
 		emitRowChanged(splitsModel, splitIdx);
@@ -408,7 +408,7 @@ bool MainWindow::exportTone() {
 		return false;
 
 	auto tonePath = QString("%1-%2-%3").arg(programIdx + 1).arg(layerIdx + 1).arg(splitIdx + 1);
-	return tone::exportDialog(this, *split, getOutPath(curFile, true), QFileInfo(curFile).baseName(), tonePath);
+	return tone::exportDialog(*split, getOutPath(curFile, true), QFileInfo(curFile).baseName(), tonePath, this);
 }
 
 void MainWindow::editBankProperties() {

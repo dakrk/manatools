@@ -9,12 +9,12 @@ namespace tone {
 		WAV, DAT
 	};
 
-	bool importDialog(QWidget* parent, manatools::mpb::Split& split, const QString& basePath);
-	bool importFile(QWidget* parent, manatools::mpb::Split& split, const QString& path);
+	bool importDialog(manatools::mpb::Split& split, const QString& basePath, QWidget* parent = nullptr);
+	bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* parent = nullptr);
 
-	bool exportDialog(QWidget* parent, const manatools::mpb::Split& split, const QString& basePath,
-	                  const QString& baseName, const QString& tonePath);
-	bool exportFile(QWidget* parent, const manatools::mpb::Split& split, const QString& path, FileType type);
+	bool exportDialog(const manatools::mpb::Split& split, const QString& basePath, const QString& baseName,
+	                  const QString& tonePath, QWidget* parent = nullptr);
+	bool exportFile(const manatools::mpb::Split& split, const QString& path, FileType type, QWidget* parent = nullptr);
 
-	void convertToADPCM(manatools::tone::Tone& tone);
+	bool convertToADPCM(manatools::tone::Tone& tone, QWidget* parent = nullptr);
 } // namespace tone

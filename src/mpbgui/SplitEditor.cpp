@@ -259,7 +259,7 @@ void SplitEditor::setPath(size_t programIdx, size_t layerIdx, size_t splitIdx) {
 }
 
 bool SplitEditor::importTone() {
-	bool success = tone::importDialog(this, split_, getOutPath(curFile, true));
+	bool success = tone::importDialog(split_, getOutPath(curFile, true), this);
 
 	if (success)
 		loadSplitData();
@@ -273,10 +273,11 @@ bool SplitEditor::exportTone() {
 	if (pathSet)
 		tonePath = QString("%1-%2-%3").arg(programIdx_ + 1).arg(layerIdx_ + 1).arg(splitIdx_ + 1);
 
-	return tone::exportDialog(this, split_, getOutPath(curFile, true), QFileInfo(curFile).baseName(), tonePath);
+	return tone::exportDialog(split_, getOutPath(curFile, true), QFileInfo(curFile).baseName(), tonePath, this);
 }
 
 void SplitEditor::convertToADPCM() {
+	tone::convertToADPCM(split_.tone, this);
 	loadToneData();
 }
 

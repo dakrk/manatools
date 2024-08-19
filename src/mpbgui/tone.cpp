@@ -21,7 +21,7 @@ namespace tone {
 
 constexpr const size_t READ_SIZE = 512;
 
-bool importDialog(QWidget* parent, manatools::mpb::Split& split, const QString& basePath) {
+bool importDialog(manatools::mpb::Split& split, const QString& basePath, QWidget* parent) {
 	const QString path = QFileDialog::getOpenFileName(
 		parent,
 		tr("Import split tone"),
@@ -31,10 +31,10 @@ bool importDialog(QWidget* parent, manatools::mpb::Split& split, const QString& 
 	if (path.isEmpty())
 		return false;
 
-	return importFile(parent, split, path);
+	return importFile(split, path, parent);
 }
 
-bool importFile(QWidget* parent, manatools::mpb::Split& split, const QString& path) {
+bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* parent) {
 	CursorOverride cursor(Qt::WaitCursor);
 	SndfileHandle sndFile(path.toStdString());
 
@@ -142,8 +142,8 @@ bool importFile(QWidget* parent, manatools::mpb::Split& split, const QString& pa
 	return true;
 }
 
-bool exportDialog(QWidget* parent, const manatools::mpb::Split& split, const QString& basePath,
-                 const QString& baseName, const QString& tonePath)
+bool exportDialog(const manatools::mpb::Split& split, const QString& basePath, const QString& baseName,
+                  const QString& tonePath, QWidget* parent)
 {
 	const QStringList filters = {
 		tr("WAV file (*.wav)"),
@@ -175,10 +175,10 @@ bool exportDialog(QWidget* parent, const manatools::mpb::Split& split, const QSt
 	else
 		type = FileType::DAT;
 
-	return exportFile(parent, split, path, type);
+	return exportFile(split, path, type, parent);
 }
 
-bool exportFile(QWidget* parent, const manatools::mpb::Split& split, const QString& path, FileType type) {
+bool exportFile(const manatools::mpb::Split& split, const QString& path, FileType type, QWidget* parent) {
 	CursorOverride cursor(Qt::WaitCursor);
 
 	if (!split.tone.data) {
@@ -233,7 +233,7 @@ bool exportFile(QWidget* parent, const manatools::mpb::Split& split, const QStri
 	return true;
 }
 
-bool convertToADPCM(QWidget* parent, manatools::tone::Tone tone) {
+bool convertToADPCM(manatools::tone::Tone& tone, QWidget* parent) {
 	if (!tone.data)
 		return false;
 
@@ -247,10 +247,25 @@ bool convertToADPCM(QWidget* parent, manatools::tone::Tone tone) {
 				QMessageBox::warning(parent, "", tr("Cannot convert tone to ADPCM: Size of PCM-16 data must be a multiple of 2 bytes."));
 				return false;
 			}
+
+			manatools::tone::Tone newTone;
+			newTone.format = manatools::tone::Format::ADPCM,
+			// really not sure about this whole divide and ceil stuff
+			newTone.data = manatools::tone::makeDataPtr(std::ceil(tone.samples() / 2.));
+
+			manatools::yadpcm::Context adpcmCtx;
+			adpcmCtx.encode(reinterpret_cast<s16*>(tone.data->data()), newTone.data->data(), tone.samples());
+
+			tone = newTone;
 		}
 
 		case PCM8: {
-
+			/**
+			 * TODO: PCM8 to PCM16, which can then be passed to yadpcm::encode
+			 * (PCM8 in the switch case could then possibly be moved above PCM16 as to fallthrough
+			 * to reduce duplicate code)
+			 */
+			return false;
 		}
 	}
 
