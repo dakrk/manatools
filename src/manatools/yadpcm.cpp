@@ -51,11 +51,11 @@ size_t Context::encode(const s16* in, u8* out, size_t len) {
 		 * causes the output data to be offset by 1 sample.
 		 * However, oddly the ymz_encode code has the opposite behaviour and
 		 * thus this issue isn't present.
-		 * (This still has the issue it's just not NOT'd because nibble starts
-		 * at a non-zero value to make initialising a Context more uniform with
-		 * decoding)
+		 * This issue is fixed here despite it still being NOT'd, as nibble
+		 * starts at a non-zero value as to make initialising a Context more
+		 * uniform with decoding.
 		 */
-		if (nibble)
+		if (!nibble)
 			*out++ = bufSample | (adpcmSample << 4);
 		else
 			bufSample = adpcmSample & 15;
