@@ -157,7 +157,7 @@ OSB load(const fs::path& path) {
 		io.jump(start);
 
 		// I don't think OSB shares tone data like MSB does but whatever
-		auto toneData = std::make_shared<tone::Data>(end - start);
+		auto toneData = tone::makeDataPtr(end - start);
 		io.readVec(*toneData);
 
 		toneDataMap[start] = toneData;

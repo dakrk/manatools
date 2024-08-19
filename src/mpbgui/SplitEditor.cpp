@@ -23,7 +23,6 @@ SplitEditor::SplitEditor(const Split& split, Bank* bank, QWidget* parent) :
 	QDialog(parent),
 	settings(),
 	split_(split),
-	newTone(split.tone),
 	bank(bank),
 	tonePlayer(22050, this)
 {
@@ -129,10 +128,10 @@ bool SplitEditor::setLFOWaveType(QComboBox* box, LFOWaveType type) {
 }
 
 void SplitEditor::loadToneData() {
-	tonePlayer.setTone(newTone);
+	tonePlayer.setTone(split_.tone);
 	ui.lblToneInfo->setText(
-		tr("%n samples, %1", "", newTone.samples())
-			.arg(manatools::tone::formatName(newTone.format))
+		tr("%n samples, %1", "", split_.tone.samples())
+			.arg(manatools::tone::formatName(split_.tone.format))
 	);
 }
 
@@ -238,8 +237,6 @@ void SplitEditor::setSplitData() {
 
 	split_.drumMode = ui.checkDrumModeOn->isChecked();
 	split_.drumGroupID = ui.spinDrumGroupID->value();
-
-	split_.tone = newTone;
 }
 
 void SplitEditor::setCurFile(const QString& in) {
@@ -247,6 +244,11 @@ void SplitEditor::setCurFile(const QString& in) {
 }
 
 void SplitEditor::setPath(size_t programIdx, size_t layerIdx, size_t splitIdx) {
+	pathSet = true;
+	programIdx_ = programIdx;
+	layerIdx_ = layerIdx;
+	splitIdx_ = splitIdx;
+
 	setWindowTitle(
 		QString("%1 [%2:%3:%4]")
 			.arg(tr("Edit split"))
@@ -266,8 +268,12 @@ bool SplitEditor::importTone() {
 }
 
 bool SplitEditor::exportTone() {
-	// return tone::exportDialog(this, split_, getOutPath(curFile, true), QFileInfo(curFile).baseName());
-	return false;
+	QString tonePath;
+	
+	if (pathSet)
+		tonePath = QString("%1-%2-%3").arg(programIdx_ + 1).arg(layerIdx_ + 1).arg(splitIdx_ + 1);
+
+	return tone::exportDialog(this, split_, getOutPath(curFile, true), QFileInfo(curFile).baseName(), tonePath);
 }
 
 void SplitEditor::convertToADPCM() {

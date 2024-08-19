@@ -254,7 +254,7 @@ Bank load(const fs::path& path) {
 
 		io.jump(start);
 
-		auto toneData = std::make_shared<tone::Data>(end - start);
+		auto toneData = tone::makeDataPtr(end - start);
 		io.readVec(*toneData);
 
 		toneDataMap[start] = toneData;

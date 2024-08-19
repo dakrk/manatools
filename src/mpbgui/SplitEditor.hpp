@@ -62,8 +62,13 @@ private:
 	QMenu* editToneMenu;
 
 	Split split_;
-	Tone newTone;
 	Bank* bank;
+
+	// Used for window title and export file name
+	bool pathSet = false;
+	size_t programIdx_ = 0;
+	size_t layerIdx_ = 0;
+	size_t splitIdx_ = 0;
 
 	// TODO: Initialising one of these each time a dialog is opened is noticeably slower
 	TonePlayer tonePlayer;
