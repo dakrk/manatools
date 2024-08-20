@@ -2,8 +2,8 @@
 #include <QDialog>
 #include <manatools/mpb.hpp>
 
-#include "UIntValidator.hpp"
 #include "ui_BankPropertiesDialog.h"
+#include "UIntValidator.hpp"
 
 class BankPropertiesDialog : public QDialog {
 	Q_OBJECT

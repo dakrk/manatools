@@ -24,6 +24,7 @@ add_executable(mpbgui
 	UIntValidator.cpp
 	InstDataDialog.cpp
 	utilities.cpp
+	VelCurveWidget.cpp
 )
 
 target_link_libraries(mpbgui PRIVATE

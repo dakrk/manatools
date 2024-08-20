@@ -53,6 +53,11 @@ void SplitEditor::init() {
 		ui.btnTonePlay->setIcon(QIcon::fromTheme(checked ? "media-playback-stop" : "media-playback-start"));
 	});
 
+	connect(&tonePlayer, &TonePlayer::playingChanged, this, [this]() {
+		ui.btnTonePlay->setChecked(tonePlayer.isPlaying());
+	});
+
+	connect(ui.btnVelCurveEdit, &QPushButton::clicked, this, &SplitEditor::editVelCurve);
 	connect(ui.actionImportTone, &QAction::triggered, this, &SplitEditor::importTone);
 	connect(ui.actionExportTone, &QAction::triggered, this, &SplitEditor::exportTone);
 	connect(ui.actionConvertToADPCM, &QAction::triggered, this, &SplitEditor::convertToADPCM);
@@ -60,10 +65,6 @@ void SplitEditor::init() {
 
 	connect(this, &QDialog::accepted, this, &SplitEditor::setSplitData);
 	connect(this, &QDialog::finished, this, &SplitEditor::saveSettings);
-
-	connect(&tonePlayer, &TonePlayer::playingChanged, this, [this]() {
-		ui.btnTonePlay->setChecked(tonePlayer.isPlaying());
-	});
 
 	ui.btnTonePlay->setCheckable(true);
 
@@ -256,6 +257,10 @@ void SplitEditor::setPath(size_t programIdx, size_t layerIdx, size_t splitIdx) {
 			.arg(layerIdx + 1)
 			.arg(splitIdx + 1)
 	);
+}
+
+void SplitEditor::editVelCurve() {
+	// TODO
 }
 
 bool SplitEditor::importTone() {

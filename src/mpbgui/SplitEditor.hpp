@@ -4,8 +4,8 @@
 #include <QSettings>
 #include <manatools/mpb.hpp>
 
-#include "TonePlayer.hpp"
 #include "ui_SplitEditor.h"
+#include "TonePlayer.hpp"
 
 class SplitEditor : public QDialog {
 	Q_OBJECT
@@ -30,6 +30,7 @@ public:
 	}
 
 public slots:
+	void editVelCurve();
 	bool importTone();
 	bool exportTone();
 	void convertToADPCM();
