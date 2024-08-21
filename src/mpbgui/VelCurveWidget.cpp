@@ -11,17 +11,15 @@ VelCurveWidget::VelCurveWidget(const Velocity& velocity, QWidget* parent) :
 	vel(velocity) {}
 
 void VelCurveWidget::paintEvent(QPaintEvent* event) {
+	Q_UNUSED(event);
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing);
-
-	Q_UNUSED(event);
 
 	// flip y-axis
 	painter.translate(0, height());
 	painter.scale(1, -1);
 
 	size_t numPoints = std::size(vel.data);
-
 	double stepX = width() / (double)numPoints;
 	double stepY = height() / 128.;
 

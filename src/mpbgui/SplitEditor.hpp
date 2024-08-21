@@ -37,7 +37,7 @@ public slots:
 	void editUnknownProps();
 
 protected:
-	void closeEvent(QCloseEvent* event);
+	void closeEvent(QCloseEvent* event) override;
 
 private:
 	void init();

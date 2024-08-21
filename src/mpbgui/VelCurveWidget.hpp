@@ -13,5 +13,5 @@ public:
 	Velocity vel;
 
 protected:
-	void paintEvent(QPaintEvent* event);
+	void paintEvent(QPaintEvent* event) override;
 };

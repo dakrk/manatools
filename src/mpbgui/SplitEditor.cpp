@@ -3,6 +3,7 @@
 #include <QCloseEvent>
 #include <QThread>
 #include <QMenu>
+#include <QFileInfo>
 #include <utility>
 
 #include "SplitEditor.hpp"

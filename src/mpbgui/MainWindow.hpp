@@ -36,9 +36,9 @@ public slots:
 	void about();
 
 protected:
-	void closeEvent(QCloseEvent* event);
-	void dragEnterEvent(QDragEnterEvent* event);
-	void dropEvent(QDropEvent* event);
+	void closeEvent(QCloseEvent* event) override;
+	void dragEnterEvent(QDragEnterEvent* event) override;
+	void dropEvent(QDropEvent* event) override;
 
 private:
 	static void setCommonTableProps(QTableView* table);
