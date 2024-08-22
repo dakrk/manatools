@@ -35,13 +35,17 @@ namespace manatools::io {
 		bool readU8(u8* out)                               { return read(out, sizeof(*out), 1) == 1; }
 		bool readS8(s8* out)                               { return read(out, sizeof(*out), 1) == 1; }
 		bool readU16LE(u16* out);
+		bool readU16BE(u16* out);
 		bool readU32LE(u32* out);
+		bool readU32BE(u32* out);
 		bool readBool(bool* out);
 
 		bool writeU8(u8 in)                                { return write(&in, sizeof(in), 1) == 1; }
 		bool writeS8(s8 in)                                { return write(&in, sizeof(in), 1) == 1; }
 		bool writeU16LE(u16 in);
+		bool writeU16BE(u16 in);
 		bool writeU32LE(u32 in);
+		bool writeU32BE(u32 in);
 		bool writeBool(bool in);
 		bool writeStr(const std::string_view in)           { return write(in.data(), sizeof(char), in.size()) == in.size(); }
 
@@ -172,7 +176,9 @@ namespace manatools::io {
 		}
 
 	DEFINE_READ_FUNC(u16, LE, U16LE)
+	DEFINE_READ_FUNC(u16, BE, U16BE)
 	DEFINE_READ_FUNC(u32, LE, U32LE)
+	DEFINE_READ_FUNC(u32, BE, U32BE)
 
 	inline bool DataIO::readBool(bool* out) {
 		u8 b;
@@ -183,7 +189,9 @@ namespace manatools::io {
 	}
 
 	DEFINE_WRITE_FUNC(u16, LE, U16LE)
+	DEFINE_WRITE_FUNC(u16, BE, U16BE)
 	DEFINE_WRITE_FUNC(u32, LE, U32LE)
+	DEFINE_WRITE_FUNC(u32, BE, U32BE)
 
 	inline bool DataIO::writeBool(bool in) {
 		u8 b = in;
