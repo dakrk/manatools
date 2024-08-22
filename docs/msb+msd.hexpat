@@ -23,15 +23,16 @@ namespace msd {
     
     // TODO
     enum Status : u8 {
-        Note          = 0x00 ... 0x3F,
+        Note            = 0x00 ... 0x3F,
         
-        Reference     = 0x81,
-        Loop          = 0x82,
-        EndOfTrack    = 0x83,
-        TempoChange   = 0x84,
+        Reference       = 0x81,
+        Loop            = 0x82,
+        EndOfTrack      = 0x83,
+        TempoChange     = 0x84,
         
-        ControlChange = 0xB0 ... 0xBF,
-        ProgramChange = 0xC0 ... 0xCF
+        ControlChange   = 0xB0 ... 0xBF,
+        ProgramChange   = 0xC0 ... 0xCF,
+        ChannelPressure = 0xD0 ... 0xDF
     };
     
     /**
@@ -98,6 +99,11 @@ namespace msd {
     bitfield ProgramChangeBits {
         step16Bit : 1;
         voice : 7;
+    } [[bitfield_order(BITFIELD_ORDER, 8)]];
+    
+    bitfield ChannelPressureBits {
+        step16Bit : 1;
+        value : 7;
     } [[bitfield_order(BITFIELD_ORDER, 8)]];
     
     // BPM = 60 * 1e3 / tempo
@@ -169,6 +175,15 @@ namespace msd {
                 if (pcData.step16Bit)
                     u16 step;
                 else
+                    u8 step;
+            }
+            
+            (Status::ChannelPressure): {
+                ChannelPressureBits cpData;
+                 
+                 if (cpData.step16Bit)
+                    u16 step;
+                 else
                     u8 step;
             }
             
