@@ -5,11 +5,23 @@
 #include "utilities.hpp"
 
 FilterEnvelopeWidget::FilterEnvelopeWidget(QWidget* parent) :
-	QFrame(parent) {}
+	QFrame(parent)
+{
+	init();
+}
 
 FilterEnvelopeWidget::FilterEnvelopeWidget(const FilterEnvelope& filterEnvelope, QWidget* parent) :
 	QFrame(parent),
-	filter(filterEnvelope) {}
+	filter(filterEnvelope)
+{
+	init();
+}
+
+void FilterEnvelopeWidget::init() {
+	setFrameShape(Panel);
+	setFrameShadow(Sunken);
+	setStyleSheet("background-color: rgba(0, 0, 0, 48);");
+}
 
 void FilterEnvelopeWidget::mouseMoveEvent(QMouseEvent* event) {
 	QFrame::mouseMoveEvent(event);

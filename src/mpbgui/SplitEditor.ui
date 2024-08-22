@@ -176,15 +176,12 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QPushButton" name="placeholderAmpEnv">
+     <widget class="AmpEnvelopeWidget" name="ampEnvelope">
       <property name="minimumSize">
        <size>
         <width>0</width>
         <height>110</height>
        </size>
-      </property>
-      <property name="text">
-       <string>pretend this is an envelope visualisation</string>
       </property>
      </widget>
     </item>
@@ -536,15 +533,12 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="QPushButton" name="placeholderFilterEnv">
+     <widget class="FilterEnvelopeWidget" name="filterEnvelope">
       <property name="minimumSize">
        <size>
         <width>0</width>
         <height>110</height>
        </size>
-      </property>
-      <property name="text">
-       <string>pretend this is an envelope visualisation</string>
       </property>
      </widget>
     </item>
@@ -1062,7 +1056,7 @@
        </font>
       </property>
       <property name="text">
-       <string>C-0</string>
+       <string/>
       </property>
      </widget>
     </item>
@@ -1375,6 +1369,20 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AmpEnvelopeWidget</class>
+   <extends>QFrame</extends>
+   <header>AmpEnvelopeWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FilterEnvelopeWidget</class>
+   <extends>QFrame</extends>
+   <header>FilterEnvelopeWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>spinBaseNote</tabstop>
   <tabstop>sliderFineTune</tabstop>
@@ -1408,7 +1416,7 @@
   <tabstop>toolbtnToneEdit</tabstop>
   <tabstop>spinLoopStart</tabstop>
   <tabstop>spinLoopEnd</tabstop>
-  <tabstop>placeholderAmpEnv</tabstop>
+  <tabstop>ampEnvelope</tabstop>
   <tabstop>sliderAmpAttack</tabstop>
   <tabstop>spinAmpAttack</tabstop>
   <tabstop>sliderAmpDecay1</tabstop>
@@ -1421,7 +1429,6 @@
   <tabstop>spinAmpRelease</tabstop>
   <tabstop>sliderAmpKeyRateScaling</tabstop>
   <tabstop>spinAmpKeyRateScaling</tabstop>
-  <tabstop>placeholderFilterEnv</tabstop>
   <tabstop>checkFilterOn</tabstop>
   <tabstop>sliderFilterStartLvl</tabstop>
   <tabstop>spinFilterStartLvl</tabstop>

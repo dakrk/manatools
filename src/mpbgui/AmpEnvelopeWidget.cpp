@@ -5,11 +5,23 @@
 #include "utilities.hpp"
 
 AmpEnvelopeWidget::AmpEnvelopeWidget(QWidget* parent) :
-	QFrame(parent) {}
+	QFrame(parent)
+{
+	init();
+}
 
 AmpEnvelopeWidget::AmpEnvelopeWidget(const AmpEnvelope& ampEnvelope, QWidget* parent) :
 	QFrame(parent),
-	amp(ampEnvelope) {}
+	amp(ampEnvelope)
+{
+	init();
+}
+
+void AmpEnvelopeWidget::init() {
+	setFrameShape(Panel);
+	setFrameShadow(Sunken);
+	setStyleSheet("background-color: rgba(0, 0, 0, 48);");
+}
 
 void AmpEnvelopeWidget::mouseMoveEvent(QMouseEvent* event) {
 	QFrame::mouseMoveEvent(event);

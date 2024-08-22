@@ -30,6 +30,19 @@ SplitEditor::SplitEditor(const Split& split, Bank* bank, QWidget* parent) :
 	init();
 }
 
+// bleh. not so pleased with this and how I force an update
+#define CONNECT_AMP_SPINBOX_VALUE(spinbox, out) \
+	connect(spinbox, &QSpinBox::valueChanged, this, [&](int i) { \
+		out = i; \
+		ui.ampEnvelope->update(); \
+	});
+
+#define CONNECT_FILTER_SPINBOX_VALUE(spinbox, out) \
+	connect(spinbox, &QSpinBox::valueChanged, this, [&](int i) { \
+		out = i; \
+		ui.filterEnvelope->update(); \
+	});
+
 void SplitEditor::init() {
 	ui.setupUi(this);
 	setFixedSize(size());
@@ -57,6 +70,22 @@ void SplitEditor::init() {
 	connect(&tonePlayer, &TonePlayer::playingChanged, this, [this]() {
 		ui.btnTonePlay->setChecked(tonePlayer.isPlaying());
 	});
+
+	CONNECT_AMP_SPINBOX_VALUE(ui.spinAmpAttack, ui.ampEnvelope->amp.attackRate);
+	CONNECT_AMP_SPINBOX_VALUE(ui.spinAmpDecay1, ui.ampEnvelope->amp.decayRate1);
+	CONNECT_AMP_SPINBOX_VALUE(ui.spinAmpDecayLvl, ui.ampEnvelope->amp.decayLevel);
+	CONNECT_AMP_SPINBOX_VALUE(ui.spinAmpDecay2, ui.ampEnvelope->amp.decayRate2);
+	CONNECT_AMP_SPINBOX_VALUE(ui.spinAmpRelease, ui.ampEnvelope->amp.releaseRate);
+
+	CONNECT_FILTER_SPINBOX_VALUE(ui.spinFilterStartLvl, ui.filterEnvelope->filter.startLevel);
+	CONNECT_FILTER_SPINBOX_VALUE(ui.spinFilterAttackRate, ui.filterEnvelope->filter.attackRate);
+	CONNECT_FILTER_SPINBOX_VALUE(ui.spinFilterAttackLvl, ui.filterEnvelope->filter.attackLevel);
+	CONNECT_FILTER_SPINBOX_VALUE(ui.spinFilterDecayRate1, ui.filterEnvelope->filter.decayRate1);
+	CONNECT_FILTER_SPINBOX_VALUE(ui.spinFilterDecayLvl1, ui.filterEnvelope->filter.decayLevel1);
+	CONNECT_FILTER_SPINBOX_VALUE(ui.spinFilterDecayRate2, ui.filterEnvelope->filter.decayRate2);
+	CONNECT_FILTER_SPINBOX_VALUE(ui.spinFilterDecayLvl2, ui.filterEnvelope->filter.decayLevel2);
+	CONNECT_FILTER_SPINBOX_VALUE(ui.spinFilterReleaseRate, ui.filterEnvelope->filter.releaseRate);
+	CONNECT_FILTER_SPINBOX_VALUE(ui.spinFilterReleaseLvl, ui.filterEnvelope->filter.releaseLevel);
 
 	connect(ui.btnVelCurveEdit, &QPushButton::clicked, this, &SplitEditor::editVelCurve);
 	connect(ui.actionImportTone, &QAction::triggered, this, &SplitEditor::importTone);
@@ -149,6 +178,7 @@ void SplitEditor::loadSplitData() {
 	ui.spinAmpRelease->setValue(split_.amp.releaseRate);
 	ui.spinAmpDecayLvl->setValue(split_.amp.decayLevel);
 	ui.spinAmpKeyRateScaling->setValue(split_.amp.keyRateScaling);
+	ui.ampEnvelope->amp = split_.amp;
 
 	ui.checkLFOSync->setChecked(split_.lfoOn);
 	ui.spinLFOAmpDepth->setValue(split_.lfo.ampDepth);
@@ -175,6 +205,7 @@ void SplitEditor::loadSplitData() {
 	ui.spinFilterAttackRate->setValue(split_.filter.attackRate);
 	ui.spinFilterReleaseRate->setValue(split_.filter.releaseRate);
 	ui.spinFilterDecayRate2->setValue(split_.filter.decayRate2);
+	ui.filterEnvelope->filter = split_.filter;
 
 	// Start & end note unhandled :( (Should really increase window size)
 	ui.spinBaseNote->setValue(split_.baseNote);
