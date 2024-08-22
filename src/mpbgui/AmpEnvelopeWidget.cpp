@@ -12,42 +12,44 @@ AmpEnvelopeWidget::AmpEnvelopeWidget(const AmpEnvelope& ampEnvelope, QWidget* pa
 	amp(ampEnvelope) {}
 
 void AmpEnvelopeWidget::mouseMoveEvent(QMouseEvent* event) {
+	QFrame::mouseMoveEvent(event);
 	// TODO: allow moving points around
 }
 
 void AmpEnvelopeWidget::paintEvent(QPaintEvent* event) {
-	Q_UNUSED(event);
+	QFrame::paintEvent(event);
+
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing);
 
 	QPen pen(painter.pen());
 
-	double stepX = width() / (31.0 * 3.0);
-	double stepY = height() / 31.0;
+	qreal stepX = width() / (31.0 * 3.0);
+	qreal stepY = height() / 31.0;
 	qreal decayLevel = amp.decayLevel;
 
-	QPointF pointAttackRate  = {(31.0 * 1) - amp.attackRate, 0};
-	QPointF pointDecayRate1  = {(31.0 * 2) - ((amp.decayRate1 / 31.0) * (31.0 + amp.attackRate)), decayLevel};
-	QPointF pointDecayRate2  = {(31.0 * 2), (decayLevel + ((amp.decayRate2 / 31.0) * (31.0 - decayLevel)))};
-	QPointF pointReleaseRate = {(31.0 * 3) - amp.releaseRate, 31.0};
+	QPointF pointAttack  = {(31.0 * 1) - amp.attackRate, 0};
+	QPointF pointDecay1  = {(31.0 * 2) - ((amp.decayRate1 / 31.0) * (31.0 + amp.attackRate)), decayLevel};
+	QPointF pointDecay2  = {(31.0 * 2), (decayLevel + ((amp.decayRate2 / 31.0) * (31.0 - decayLevel)))};
+	QPointF pointRelease = {(31.0 * 3) - amp.releaseRate, 31.0};
 
-	pointAttackRate  = mulPoint(pointAttackRate, stepX, stepY);
-	pointDecayRate1  = mulPoint(pointDecayRate1, stepX, stepY);
-	pointDecayRate2  = mulPoint(pointDecayRate2, stepX, stepY);
-	pointReleaseRate = mulPoint(pointReleaseRate, stepX, stepY);
+	pointAttack  = mulPoint(pointAttack, stepX, stepY);
+	pointDecay1  = mulPoint(pointDecay1, stepX, stepY);
+	pointDecay2  = mulPoint(pointDecay2, stepX, stepY);
+	pointRelease = mulPoint(pointRelease, stepX, stepY);
 
 	pen.setWidth(6); painter.setPen(pen);
-	painter.drawPoint(pointAttackRate);
-	painter.drawPoint(pointDecayRate1);
-	painter.drawPoint(pointDecayRate2);
-	painter.drawPoint(pointReleaseRate);
+	painter.drawPoint(pointAttack);
+	painter.drawPoint(pointDecay1);
+	painter.drawPoint(pointDecay2);
+	painter.drawPoint(pointRelease);
 	pen.setWidth(1); painter.setPen(pen);
 
 	QPainterPath path;
 	path.moveTo(0, 31.0 * stepY);
-	path.lineTo(pointAttackRate);
-	path.lineTo(pointDecayRate1);
-	path.lineTo(pointDecayRate2);
-	path.lineTo(pointReleaseRate);
+	path.lineTo(pointAttack);
+	path.lineTo(pointDecay1);
+	path.lineTo(pointDecay2);
+	path.lineTo(pointRelease);
 	painter.drawPath(path);
 }

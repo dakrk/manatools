@@ -26,6 +26,7 @@ add_executable(mpbgui
 	utilities.cpp
 	VelCurveWidget.cpp
 	AmpEnvelopeWidget.cpp
+	FilterEnvelopeWidget.cpp
 )
 
 target_link_libraries(mpbgui PRIVATE
