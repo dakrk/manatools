@@ -4,6 +4,7 @@
 #include <manatools/filesystem.hpp>
 #include <manatools/io.hpp>
 #include <manatools/msb.hpp>
+#include <manatools/msd.hpp>
 
 namespace fs = manatools::fs;
 namespace io = manatools::io;
@@ -26,6 +27,22 @@ void msbExtractMSDs(const fs::path& msbPath, const fs::path& msdOutPath) {
 	}
 }
 
+void msbDumpMSDs(const fs::path& msbPath) {
+	auto msb = manatools::msb::load(msbPath);
+
+	for (size_t s = 0; s < msb.sequences.size(); s++) {
+		auto& data = msb.sequences[s];
+
+		if (!data.data.size()) {
+			fprintf(stderr, "Warning: Sequence %zu has no data\n", s);
+			continue;
+		}
+
+		io::DynBufIO io(data.data);
+		auto seq = manatools::msd::load(io);
+	}
+}
+
 // TODO: dear god this needs better argument parsing
 int main(int argc, char** argv) {
 	try {
@@ -37,6 +54,8 @@ int main(int argc, char** argv) {
 				goto invalid;
 
 			msbExtractMSDs(argv[2], argv[3]);
+		} else if (!strcmp(argv[1], "dump")) {
+			msbDumpMSDs(argv[2]);
 		} else {
 			goto invalid;
 		}

@@ -3,6 +3,7 @@ add_library(manatools
 	mlt.cpp
 	mpb.cpp
 	msb.cpp
+	msd.cpp
 	osb.cpp
 	sf2.cpp
 	tonedecoder.cpp
