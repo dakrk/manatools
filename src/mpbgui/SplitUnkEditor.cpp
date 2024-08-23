@@ -8,7 +8,7 @@ SplitUnkEditor::SplitUnkEditor(QWidget* parent) :
 
 SplitUnkEditor::SplitUnkEditor(const Split& split, QWidget* parent) :
 	QDialog(parent),
-	split_(split)
+	split(split)
 {
 	init();
 }
@@ -34,15 +34,15 @@ void SplitUnkEditor::connectSpinnerHexLabel(QSpinBox* spinner, QLabel* label) {
 }
 
 void SplitUnkEditor::loadSplitData() {
-	ui.spinUnk1->setValue(split_.unk1);
-	ui.spinUnk2->setValue(split_.unk2);
-	ui.spinUnk3->setValue(split_.unk3);
-	ui.spinUnk4->setValue(split_.unk4);
+	ui.spinUnk1->setValue(split.unk1);
+	ui.spinUnk2->setValue(split.unk2);
+	ui.spinUnk3->setValue(split.unk3);
+	ui.spinUnk4->setValue(split.unk4);
 }
 
 void SplitUnkEditor::setSplitData() {
-	split_.unk1 = ui.spinUnk1->value();
-	split_.unk2 = ui.spinUnk2->value();
-	split_.unk3 = ui.spinUnk3->value();
-	split_.unk4 = ui.spinUnk4->value();
+	split.unk1 = ui.spinUnk1->value();
+	split.unk2 = ui.spinUnk2->value();
+	split.unk3 = ui.spinUnk3->value();
+	split.unk4 = ui.spinUnk4->value();
 }

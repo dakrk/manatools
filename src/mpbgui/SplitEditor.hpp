@@ -21,13 +21,7 @@ public:
 	void setCurFile(const QString& in);
 	void setPath(size_t programIdx, size_t layerIdx, size_t splitIdx);
 
-	Split& split() {
-		return split_;
-	}
-
-	const Split& split() const {
-		return split_;
-	}
+	Split split;
 
 public slots:
 	void editVelCurve();
@@ -62,7 +56,6 @@ private:
 
 	QMenu* editToneMenu;
 
-	Split split_;
 	Bank* bank;
 
 	// Used for window title and export file name

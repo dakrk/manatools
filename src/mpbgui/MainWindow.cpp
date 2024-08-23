@@ -446,7 +446,7 @@ void MainWindow::editSplit() {
 		 * unsafe, but this is a modal, so no other bank operations that may have invalidated this
 		 * pointer should have happened (hopefully)
 		 */
-		*split = std::move(editor.split());
+		*split = std::move(editor.split);
 		// TODO: don't change windowModified if split data hasn't actually changed
 		emitRowChanged(splitsModel, splitIdx);
 	}

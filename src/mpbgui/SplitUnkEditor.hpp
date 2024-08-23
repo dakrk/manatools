@@ -12,13 +12,7 @@ public:
 	explicit SplitUnkEditor(QWidget* parent = nullptr);
 	SplitUnkEditor(const Split& split, QWidget* parent = nullptr);
 
-	Split& split() {
-		return split_;
-	}
-
-	const Split& split() const {
-		return split_;
-	}
+	Split split;
 
 private:
 	void init();
@@ -29,6 +23,4 @@ private:
 	void setSplitData();
 
 	Ui::SplitUnkEditor ui;
-
-	Split split_;
 };

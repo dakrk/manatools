@@ -22,8 +22,8 @@ SplitEditor::SplitEditor(QWidget* parent) :
 
 SplitEditor::SplitEditor(const Split& split, Bank* bank, QWidget* parent) :
 	QDialog(parent),
+	split(split),
 	settings(),
-	split_(split),
 	bank(bank),
 	tonePlayer(22050, this)
 {
@@ -159,117 +159,117 @@ bool SplitEditor::setLFOWaveType(QComboBox* box, LFOWaveType type) {
 }
 
 void SplitEditor::loadToneData() {
-	tonePlayer.setTone(split_.tone);
+	tonePlayer.setTone(split.tone);
 	ui.lblToneInfo->setText(
-		tr("%n samples, %1", "", split_.tone.samples())
-			.arg(manatools::tone::formatName(split_.tone.format))
+		tr("%n samples, %1", "", split.tone.samples())
+			.arg(manatools::tone::formatName(split.tone.format))
 	);
 }
 
 void SplitEditor::loadSplitData() {
 	// In order of the Split struct in manatools/mpb.hpp
-	ui.checkLoopOn->setChecked(split_.loop);
-	ui.spinLoopStart->setValue(split_.loopStart);
-	ui.spinLoopEnd->setValue(split_.loopEnd);
+	ui.checkLoopOn->setChecked(split.loop);
+	ui.spinLoopStart->setValue(split.loopStart);
+	ui.spinLoopEnd->setValue(split.loopEnd);
 
-	ui.spinAmpAttack->setValue(split_.amp.attackRate);
-	ui.spinAmpDecay1->setValue(split_.amp.decayRate1);
-	ui.spinAmpDecay2->setValue(split_.amp.decayRate2);
-	ui.spinAmpRelease->setValue(split_.amp.releaseRate);
-	ui.spinAmpDecayLvl->setValue(split_.amp.decayLevel);
-	ui.spinAmpKeyRateScaling->setValue(split_.amp.keyRateScaling);
-	ui.ampEnvelope->amp = split_.amp;
+	ui.spinAmpAttack->setValue(split.amp.attackRate);
+	ui.spinAmpDecay1->setValue(split.amp.decayRate1);
+	ui.spinAmpDecay2->setValue(split.amp.decayRate2);
+	ui.spinAmpRelease->setValue(split.amp.releaseRate);
+	ui.spinAmpDecayLvl->setValue(split.amp.decayLevel);
+	ui.spinAmpKeyRateScaling->setValue(split.amp.keyRateScaling);
+	ui.ampEnvelope->amp = split.amp;
 
-	ui.checkLFOSync->setChecked(split_.lfoOn);
-	ui.spinLFOAmpDepth->setValue(split_.lfo.ampDepth);
-	setLFOWaveType(ui.comboLFOAmpWave, split_.lfo.ampWave);
-	ui.spinLFOPitchDepth->setValue(split_.lfo.pitchDepth);
-	setLFOWaveType(ui.comboLFOPitchWave, split_.lfo.pitchWave);
-	ui.spinLFOFreq->setValue(split_.lfo.frequency);
+	ui.checkLFOSync->setChecked(split.lfoOn);
+	ui.spinLFOAmpDepth->setValue(split.lfo.ampDepth);
+	setLFOWaveType(ui.comboLFOAmpWave, split.lfo.ampWave);
+	ui.spinLFOPitchDepth->setValue(split.lfo.pitchDepth);
+	setLFOWaveType(ui.comboLFOPitchWave, split.lfo.pitchWave);
+	ui.spinLFOFreq->setValue(split.lfo.frequency);
 
 	// SplitFX struct unhandled
 
-	ui.spinPanPot->setValue(split_.panPot);
-	ui.spinDirectLevel->setValue(split_.directLevel);
+	ui.spinPanPot->setValue(split.panPot);
+	ui.spinDirectLevel->setValue(split.directLevel);
 
-	ui.spinOscLvl->setValue(split_.oscillatorLevel);
+	ui.spinOscLvl->setValue(split.oscillatorLevel);
 
-	ui.checkFilterOn->setChecked(split_.filterOn);
-	ui.spinFilterQ->setValue(split_.filter.resonance);
-	ui.spinFilterStartLvl->setValue(split_.filter.startLevel);
-	ui.spinFilterAttackLvl->setValue(split_.filter.attackLevel);
-	ui.spinFilterDecayLvl1->setValue(split_.filter.decayLevel1);
-	ui.spinFilterDecayLvl2->setValue(split_.filter.decayLevel2);
-	ui.spinFilterReleaseLvl->setValue(split_.filter.releaseLevel);
-	ui.spinFilterDecayRate1->setValue(split_.filter.decayRate1);
-	ui.spinFilterAttackRate->setValue(split_.filter.attackRate);
-	ui.spinFilterReleaseRate->setValue(split_.filter.releaseRate);
-	ui.spinFilterDecayRate2->setValue(split_.filter.decayRate2);
-	ui.filterEnvelope->filter = split_.filter;
+	ui.checkFilterOn->setChecked(split.filterOn);
+	ui.spinFilterQ->setValue(split.filter.resonance);
+	ui.spinFilterStartLvl->setValue(split.filter.startLevel);
+	ui.spinFilterAttackLvl->setValue(split.filter.attackLevel);
+	ui.spinFilterDecayLvl1->setValue(split.filter.decayLevel1);
+	ui.spinFilterDecayLvl2->setValue(split.filter.decayLevel2);
+	ui.spinFilterReleaseLvl->setValue(split.filter.releaseLevel);
+	ui.spinFilterDecayRate1->setValue(split.filter.decayRate1);
+	ui.spinFilterAttackRate->setValue(split.filter.attackRate);
+	ui.spinFilterReleaseRate->setValue(split.filter.releaseRate);
+	ui.spinFilterDecayRate2->setValue(split.filter.decayRate2);
+	ui.filterEnvelope->filter = split.filter;
 
 	// Start & end note unhandled :( (Should really increase window size)
-	ui.spinBaseNote->setValue(split_.baseNote);
-	ui.spinFineTune->setValue(split_.fineTune);
+	ui.spinBaseNote->setValue(split.baseNote);
+	ui.spinFineTune->setValue(split.fineTune);
 
-	setVelCurve(ui.comboVelCurve, split_.velocityCurveID);
-	ui.spinVelLow->setValue(split_.velocityLow);
-	ui.spinVelHigh->setValue(split_.velocityHigh);
+	setVelCurve(ui.comboVelCurve, split.velocityCurveID);
+	ui.spinVelLow->setValue(split.velocityLow);
+	ui.spinVelHigh->setValue(split.velocityHigh);
 
-	ui.checkDrumModeOn->setChecked(split_.drumMode);
-	ui.spinDrumGroupID->setValue(split_.drumGroupID);
+	ui.checkDrumModeOn->setChecked(split.drumMode);
+	ui.spinDrumGroupID->setValue(split.drumGroupID);
 
 	loadToneData();
 }
 
 void SplitEditor::setSplitData() {
 	// In order of the Split struct in manatools/mpb.hpp
-	split_.loop = ui.checkLoopOn->isChecked();
-	split_.loopStart = ui.spinLoopStart->value();
-	split_.loopEnd = ui.spinLoopEnd->value();
+	split.loop = ui.checkLoopOn->isChecked();
+	split.loopStart = ui.spinLoopStart->value();
+	split.loopEnd = ui.spinLoopEnd->value();
 
-	split_.amp.attackRate = ui.spinAmpAttack->value();
-	split_.amp.decayRate1 = ui.spinAmpDecay1->value();
-	split_.amp.decayRate2 = ui.spinAmpDecay2->value();
-	split_.amp.releaseRate = ui.spinAmpRelease->value();
-	split_.amp.decayLevel = ui.spinAmpDecayLvl->value();
-	split_.amp.keyRateScaling = ui.spinAmpKeyRateScaling->value();
+	split.amp.attackRate = ui.spinAmpAttack->value();
+	split.amp.decayRate1 = ui.spinAmpDecay1->value();
+	split.amp.decayRate2 = ui.spinAmpDecay2->value();
+	split.amp.releaseRate = ui.spinAmpRelease->value();
+	split.amp.decayLevel = ui.spinAmpDecayLvl->value();
+	split.amp.keyRateScaling = ui.spinAmpKeyRateScaling->value();
 
-	split_.lfoOn = ui.checkLFOSync->isChecked();
-	split_.lfo.ampDepth = ui.spinLFOAmpDepth->value();
-	split_.lfo.ampWave = ui.comboLFOAmpWave->currentData().value<LFOWaveType>();
-	split_.lfo.pitchDepth = ui.spinLFOPitchDepth->value();
-	split_.lfo.pitchWave = ui.comboLFOPitchWave->currentData().value<LFOWaveType>();
-	split_.lfo.frequency = ui.spinLFOFreq->value();
+	split.lfoOn = ui.checkLFOSync->isChecked();
+	split.lfo.ampDepth = ui.spinLFOAmpDepth->value();
+	split.lfo.ampWave = ui.comboLFOAmpWave->currentData().value<LFOWaveType>();
+	split.lfo.pitchDepth = ui.spinLFOPitchDepth->value();
+	split.lfo.pitchWave = ui.comboLFOPitchWave->currentData().value<LFOWaveType>();
+	split.lfo.frequency = ui.spinLFOFreq->value();
 
 	// SplitFX struct unhandled
 
-	split_.panPot = ui.spinPanPot->value();
-	split_.directLevel = ui.spinDirectLevel->value();
+	split.panPot = ui.spinPanPot->value();
+	split.directLevel = ui.spinDirectLevel->value();
 
-	split_.oscillatorLevel = ui.spinOscLvl->value();
+	split.oscillatorLevel = ui.spinOscLvl->value();
 
-	split_.filterOn = ui.checkFilterOn->isChecked();
-	split_.filter.resonance = ui.spinFilterQ->value();
-	split_.filter.startLevel = ui.spinFilterStartLvl->value();
-	split_.filter.attackLevel = ui.spinFilterAttackLvl->value();
-	split_.filter.decayLevel1 = ui.spinFilterDecayLvl1->value();
-	split_.filter.decayLevel2 = ui.spinFilterDecayLvl2->value();
-	split_.filter.releaseLevel = ui.spinFilterReleaseLvl->value();
-	split_.filter.decayRate1 = ui.spinFilterDecayRate1->value();
-	split_.filter.attackRate = ui.spinFilterAttackRate->value();
-	split_.filter.releaseRate = ui.spinFilterReleaseRate->value();
-	split_.filter.decayRate2 = ui.spinFilterDecayRate2->value();
+	split.filterOn = ui.checkFilterOn->isChecked();
+	split.filter.resonance = ui.spinFilterQ->value();
+	split.filter.startLevel = ui.spinFilterStartLvl->value();
+	split.filter.attackLevel = ui.spinFilterAttackLvl->value();
+	split.filter.decayLevel1 = ui.spinFilterDecayLvl1->value();
+	split.filter.decayLevel2 = ui.spinFilterDecayLvl2->value();
+	split.filter.releaseLevel = ui.spinFilterReleaseLvl->value();
+	split.filter.decayRate1 = ui.spinFilterDecayRate1->value();
+	split.filter.attackRate = ui.spinFilterAttackRate->value();
+	split.filter.releaseRate = ui.spinFilterReleaseRate->value();
+	split.filter.decayRate2 = ui.spinFilterDecayRate2->value();
 
-	// Start & end note unhandled
-	split_.baseNote = ui.spinBaseNote->value();
-	split_.fineTune = ui.spinFineTune->value();
+	// Strt & end note unhandled
+	split.baseNote = ui.spinBaseNote->value();
+	split.fineTune = ui.spinFineTune->value();
 
-	split_.velocityCurveID = ui.comboVelCurve->currentIndex();
-	split_.velocityLow = ui.spinVelLow->value();
-	split_.velocityHigh = ui.spinVelHigh->value();
+	split.velocityCurveID = ui.comboVelCurve->currentIndex();
+	split.velocityLow = ui.spinVelLow->value();
+	split.velocityHigh = ui.spinVelHigh->value();
 
-	split_.drumMode = ui.checkDrumModeOn->isChecked();
-	split_.drumGroupID = ui.spinDrumGroupID->value();
+	split.drumMode = ui.checkDrumModeOn->isChecked();
+	split.drumGroupID = ui.spinDrumGroupID->value();
 }
 
 void SplitEditor::setCurFile(const QString& in) {
@@ -296,7 +296,7 @@ void SplitEditor::editVelCurve() {
 }
 
 bool SplitEditor::importTone() {
-	bool success = tone::importDialog(split_, getOutPath(curFile, true), this);
+	bool success = tone::importDialog(split, getOutPath(curFile, true), this);
 
 	if (success)
 		loadSplitData();
@@ -310,19 +310,19 @@ bool SplitEditor::exportTone() {
 	if (pathSet)
 		tonePath = QString("%1-%2-%3").arg(programIdx_ + 1).arg(layerIdx_ + 1).arg(splitIdx_ + 1);
 
-	return tone::exportDialog(split_, getOutPath(curFile, true), QFileInfo(curFile).baseName(), tonePath, this);
+	return tone::exportDialog(split, getOutPath(curFile, true), QFileInfo(curFile).baseName(), tonePath, this);
 }
 
 void SplitEditor::convertToADPCM() {
-	tone::convertToADPCM(split_.tone, this);
+	tone::convertToADPCM(split.tone, this);
 	loadToneData();
 }
 
 void SplitEditor::editUnknownProps() {
-	SplitUnkEditor editor(split_, this);
+	SplitUnkEditor editor(split, this);
 
 	if (editor.exec() == QDialog::Accepted) {
-		split_ = std::move(editor.split());
+		split = std::move(editor.split);
 	}
 }
 
