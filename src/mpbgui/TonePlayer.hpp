@@ -34,6 +34,8 @@ public slots:
 private:
 	MT_DISABLE_COPY(TonePlayer)
 
+	static constexpr float MAX_PAD_DURATION = 0.05; // 50ms
+
 	int paStreamCallback(void* output, unsigned long frameCount);
 	void paStreamFinished();
 
@@ -45,5 +47,9 @@ private:
 
 	Tone tone_;
 	manatools::tone::Decoder decoder;
+
+	unsigned long maxPadFrames;
 	PaStream* stream;
+	uint padFrames;
+	uint endPadFrames;
 };

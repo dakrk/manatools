@@ -1,6 +1,10 @@
 #include "TonePlayer.hpp"
 
-TonePlayer::TonePlayer(double sampleRate, QObject* parent) : QObject(parent), stream(nullptr) {
+TonePlayer::TonePlayer(double sampleRate, QObject* parent) :
+	QObject(parent),
+	maxPadFrames(sampleRate * MAX_PAD_DURATION),
+	stream(nullptr)
+{
 	PaError err;
 
 	err = Pa_OpenDefaultStream(
@@ -44,6 +48,8 @@ void TonePlayer::play() {
 	bool wasPlaying = isPlaying();
 
 	decoder.reset();
+	padFrames = 0;
+	endPadFrames = 0;
 
 	if (!wasPlaying) {
 		Pa_StopStream(stream);
@@ -61,13 +67,30 @@ void TonePlayer::stop() {
 	}
 }
 
-// TODO: Begin and end audio with about 10ms or so of silence to avoid PortAudio cutting it off, grr
 int TonePlayer::paStreamCallback(void* output, unsigned long frameCount) {
 	s16* out = static_cast<s16*>(output);
 
+	/**
+	 * Pad the beginning of the stream to try and prevent PortAudio from cutting it off
+	 * depending on system and backend
+	 */
+	if (padFrames < maxPadFrames) {
+		std::fill(out, out + frameCount, 0);
+		padFrames += frameCount;
+		return paContinue;
+	}
+
 	size_t samples = decoder.decode(out, frameCount);
 
+	// Also pad the end, too
 	if (samples < frameCount) {
+		std::fill(out + samples, out + frameCount, 0);
+		endPadFrames += frameCount - samples;
+
+		if (endPadFrames < maxPadFrames) {
+			return paContinue;
+		}
+
 		return paComplete;
 	}
 
