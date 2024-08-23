@@ -99,7 +99,7 @@ namespace manatools::msd {
 
 	struct Note {
 		u8 channel = 0;
-		u8 key = 0;
+		u8 note = 0;
 		u8 velocity = 0;
 		u16 gate = 0;
 		u16 step = 0;

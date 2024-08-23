@@ -52,7 +52,7 @@ MSD load(io::DataIO& io) {
 		// Note event
 		if (IN_RANGE(status, 0x00, 0x3F)) {
 			Note msg(channel);
-			io.readU8(&msg.key);
+			io.readU8(&msg.note);
 			io.readU8(&msg.velocity);
 
 			switch (status) {

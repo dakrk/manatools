@@ -5,6 +5,7 @@
 #include <manatools/io.hpp>
 #include <manatools/msb.hpp>
 #include <manatools/msd.hpp>
+#include <manatools/note.hpp>
 
 namespace fs = manatools::fs;
 namespace io = manatools::io;
@@ -50,7 +51,9 @@ void msbDumpMSDs(const fs::path& msbPath) {
 		for (const msd::Message& m : seq.messages) {
 			std::visit(overloaded {
 				[](const msd::Note& msg) {
-					printf("[Ch.%02u] Note            : key=%u velocity=%u gate=%u step=%u\n", msg.channel, msg.key, msg.velocity, msg.gate, msg.step);
+					printf("[Ch.%02u] Note            : note=%u (%s%d) velocity=%u gate=%u step=%u\n",
+					       msg.channel, msg.note, manatools::noteName(msg.note), manatools::noteOctave(msg.note),
+					       msg.velocity, msg.gate, msg.step);
 				},
 
 				[](const msd::ControlChange& msg) {
@@ -105,8 +108,21 @@ invalid:
 		"https://github.com/dakrk/manatools\n"
 		"\n"
 		"Usage: %s extract <in.msb> <outdir>\n"
+		"       %s dump <in.msb>\n"
+		"\n"
+		"An MSB file is a collection of sequences of MIDI messages.\n"
+		"Typically these are packed inside an MLT, and are used for music.\n"
+		"\n"
+		"Despite its name, the data is not particularly MIDI compliant and uses\n"
+		"different status IDs for its messages, and employs different file size\n"
+		"optimisations. Such optimisations include:\n"
+		"    - Replacing Note Off messages with \"gate time\" in the Note On message.\n"
+		"    - Having a \"reference\" message as some sort of basic compression, by\n"
+		"      storing a file offset and the number of messages to an instance of a\n"
+		"      previously repeated sequence.\n"
 		"\n"
 		"The aforementioned usage syntax is not final and will be revised.\n",
+		argv[0],
 		argv[0]
 	);
 

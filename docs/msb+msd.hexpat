@@ -117,7 +117,7 @@ namespace msd {
         match (u8(status) & 0xF0) {
             // TODO: Confirm how note off is handled
             (Status::Note | 0x00 ... 0x3F): {
-                u8 key;
+                u8 note;
                 u8 velocity;
                 
                 match (statusBits.type) {
