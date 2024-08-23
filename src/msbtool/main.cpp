@@ -11,6 +11,7 @@ namespace io = manatools::io;
 namespace msb = manatools::msb;
 namespace msd = manatools::msd;
 
+// more sane way to use visitors in our case
 template<class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
 
@@ -47,14 +48,32 @@ void msbDumpMSDs(const fs::path& msbPath) {
 		auto seq = msd::load(io);
 
 		for (const msd::Message& m : seq.messages) {
-			std::visit(overloaded{
-				[&](const msd::Note& msg) {
-					printf("[Channel %u] NOTE: key=%u velocity=%u gate=%u step=%u\n", msg.channel, msg.key, msg.velocity, msg.gate, msg.step);
+			std::visit(overloaded {
+				[](const msd::Note& msg) {
+					printf("[Ch.%02u] Note            : key=%u velocity=%u gate=%u step=%u\n", msg.channel, msg.key, msg.velocity, msg.gate, msg.step);
 				},
 
-				[&](const auto& msg) {
+				[](const msd::ControlChange& msg) {
+					printf("[Ch.%02u] Control Change  : controller=%u value=%x step=%u\n", msg.channel, static_cast<u8>(msg.controller), msg.value, msg.step);
+				},
+
+				[](const msd::ProgramChange& msg) {
+					printf("[Ch.%02u] Program Change  : program=%u step=%u\n", msg.channel, msg.program, msg.step);
+				},
+
+				[](const msd::ChannelPressure& msg) {
+					printf("[Ch.%02u] Channel Pressure: pressure=%u step=%u\n", msg.channel, msg.pressure, msg.step);
+				},
+
+				// temp
+				[](const msd::Reference& msg) {
+					printf("        Reference       : offset=%u length=%u\n", msg.offset, msg.length);
+				},
+
+				[](const auto& msg) {
 					(void)msg;
-					fprintf(stderr, "Unhandled message encountered\n");
+					// perhaps this should assert/throw because it's a bug if we get to this point
+					fprintf(stderr, "Unhandled message encountered!\n");
 				}
 			}, m);
 		}

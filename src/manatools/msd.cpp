@@ -7,6 +7,20 @@
 
 namespace manatools::msd {
 
+static u16 readVar(io::DataIO& io, u8 data) {
+	u16 out;
+
+	if (data & 0x80) {
+		io.readU16BE(&out);
+	} else {
+		u8 outu8;
+		io.readU8(&outu8);
+		out = outu8;
+	}
+
+	return out;
+}
+
 MSD load(const fs::path& path) {
 	io::FileIO io(path, "rb");
 	return load(io);
@@ -85,19 +99,10 @@ MSD load(io::DataIO& io) {
 				u8 type;
 				io.readU8(&type);
 
-				/**
-				 * remove leftmost bit as that's used to indicate step data size
-				 * (perhaps I should consider doing some proper VLQ stuff)
-				 */
+				// remove leftmost bit as that's used to indicate step data size
 				msg.controller = static_cast<Controller>(type >> 1);
 				io.readU8(&msg.value);
-
-				if (type < 0x80) {
-					u8 step; io.readU8(&step);
-					msg.step = step;
-				} else {
-					io.readU16BE(&msg.step);
-				}
+				msg.step = readVar(io, type);
 
 				msd.messages.push_back(msg);
 				continue;
@@ -110,14 +115,7 @@ MSD load(io::DataIO& io) {
 				io.readU8(&data);
 
 				msg.program = data >> 1;
-
-				// TODO: recurring pattern, need to clean this up somehow
-				if (data < 0x80) {
-					u8 step; io.readU8(&step);
-					msg.step = step;
-				} else {
-					io.readU16BE(&msg.step);
-				}
+				msg.step = readVar(io, data);
 
 				msd.messages.push_back(msg);
 				continue;
@@ -130,13 +128,7 @@ MSD load(io::DataIO& io) {
 				io.readU8(&data);
 
 				msg.pressure = data >> 1;
-
-				if (data < 0x80) {
-					u8 step; io.readU8(&step);
-					msg.step = step;
-				} else {
-					io.readU16BE(&msg.step);
-				}
+				msg.step = readVar(io, data);
 
 				msd.messages.push_back(msg);
 				continue;
@@ -168,13 +160,7 @@ MSD load(io::DataIO& io) {
 				io.readU8(&data);
 
 				msg.mode = data >> 1;
-
-				if (data < 0x80) {
-					u8 step; io.readU8(&step);
-					msg.step = step;
-				} else {
-					io.readU16BE(&msg.step);
-				}				
+				msg.step = readVar(io, data);
 
 				msd.messages.push_back(msg);
 				continue;
