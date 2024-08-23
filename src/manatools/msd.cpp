@@ -13,9 +13,9 @@ static u16 readVar(io::DataIO& io, u8 data) {
 	if (data & 0x80) {
 		io.readU16BE(&out);
 	} else {
-		u8 outu8;
-		io.readU8(&outu8);
-		out = outu8;
+		u8 outU8;
+		io.readU8(&outU8);
+		out = outU8;
 	}
 
 	return out;
@@ -31,6 +31,9 @@ MSD load(io::DataIO& io) {
 	bool eofErrors = io.eofErrors(true);
 	MSD msd;
 
+	// we could be reading from anywhere in a file, store the beginning of *our* data
+	auto startPos = io.tell();
+
 	u8 magic[4];
 	io.readArrT(magic);
 	if (memcmp(MSD_MAGIC, magic, sizeof(magic))) {
@@ -40,8 +43,7 @@ MSD load(io::DataIO& io) {
 	io.readU32BE(&msd.unk1);
 	io.readU32BE(&msd.unk2);
 
-	bool processing = true;
-	while (processing) {
+	auto readMessageImpl = [&](const auto& self) {
 		u8 statusByte;
 		io.readU8(&statusByte);
 		u8 channel = statusByte & 0x0F;
@@ -88,7 +90,7 @@ MSD load(io::DataIO& io) {
 			}
 
 			msd.messages.push_back(msg);
-			continue;
+			return true;
 		}
 
 		// Messages that associate to a channel (has an annotated range in the enum)
@@ -105,7 +107,7 @@ MSD load(io::DataIO& io) {
 				msg.step = readVar(io, type);
 
 				msd.messages.push_back(msg);
-				continue;
+				return true;
 			}
 
 			case Status::ProgramChange: {
@@ -118,7 +120,7 @@ MSD load(io::DataIO& io) {
 				msg.step = readVar(io, data);
 
 				msd.messages.push_back(msg);
-				continue;
+				return true;
 			}
 
 			case Status::ChannelPressure: {
@@ -131,7 +133,7 @@ MSD load(io::DataIO& io) {
 				msg.step = readVar(io, data);
 
 				msd.messages.push_back(msg);
-				continue;
+				return true;
 			}
 
 			default: {
@@ -142,15 +144,23 @@ MSD load(io::DataIO& io) {
 		// Messages that do not associate to a channel (doesn't have an annotated range in the enum)
 		switch (static_cast<Status>(statusByte)) {
 			case Status::Reference: {
-				/**
-				 * TODO: oh. oh god. I would make reference code replace references with their respective events
-				 * but they use actual file offsets and not event indexes. That is probably going to be *horrible*
-				 */
-				Reference msg;
-				io.readU16BE(&msg.offset);
-				io.readU8(&msg.length);
-				msd.messages.push_back(msg);
-				continue;
+				u16 offset;
+				u8 length;
+				io.readU16BE(&offset);
+				io.readU8(&length);
+
+				auto pos = io.tell();
+				io.jump(startPos + offset);
+				for (u8 i = 0; i < length; i++) {
+					/**
+					 * call ourself recursively. magic
+					 * TODO: pass count of how much references we're currently reading as to
+					 * prevent an infinite loop from a bad file?
+					 */
+					self(self);
+				}
+				io.jump(pos);
+				return true;
 			}
 
 			case Status::Loop: {
@@ -163,12 +173,11 @@ MSD load(io::DataIO& io) {
 				msg.step = readVar(io, data);
 
 				msd.messages.push_back(msg);
-				continue;
+				return true;
 			}
 
 			case Status::EndOfSequence: {
-				processing = false;
-				continue;
+				return false;
 			}
 
 			case Status::TempoChange: {
@@ -176,14 +185,25 @@ MSD load(io::DataIO& io) {
 				io.readU16BE(&msg.tempo);
 				io.readU8(&msg.unk1);
 				msd.messages.push_back(msg);
-				continue;
+				return true;
 			}
 
 			default: {
 				throw std::runtime_error("Unknown MSD message encountered");
 			}
 		}
-	}
+	};
+
+	/**
+	 * My GCC version doesn't support C++23 "deducing this" and my Clang version
+	 * crashes when trying to do it, so go back to the method of using two lambdas
+	 * to be able to call them recursively
+	 */
+	auto readMessage = [&]() {
+		return readMessageImpl(readMessageImpl);
+	};
+
+	while (readMessage());
 
 	io.exceptions(exceptions);
 	io.eofErrors(eofErrors);

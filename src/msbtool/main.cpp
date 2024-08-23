@@ -65,11 +65,6 @@ void msbDumpMSDs(const fs::path& msbPath) {
 					printf("[Ch.%02u] Channel Pressure: pressure=%u step=%u\n", msg.channel, msg.pressure, msg.step);
 				},
 
-				// temp
-				[](const msd::Reference& msg) {
-					printf("        Reference       : offset=%u length=%u\n", msg.offset, msg.length);
-				},
-
 				[](const auto& msg) {
 					(void)msg;
 					// perhaps this should assert/throw because it's a bug if we get to this point

@@ -125,11 +125,6 @@ namespace manatools::msd {
 		u16 step = 0;
 	};
 
-	struct Reference {
-		u16 offset;
-		u8 length;
-	};
-
 	struct Loop {
 		u8 mode;
 		u16 step;
@@ -146,7 +141,7 @@ namespace manatools::msd {
 		ProgramChange,
 		ChannelPressure,
 
-		Reference,
+		// Reference,
 		Loop,
 		// EndOfSequence
 		TempoChange
