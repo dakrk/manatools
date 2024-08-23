@@ -505,7 +505,7 @@ void MainWindow::connectTableMutations(QAbstractTableModel* model) {
 		Q_UNUSED(tl);
 		Q_UNUSED(br);
 		Q_UNUSED(roles);
-		if (roles.contains(Qt::DisplayRole) || roles.isEmpty()) {
+		if (roles.contains(Qt::DisplayRole) || roles.contains(Qt::EditRole) || roles.isEmpty()) {
 			setWindowModified(true);
 		}
 	});
