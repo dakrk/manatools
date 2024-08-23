@@ -104,6 +104,16 @@ namespace manatools::wav {
 			if ((data.size() * sizeof(T)) & 1)
 				io.writeU8(0);
 
+			/**
+			 * Prevent GCC (but not Clang) from complaining that `sampler->loops` may be used uninitialised.
+			 * It should be initialised...? If sampler is initialised (which it is at that point), then the 
+			 * loop vector should be too.
+			 */
+			#if defined(__GNUG__) && !defined(__clang__)
+				#pragma GCC diagnostic push
+				#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+			#endif
+
 			if (sampler) {
 				io.writeStr("smpl");                                //           chunkId:
 				io.writeU32LE(36 + (sampler->loops.size() * 24));   //         chunkSize:
@@ -126,6 +136,10 @@ namespace manatools::wav {
 					io.writeU32LE(loop.playCount);              //  playCount: Number of times to play the loop (0 is infinite)
 				}
 			}
+
+			#if defined(__GNUG__) && !defined(__clang__)
+				#pragma GCC diagnostic pop
+			#endif
 		}
 
 		auto size = io.tell() - (riffChunkSizePos + 4);

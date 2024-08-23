@@ -257,6 +257,7 @@ bool convertToADPCM(manatools::tone::Tone& tone, QWidget* parent) {
 			adpcmCtx.encode(reinterpret_cast<s16*>(tone.data->data()), newTone.data->data(), tone.samples());
 
 			tone = newTone;
+			break;
 		}
 
 		case PCM8: {

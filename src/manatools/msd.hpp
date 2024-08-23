@@ -105,9 +105,10 @@ namespace manatools::msd {
 		u16 step = 0;
 	};
 
+	// Bank Select (MSB) is index 0, so good default to make GCC not warn
 	struct ControlChange {
 		u8 channel = 0;
-		Controller controller;
+		Controller controller = Controller::BankSelect_MSB;
 		u8 value = 0;
 		u16 step = 0;
 	};

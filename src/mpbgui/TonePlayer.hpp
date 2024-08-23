@@ -50,6 +50,6 @@ private:
 
 	unsigned long maxPadFrames;
 	PaStream* stream;
-	uint padFrames;
-	uint endPadFrames;
+	unsigned long padFrames;
+	unsigned long endPadFrames;
 };
