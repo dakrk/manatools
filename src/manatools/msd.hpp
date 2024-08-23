@@ -1,4 +1,5 @@
 #pragma once
+#include <variant>
 #include <vector>
 
 #include "filesystem.hpp"
@@ -17,14 +18,14 @@ namespace manatools::msd {
 		Note            = 0x00, // 0x00 ... 0x3F
 		Reference       = 0x81, // 0x81
 		Loop            = 0x82, // 0x82
-		EndOfTrack      = 0x83, // 0x83
+		EndOfSequence   = 0x83, // 0x83
 		TempoChange     = 0x84, // 0x84
 		ControlChange   = 0xB0, // 0xB0 ... 0xBF
 		ProgramChange   = 0xC0, // 0xC0 ... 0xCF
 		ChannelPressure = 0xD0, // 0xD0 ... 0xDF
 	};
 
-	enum class ControlChange : u8 {
+	enum class Controller : u8 {
 		BankSelect_MSB          = 0,
 		ModulationWheel_MSB     = 1,
 		BreathController_MSB    = 2,
@@ -95,29 +96,60 @@ namespace manatools::msd {
 
 		ResetAllControllers     = 121
 	};
-	
-	struct Message {
-		Status status;
+
+	struct Note {
+		u8 channel = 0;
+		u8 key = 0;
+		u8 velocity = 0;
+		u16 gate = 0;
+		u16 step = 0;
 	};
 
-	struct NoteMsg {
-		u16 gate;
-		u16 step;
+	struct ControlChange {
+		u8 channel = 0;
+		Controller controller;
+		u8 value = 0;
+		u16 step = 0;
 	};
 
-	struct ControlChangeMsg {
-
+	struct ProgramChange {
+		u8 channel = 0;
+		u8 program = 0;
+		u16 step = 0;
 	};
 
-	struct ReferenceMsg {
+	struct ChannelPressure {
+		u8 channel = 0;
+		u8 pressure = 0;
+		u16 step = 0;
+	};
+
+	struct Reference {
 		u16 offset;
 		u8 length;
 	};
 
-	struct TempoChangeMsg {
+	struct Loop {
+		u8 mode;
+		u16 step;
+	};
+
+	struct TempoChange {
 		u16 tempo;
 		u8 unk1;
 	};
+
+	using Message = std::variant<
+		Note,
+		ControlChange,
+		ProgramChange,
+		ChannelPressure,
+
+		Reference,
+		Loop,
+		// EndOfSequence
+		TempoChange
+	>;
 
 	struct MSD {
 		u32 unk1;

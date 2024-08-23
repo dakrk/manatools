@@ -27,7 +27,7 @@ namespace msd {
         
         Reference       = 0x81,
         Loop            = 0x82,
-        EndOfTrack      = 0x83,
+        EndOfSequence   = 0x83,
         TempoChange     = 0x84,
         
         ControlChange   = 0xB0 ... 0xBF,
@@ -98,12 +98,12 @@ namespace msd {
     
     bitfield ProgramChangeBits {
         step16Bit : 1;
-        voice : 7;
+        program : 7;
     } [[bitfield_order(BITFIELD_ORDER, 8)]];
     
     bitfield ChannelPressureBits {
         step16Bit : 1;
-        value : 7;
+        pressure : 7;
     } [[bitfield_order(BITFIELD_ORDER, 8)]];
     
     // BPM = 60 * 1e3 / tempo
@@ -118,7 +118,7 @@ namespace msd {
             // TODO: Confirm how note off is handled
             (Status::Note | 0x00 ... 0x3F): {
                 u8 key;
-                u8 volume;
+                u8 velocity;
                 
                 match (statusBits.type) {
                     (0x0): {
@@ -215,7 +215,7 @@ namespace msd {
                     u16 step;
             }
             
-            (Status::EndOfTrack): {
+            (Status::EndOfSequence): {
                 _gMoreMessages = false;
             }
             
