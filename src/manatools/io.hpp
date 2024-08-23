@@ -233,12 +233,11 @@ namespace manatools::io {
 	};
 
 	class DynBufIO : public DataIO {
-		typedef std::vector<u8> VecType;
-		VecType vec_;
-		size_t cur_;
 	public:
-		DynBufIO(bool exceptions = true, bool eofErrors = true) :
-			DataIO(exceptions, eofErrors), cur_(0) {}
+		typedef std::vector<u8> VecType;
+
+		DynBufIO(VecType& vec, bool exceptions = true, bool eofErrors = true) :
+			DataIO(exceptions, eofErrors), vec_(vec), cur_(0) {}
 
 		size_t read(void* buf, size_t size, size_t count) override;
 		size_t write(const void* buf, size_t size, size_t count) override;
@@ -255,6 +254,10 @@ namespace manatools::io {
 		void resize(VecType::size_type cnt, const VecType::value_type& val) {
 			return vec_.resize(cnt, val);
 		}
+
+	private:
+		VecType& vec_;
+		size_t cur_;
 	};
 } // namespace manatools::io
 

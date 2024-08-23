@@ -283,7 +283,8 @@ Bank load(const fs::path& path) {
 }
 
 void Bank::save(const fs::path& path) {
-	io::DynBufIO io;
+	io::DynBufIO::VecType outBuf;
+	io::DynBufIO io(outBuf);
 
 	// ============ Start header ============
 
