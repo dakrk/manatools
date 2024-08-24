@@ -23,62 +23,62 @@ namespace manatools::midi {
 	};
 
 	enum class MetaEvents : u8 {
-		EndOfTrack    = 0x2F,
-		SetTempo      = 0x51
+		EndOfTrack = 0x2F,
+		SetTempo   = 0x51
 	};
 
 	struct NoteOn {
-		u8 delta;
+		u32 delta;
 		u8 channel;
 		u8 note;
 		u8 velocity;
 	};
 
 	struct NoteOff {
-		u8 delta;
+		u32 delta;
 		u8 channel;
 		u8 note;
 		u8 velocity;
 	};
 
 	struct PolyKeyPressure {
-		u8 delta;
+		u32 delta;
 		u8 channel;
 		u8 note;
 		u8 pressure;
 	};
 
 	struct ControlChange {
-		u8 delta;
+		u32 delta;
 		u8 channel;
 		u8 controller;
 		u8 value;
 	};
 
 	struct ProgramChange {
-		u8 delta;
+		u32 delta;
 		u8 channel;
 		u8 program;
 	};
 
 	struct ChannelPressure {
-		u8 delta;
+		u32 delta;
 		u8 channel;
 		u8 pressure;
 	};
 
 	struct PitchWheelChange {
-		u8 delta;
+		u32 delta;
 		u8 channel;
 		u16 pitch; // TODO
 	};
 
 	struct EndOfTrack {
-		u8 delta;
+		u32 delta;
 	};
 
 	struct SetTempo {
-		u8 delta;
+		u32 delta;
 		u32 tempo : 24;
 	};
 

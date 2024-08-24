@@ -3,12 +3,14 @@
 
 #include <manatools/filesystem.hpp>
 #include <manatools/io.hpp>
+#include <manatools/midi.hpp>
 #include <manatools/msb.hpp>
 #include <manatools/msd.hpp>
 #include <manatools/note.hpp>
 
 namespace fs = manatools::fs;
 namespace io = manatools::io;
+namespace midi = manatools::midi;
 namespace msb = manatools::msb;
 namespace msd = manatools::msd;
 
@@ -78,6 +80,50 @@ void msbDumpMSDs(const fs::path& msbPath) {
 	}
 }
 
+void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
+	auto msb = msb::load(msbPath);
+
+	for (size_t s = 0; s < msb.sequences.size(); s++) {
+		auto& data = msb.sequences[s];
+
+		if (!data.data.size()) {
+			fprintf(stderr, "Warning: Sequence %zu has no data\n", s);
+			continue;
+		}
+
+		io::DynBufIO io(data.data);
+		midi::File midiFile;
+		auto seq = msd::load(io);
+
+		for (const msd::Message& m : seq.messages) {
+			std::visit(overloaded {
+				[&](const msd::Note& msg) {
+					midiFile.events.push_back(midi::NoteOn {msg.step, msg.channel, msg.note, msg.velocity});
+				},
+
+				[&](const msd::ControlChange& msg) {
+					midiFile.events.push_back(midi::ControlChange {msg.step, msg.channel, static_cast<u8>(msg.controller), msg.value});
+				},
+
+				[&](const msd::ProgramChange& msg) {
+					midiFile.events.push_back(midi::ProgramChange {msg.step, msg.channel, msg.program});
+				},
+
+				[](const auto& msg) {
+					(void)msg;
+					// perhaps this should assert/throw because it's a bug if we get to this point
+					fprintf(stderr, "Unhandled message encountered!\n");
+				}
+			}, m);
+		}
+
+		midiFile.events.push_back(midi::EndOfTrack{});
+
+		fs::path midiName = msbPath.stem().concat('_' + std::to_string(s) += ".mid");
+		midiFile.save(midiOutPath / midiName);
+	}
+}
+
 // TODO: dear god this needs better argument parsing
 int main(int argc, char** argv) {
 	try {
@@ -91,6 +137,11 @@ int main(int argc, char** argv) {
 			msbExtractMSDs(argv[2], argv[3]);
 		} else if (!strcmp(argv[1], "dump")) {
 			msbDumpMSDs(argv[2]);
+		} else if (!strcmp(argv[1], "exportmidis")) {
+			if (argc < 4)
+				goto invalid;
+
+			msbExportMIDIs(argv[2], argv[3]);
 		} else {
 			goto invalid;
 		}

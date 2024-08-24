@@ -1,5 +1,6 @@
 add_library(manatools
 	io.cpp
+	midi.cpp
 	mlt.cpp
 	mpb.cpp
 	msb.cpp

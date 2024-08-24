@@ -8,7 +8,7 @@ struct overloaded : Ts... { using Ts::operator()...; };
 namespace manatools::midi {
 
 static constexpr u8 makeStatus(u8 status, u8 channel) {
-	return (status << 4) | (channel & 0xF);
+	return (status & 0xF0) | (channel & 0x0F);
 }
 
 static constexpr u8 makeStatus(Status status, u8 channel) {
