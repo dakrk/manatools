@@ -104,7 +104,7 @@ namespace manatools::midi {
 		void save(const fs::path& path);
 
 		// ticks per quarter-note if 15th bit is 0, otherwise SMPTE
-		u16 division = 192;
+		u16 division = 480;
 
 		std::vector<Event> events;
 	};

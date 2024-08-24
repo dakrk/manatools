@@ -97,7 +97,7 @@ MSD load(io::DataIO& io) {
 				io.readU8(&type);
 
 				// remove leftmost bit as that's used to indicate step data size
-				msg.controller = static_cast<Controller>(type >> 1);
+				msg.controller = static_cast<Controller>(type & 0x7F);
 				io.readU8(&msg.value);
 				msg.step = readVar(io, type);
 
@@ -111,7 +111,7 @@ MSD load(io::DataIO& io) {
 				u8 data;
 				io.readU8(&data);
 
-				msg.program = data >> 1;
+				msg.program = data & 0x7F;
 				msg.step = readVar(io, data);
 
 				msd.messages.push_back(msg);
@@ -124,7 +124,7 @@ MSD load(io::DataIO& io) {
 				u8 data;
 				io.readU8(&data);
 
-				msg.pressure = data >> 1;
+				msg.pressure = data & 0x7F;
 				msg.step = readVar(io, data);
 
 				msd.messages.push_back(msg);
@@ -164,7 +164,7 @@ MSD load(io::DataIO& io) {
 				u8 data;
 				io.readU8(&data);
 
-				msg.mode = data >> 1;
+				msg.mode = data & 0x7F;
 				msg.step = readVar(io, data);
 
 				msd.messages.push_back(msg);
