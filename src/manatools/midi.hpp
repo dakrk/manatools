@@ -23,7 +23,8 @@ namespace manatools::midi {
 	};
 
 	enum class MetaEvents : u8 {
-
+		EndOfTrack    = 0x2F,
+		SetTempo      = 0x51
 	};
 
 	struct NoteOn {
@@ -40,15 +41,70 @@ namespace manatools::midi {
 		u8 velocity;
 	};
 
+	struct PolyKeyPressure {
+		u8 delta;
+		u8 channel;
+		u8 note;
+		u8 pressure;
+	};
+
+	struct ControlChange {
+		u8 delta;
+		u8 channel;
+		u8 controller;
+		u8 value;
+	};
+
+	struct ProgramChange {
+		u8 delta;
+		u8 channel;
+		u8 program;
+	};
+
+	struct ChannelPressure {
+		u8 delta;
+		u8 channel;
+		u8 pressure;
+	};
+
+	struct PitchWheelChange {
+		u8 delta;
+		u8 channel;
+		u16 pitch; // TODO
+	};
+
+	struct EndOfTrack {
+		u8 delta;
+	};
+
+	struct SetTempo {
+		u8 delta;
+		u32 tempo : 24;
+	};
+
+	using MetaEvent = std::variant<
+		EndOfTrack,
+		SetTempo
+	>;
+
 	using Event = std::variant<
 		NoteOn,
-		NoteOff
+		NoteOff,
+		PolyKeyPressure,
+		ControlChange,
+		ProgramChange,
+		ChannelPressure,
+		PitchWheelChange,
+		MetaEvent
 	>;
 
 	// SMF0, as Dreamcast sequences have no concept of tracks
 	struct File {
 		void save(io::DataIO& io);
 		void save(const fs::path& path);
+
+		// ticks per quarter-note if 15th bit is 0, otherwise SMPTE
+		u16 division = 192;
 
 		std::vector<Event> events;
 	};
