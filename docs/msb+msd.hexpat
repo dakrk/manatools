@@ -27,7 +27,7 @@ namespace msd {
         
         Reference       = 0x81,
         Loop            = 0x82,
-        EndOfSequence   = 0x83,
+        EndOfTrack      = 0x83,
         TempoChange     = 0x84,
         
         ControlChange   = 0xB0 ... 0xBF,
@@ -215,7 +215,7 @@ namespace msd {
                     u16 step;
             }
             
-            (Status::EndOfSequence): {
+            (Status::EndOfTrack): {
                 _gMoreMessages = false;
             }
             

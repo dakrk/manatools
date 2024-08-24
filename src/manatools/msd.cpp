@@ -21,11 +21,6 @@ static u16 readVar(io::DataIO& io, u8 data) {
 	return out;
 }
 
-MSD load(const fs::path& path) {
-	io::FileIO io(path, "rb");
-	return load(io);
-}
-
 MSD load(io::DataIO& io) {
 	bool exceptions = io.exceptions(true); // ugh
 	bool eofErrors = io.eofErrors(true);
@@ -176,7 +171,7 @@ MSD load(io::DataIO& io) {
 				return true;
 			}
 
-			case Status::EndOfSequence: {
+			case Status::EndOfTrack: {
 				return false;
 			}
 
@@ -211,4 +206,9 @@ MSD load(io::DataIO& io) {
 	return msd;
 }
 
-} // namespace manatools::msb
+MSD load(const fs::path& path) {
+	io::FileIO io(path, "rb");
+	return load(io);
+}
+
+} // namespace manatools::msd

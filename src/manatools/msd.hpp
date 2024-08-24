@@ -18,7 +18,7 @@ namespace manatools::msd {
 		Note            = 0x00, // 0x00 ... 0x3F
 		Reference       = 0x81, // 0x81
 		Loop            = 0x82, // 0x82
-		EndOfSequence   = 0x83, // 0x83
+		EndOfTrack      = 0x83, // 0x83
 		TempoChange     = 0x84, // 0x84
 		ControlChange   = 0xB0, // 0xB0 ... 0xBF
 		ProgramChange   = 0xC0, // 0xC0 ... 0xCF
@@ -143,7 +143,7 @@ namespace manatools::msd {
 
 		// Reference,
 		Loop,
-		// EndOfSequence
+		// EndOfTrack
 		TempoChange
 	>;
 

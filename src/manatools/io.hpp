@@ -46,6 +46,7 @@ namespace manatools::io {
 		bool writeU16BE(u16 in);
 		bool writeU32LE(u32 in);
 		bool writeU32BE(u32 in);
+		bool writeVLQ(u32 in);
 		bool writeBool(bool in);
 		bool writeStr(const std::string_view in)           { return write(in.data(), sizeof(char), in.size()) == in.size(); }
 
@@ -192,6 +193,25 @@ namespace manatools::io {
 	DEFINE_WRITE_FUNC(u16, BE, U16BE)
 	DEFINE_WRITE_FUNC(u32, LE, U32LE)
 	DEFINE_WRITE_FUNC(u32, BE, U32BE)
+
+	inline bool DataIO::writeVLQ(u32 in) {
+		u32 buf = in & 0x7F;
+		
+		while (in >>= 7) {
+			buf <<= 8;
+			buf |= (in & 0x7F) | 0x80;
+		}
+
+		while (true) {
+			if (!writeU8(buf))
+				return false;
+
+			if (buf & 0x80)
+				buf >>= 8;
+			else
+				return true;
+		}
+	}
 
 	inline bool DataIO::writeBool(bool in) {
 		u8 b = in;
