@@ -8,8 +8,7 @@
 #include "io.hpp"
 #include "tone.hpp"
 #include "types.hpp"
-
-#define READBITS(src, offset, size) ((src >> offset) & ((1U << size) - 1))
+#include "utils.hpp"
 
 namespace manatools::osb {
 
@@ -78,28 +77,28 @@ OSB load(const fs::path& path) {
 
 		u32 ampBitfield;
 		io.readU32LE(&ampBitfield);
-		program.amp.attackRate     = READBITS(ampBitfield,  0, 5);
-		program.amp.decayRate1     = READBITS(ampBitfield,  6, 5); // 1 unknown bit before this
-		program.amp.decayRate2     = READBITS(ampBitfield, 11, 5);
-		program.amp.releaseRate    = READBITS(ampBitfield, 16, 5);
-		program.amp.decayLevel     = READBITS(ampBitfield, 21, 5);
-		program.amp.keyRateScaling = READBITS(ampBitfield, 26, 4); // 2 unknown bits after this
+		program.amp.attackRate     = utils::readBits(ampBitfield,  0, 5);
+		program.amp.decayRate1     = utils::readBits(ampBitfield,  6, 5); // 1 unknown bit before this
+		program.amp.decayRate2     = utils::readBits(ampBitfield, 11, 5);
+		program.amp.releaseRate    = utils::readBits(ampBitfield, 16, 5);
+		program.amp.decayLevel     = utils::readBits(ampBitfield, 21, 5);
+		program.amp.keyRateScaling = utils::readBits(ampBitfield, 26, 4); // 2 unknown bits after this
 
 		io.forward(2);
 
 		u16 lfoBitfield;
 		io.readU16LE(&lfoBitfield);
-		program.lfo.ampDepth   = READBITS(lfoBitfield,  0, 3);
-		program.lfo.ampWave    = static_cast<LFOWaveType>(READBITS(lfoBitfield,  3, 2)); // ugh
-		program.lfo.pitchDepth = READBITS(lfoBitfield,  5, 3);
-		program.lfo.pitchWave  = static_cast<LFOWaveType>(READBITS(lfoBitfield,  8, 2)); // ughh
-		program.lfo.frequency  = READBITS(lfoBitfield, 10, 5);
-		program.lfoOn          = READBITS(lfoBitfield, 15, 1);
+		program.lfo.ampDepth   = utils::readBits(lfoBitfield,  0, 3);
+		program.lfo.ampWave    = static_cast<LFOWaveType>(utils::readBits(lfoBitfield,  3, 2)); // ugh
+		program.lfo.pitchDepth = utils::readBits(lfoBitfield,  5, 3);
+		program.lfo.pitchWave  = static_cast<LFOWaveType>(utils::readBits(lfoBitfield,  8, 2)); // ughh
+		program.lfo.frequency  = utils::readBits(lfoBitfield, 10, 5);
+		program.lfoOn          = utils::readBits(lfoBitfield, 15, 1);
 
 		u8 fxBitfield;
 		io.readU8(&fxBitfield);
-		program.fx.inputCh = READBITS(fxBitfield, 0, 4);
-		program.fx.level   = READBITS(fxBitfield, 4, 4);
+		program.fx.inputCh = utils::readBits(fxBitfield, 0, 4);
+		program.fx.level   = utils::readBits(fxBitfield, 4, 4);
 
 		io.forward(1);
 
@@ -110,8 +109,8 @@ OSB load(const fs::path& path) {
 
 		u8 filterBitfield;
 		io.readU8(&filterBitfield);
-		program.filter.resonance = READBITS(filterBitfield, 0, 5);
-		program.filterOn         = READBITS(filterBitfield, 5, 1);
+		program.filter.resonance = utils::readBits(filterBitfield, 0, 5);
+		program.filterOn         = utils::readBits(filterBitfield, 5, 1);
 
 		io.readU8(&program.oscillatorLevel);
 		program.oscillatorLevel = ~program.oscillatorLevel;

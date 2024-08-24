@@ -25,8 +25,13 @@ namespace manatools::utils {
 		return num + mul - rem;
 	}
 
+	template <std::integral T>
+	constexpr T readBits(T src, uint offset, size_t size) {
+		return (src >> offset) & ((1U << size) - 1);
+	}
+
 	template <std::integral DT, std::integral ST>
-	DT writeBits(DT dest, ST src, u8 offset, u8 size) {
+	constexpr DT writeBits(DT dest, ST src, u8 offset, u8 size) {
 		DT mask = (1 << size) - 1;
 		dest &= ~(mask << offset);
 		dest |= std::clamp(DT(src), DT(0), mask) << offset;

@@ -12,7 +12,6 @@
 #include "types.hpp"
 #include "utils.hpp"
 
-#define READBITS(src, offset, size) ((src >> offset) & ((1U << size) - 1))
 #define WRITEBITS(dest, src, offset, size) (dest = utils::writeBits(dest, src, offset, size))
 
 namespace manatools::mpb {
@@ -126,28 +125,28 @@ Bank load(const fs::path& path) {
 
 					u32 ampBitfield;
 					io.readU32LE(&ampBitfield);
-					split.amp.attackRate     = READBITS(ampBitfield,  0, 5);
-					split.amp.decayRate1     = READBITS(ampBitfield,  6, 5); // 1 unknown bit before this
-					split.amp.decayRate2     = READBITS(ampBitfield, 11, 5);
-					split.amp.releaseRate    = READBITS(ampBitfield, 16, 5);
-					split.amp.decayLevel     = READBITS(ampBitfield, 21, 5);
-					split.amp.keyRateScaling = READBITS(ampBitfield, 26, 4); // 2 unknown bits after this
+					split.amp.attackRate     = utils::readBits(ampBitfield,  0, 5);
+					split.amp.decayRate1     = utils::readBits(ampBitfield,  6, 5); // 1 unknown bit before this
+					split.amp.decayRate2     = utils::readBits(ampBitfield, 11, 5);
+					split.amp.releaseRate    = utils::readBits(ampBitfield, 16, 5);
+					split.amp.decayLevel     = utils::readBits(ampBitfield, 21, 5);
+					split.amp.keyRateScaling = utils::readBits(ampBitfield, 26, 4); // 2 unknown bits after this
 
 					io.readU16LE(&split.unk1);
 
 					u16 lfoBitfield;
 					io.readU16LE(&lfoBitfield);
-					split.lfo.ampDepth   = READBITS(lfoBitfield,  0, 3);
-					split.lfo.ampWave    = static_cast<LFOWaveType>(READBITS(lfoBitfield,  3, 2)); // ugh
-					split.lfo.pitchDepth = READBITS(lfoBitfield,  5, 3);
-					split.lfo.pitchWave  = static_cast<LFOWaveType>(READBITS(lfoBitfield,  8, 2)); // ughh
-					split.lfo.frequency  = READBITS(lfoBitfield, 10, 5);
-					split.lfoOn          = READBITS(lfoBitfield, 15, 1);
+					split.lfo.ampDepth   = utils::readBits(lfoBitfield,  0, 3);
+					split.lfo.ampWave    = static_cast<LFOWaveType>(utils::readBits(lfoBitfield,  3, 2)); // ugh
+					split.lfo.pitchDepth = utils::readBits(lfoBitfield,  5, 3);
+					split.lfo.pitchWave  = static_cast<LFOWaveType>(utils::readBits(lfoBitfield,  8, 2)); // ughh
+					split.lfo.frequency  = utils::readBits(lfoBitfield, 10, 5);
+					split.lfoOn          = utils::readBits(lfoBitfield, 15, 1);
 
 					u8 fxBitfield;
 					io.readU8(&fxBitfield);
-					split.fx.inputCh = READBITS(fxBitfield, 0, 4);
-					split.fx.level   = READBITS(fxBitfield, 4, 4);
+					split.fx.inputCh = utils::readBits(fxBitfield, 0, 4);
+					split.fx.level   = utils::readBits(fxBitfield, 4, 4);
 
 					io.readU8(&split.unk2);
 
@@ -158,8 +157,8 @@ Bank load(const fs::path& path) {
 
 					u8 filterBitfield;
 					io.readU8(&filterBitfield);
-					split.filter.resonance = READBITS(filterBitfield, 0, 5);
-					split.filterOn         = READBITS(filterBitfield, 5, 1);
+					split.filter.resonance = utils::readBits(filterBitfield, 0, 5);
+					split.filterOn         = utils::readBits(filterBitfield, 5, 1);
 
 					io.readU8(&split.oscillatorLevel);
 					split.oscillatorLevel = ~split.oscillatorLevel;
