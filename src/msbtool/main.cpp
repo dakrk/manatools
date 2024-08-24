@@ -95,6 +95,7 @@ void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
 		midi::File midiFile;
 		auto seq = msd::load(io);
 
+		bool startLoop = true;
 		for (const msd::Message& m : seq.messages) {
 			std::visit(overloaded {
 				[&](const msd::Note& msg) {
@@ -107,6 +108,19 @@ void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
 
 				[&](const msd::ProgramChange& msg) {
 					midiFile.events.push_back(midi::ProgramChange {msg.step, msg.channel, msg.program});
+				},
+
+				[&](const msd::ChannelPressure& msg) {
+					midiFile.events.push_back(midi::ChannelPressure {msg.step, msg.channel, msg.pressure});
+				},
+
+				[&](const msd::Loop& msg) {
+					midiFile.events.push_back(midi::MetaEvent {midi::Marker {msg.step, startLoop ? "loopStart" : "loopEnd"}});
+					startLoop = !startLoop;
+				},				
+
+				[&](const msd::TempoChange& msg) {
+					midiFile.events.push_back(midi::MetaEvent {midi::SetTempo {0, static_cast<u32>(msg.tempo * 1e3)}});
 				},
 
 				[](const auto& msg) {

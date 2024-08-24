@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <variant>
 #include <vector>
 
@@ -23,6 +24,7 @@ namespace manatools::midi {
 	};
 
 	enum class MetaEvents : u8 {
+		Marker     = 0x06,
 		EndOfTrack = 0x2F,
 		SetTempo   = 0x51
 	};
@@ -73,6 +75,11 @@ namespace manatools::midi {
 		u16 pitch; // TODO
 	};
 
+	struct Marker {
+		u32 delta;
+		std::string text;
+	};
+
 	struct EndOfTrack {
 		u32 delta;
 	};
@@ -83,6 +90,7 @@ namespace manatools::midi {
 	};
 
 	using MetaEvent = std::variant<
+		Marker,
 		EndOfTrack,
 		SetTempo
 	>;

@@ -1,4 +1,5 @@
 #include <cstring>
+#include <limits>
 
 #include "midi.hpp"
 
@@ -80,6 +81,14 @@ void File::save(io::DataIO& io) {
 			[&](const MetaEvent& e2) {
 				u8 status = static_cast<u8>(Status::MetaEvent);
 				std::visit(overloaded {
+					[&](const Marker& event) {
+						io.writeVLQ(event.delta);
+						io.writeU8(status);
+						io.writeU8(static_cast<u8>(MetaEvents::Marker));
+						io.writeVLQ(event.text.size());
+						io.writeStr(event.text);
+					},
+
 					[&](const EndOfTrack& event) {
 						io.writeVLQ(event.delta);
 						io.writeU8(status);

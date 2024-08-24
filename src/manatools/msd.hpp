@@ -126,7 +126,7 @@ namespace manatools::msd {
 	};
 
 	struct Loop {
-		u8 mode;
+		u8 unk1;
 		u16 step;
 	};
 

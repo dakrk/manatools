@@ -164,7 +164,7 @@ MSD load(io::DataIO& io) {
 				u8 data;
 				io.readU8(&data);
 
-				msg.mode = data & 0x7F;
+				msg.unk1 = data & 0x7F;
 				msg.step = readVar(io, data);
 
 				msd.messages.push_back(msg);
