@@ -131,6 +131,20 @@ MSD load(io::DataIO& io) {
 				return true;
 			}
 
+			case Status::PitchWheelChange: {
+				PitchWheelChange msg(channel);
+
+				u8 data;
+				io.readU8(&data);
+
+				// TODO: Investigate what pitch is measured in
+				msg.pitch = data & 0x7F;
+				msg.step = readVar(io, data);
+
+				msd.messages.push_back(msg);
+				return true;
+			}
+
 			default: {
 				// here to make clang -wswitch shut up, the rest of the enum values are in another switch
 			}
@@ -184,7 +198,9 @@ MSD load(io::DataIO& io) {
 			}
 
 			default: {
-				throw std::runtime_error("Unknown MSD message encountered");
+				char err[64];
+				snprintf(err, std::size(err), "Unknown MSD message encountered at 0x%x: %x", io.tell(), status);
+				throw std::runtime_error(err);
 			}
 		}
 	};

@@ -15,14 +15,15 @@ namespace manatools::msd {
 
 	// For statuses with ranges, the last 4 bits indicates channel
 	enum class Status : u8 {
-		Note            = 0x00, // 0x00 ... 0x3F
-		Reference       = 0x81, // 0x81
-		Loop            = 0x82, // 0x82
-		EndOfTrack      = 0x83, // 0x83
-		TempoChange     = 0x84, // 0x84
-		ControlChange   = 0xB0, // 0xB0 ... 0xBF
-		ProgramChange   = 0xC0, // 0xC0 ... 0xCF
-		ChannelPressure = 0xD0, // 0xD0 ... 0xDF
+		Note             = 0x00, // 0x00 ... 0x3F
+		Reference        = 0x81, // 0x81
+		Loop             = 0x82, // 0x82
+		EndOfTrack       = 0x83, // 0x83
+		TempoChange      = 0x84, // 0x84
+		ControlChange    = 0xB0, // 0xB0 ... 0xBF
+		ProgramChange    = 0xC0, // 0xC0 ... 0xCF
+		ChannelPressure  = 0xD0, // 0xD0 ... 0xDF
+		PitchWheelChange = 0xE0, // 0xE0 ... 0xEF
 	};
 
 	enum class Controller : u8 {
@@ -125,6 +126,12 @@ namespace manatools::msd {
 		u16 step = 0;
 	};
 
+	struct PitchWheelChange {
+		u8 channel = 0;
+		u8 pitch = 0;
+		u16 step = 0;
+	};
+
 	struct Loop {
 		u8 unk1;
 		u16 step;
@@ -140,6 +147,7 @@ namespace manatools::msd {
 		ControlChange,
 		ProgramChange,
 		ChannelPressure,
+		PitchWheelChange,
 
 		// Reference,
 		Loop,
