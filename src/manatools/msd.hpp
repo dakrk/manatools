@@ -148,8 +148,8 @@ namespace manatools::msd {
 	>;
 
 	struct MSD {
-		u32 unk1;
-		u32 unk2;
+		u32 tpqn;
+		u32 initialTempo;
 		std::vector<Message> messages;
 	};
 

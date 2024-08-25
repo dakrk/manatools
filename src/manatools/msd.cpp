@@ -35,8 +35,8 @@ MSD load(io::DataIO& io) {
 		throw std::runtime_error("Invalid MSD data");
 	}
 
-	io.readU32BE(&msd.unk1);
-	io.readU32BE(&msd.unk2);
+	io.readU32LE(&msd.tpqn);
+	io.readU32LE(&msd.initialTempo);
 
 	auto readMessageImpl = [&](const auto& self) {
 		u8 statusByte;

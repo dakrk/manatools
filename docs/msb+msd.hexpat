@@ -18,15 +18,18 @@ namespace msd {
     struct Header {
         char fourCC[4];
 
-        // Calculated by doing (0x10000 / TPQN)
-        u32 unknown1;
+        /**
+         * Converted to and from MSD and MIDI by doing (0x10000 / TPQN), albeit with a loss
+         * of precision just like tempo.
+         */
+        u32 tpqn;
 
         /**
-         * Initial tempo...? Official converter puts 500 here if it can't find a tempo message,
-         * otherwise (MPQN / 1000) sometimes.
-         * This is seemingly only read by the Dreamcast as a fallback for a missing tempo message.
+         * Initial tempo...? Official converter puts 500 here (which matches the standard MIDI
+         * 120 BPM default, except in milliseconds per quarter note) if it can't find a tempo
+         * message, otherwise (MPQN / 1000) sometimes.
          */
-        u32 unknown2;
+        u32 initialTempo;
     };
     
     // TODO
