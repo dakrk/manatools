@@ -57,7 +57,7 @@ namespace manatools::msd {
 		Undefined28_MSB         = 28, // used in Dreamcast?
 		Undefined29_MSB         = 29, // used in Dreamcast?
 		Undefined30_MSB         = 30, // used in Dreamcast?
-		Undefined31_MSB         = 31, // used in Dreamcast?
+		Undefined31_MSB         = 31, // used in Dreamcast to indicate loops?
 
 		BankSelect_LSB          = 32, // important!
 		ModulationWheel_LSB     = 33,

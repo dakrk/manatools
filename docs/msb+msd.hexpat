@@ -17,8 +17,16 @@ namespace msd {
 
     struct Header {
         char fourCC[4];
-        unk[4]; // Seems to consistently be the same value
-        unk[4]; // Sometimes equal to tempo???
+
+        // Calculated by doing (0x10000 / TPQN)
+        u32 unknown1;
+
+        /**
+         * Initial tempo...? Official converter puts 500 here if it can't find a tempo message,
+         * otherwise (MPQN / 1000) sometimes.
+         * This is seemingly only read by the Dreamcast as a fallback for a missing tempo message.
+         */
+        u32 unknown2;
     };
     
     // TODO
@@ -56,7 +64,7 @@ namespace msd {
         EffectController2_MSB   = 13, // ignored in Dreamcast?
         Undefined_MSB           = 14 ... 15,
         GeneralPurpose_MSB      = 16 ... 19,
-        Undefined_MSB           = 20 ... 31, // used in Dreamcast?
+        Undefined_MSB           = 20 ... 31, // used in Dreamcast to indicate loops?
 
         BankSelect_LSB          = 32, // important!
         ModulationWheel_LSB     = 33,

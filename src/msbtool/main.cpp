@@ -70,6 +70,14 @@ void msbDumpMSDs(const fs::path& msbPath) {
 					printf("[Ch.%02u] Channel Pressure: pressure=%u step=%u\n", msg.channel, msg.pressure, msg.step);
 				},
 
+				[](const msd::Loop& msg) {
+					printf("        Loop            : unk1=%x step=%u\n", msg.unk1, msg.step);
+				},
+
+				[](const msd::TempoChange& msg) {
+					printf("        Tempo Change    : tempo=%u msecs/pqn (%.3f BPM)\n", msg.tempo, 60 * 1000 / msg.tempo);
+				},
+
 				[](const auto& msg) {
 					(void)msg;
 					// perhaps this should assert/throw because it's a bug if we get to this point
@@ -120,7 +128,7 @@ void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
 				},				
 
 				[&](const msd::TempoChange& msg) {
-					midiFile.events.push_back(midi::MetaEvent {midi::SetTempo {0, static_cast<u32>(msg.tempo * 1e3)}});
+					midiFile.events.push_back(midi::MetaEvent {midi::SetTempo {0, static_cast<u32>(msg.tempo * 1000)}});
 				},
 
 				[](const auto& msg) {
