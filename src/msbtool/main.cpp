@@ -50,6 +50,8 @@ void msbDumpMSDs(const fs::path& msbPath) {
 		io::DynBufIO io(data.data);
 		auto seq = msd::load(io);
 
+		printf("======== Start sequence %zu ========\n", s);
+
 		for (const msd::Message& m : seq.messages) {
 			std::visit(overloaded {
 				[](const msd::Note& msg) {
@@ -75,7 +77,7 @@ void msbDumpMSDs(const fs::path& msbPath) {
 				},
 
 				[](const msd::TempoChange& msg) {
-					printf("        Tempo Change    : tempo=%u msecs/pqn (%.3f BPM)\n", msg.tempo, 60 * 1000 / msg.tempo);
+					printf("        Tempo Change    : tempo=%u msecs/pqn (%.3f BPM)\n", msg.tempo, 60 * 1000.0 / msg.tempo);
 				},
 
 				[](const auto& msg) {
@@ -85,6 +87,8 @@ void msbDumpMSDs(const fs::path& msbPath) {
 				}
 			}, m);
 		}
+
+		printf("======== End sequence %zu ========\n\n", s);
 	}
 }
 

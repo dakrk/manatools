@@ -199,7 +199,7 @@ MSD load(io::DataIO& io) {
 
 			default: {
 				char err[64];
-				snprintf(err, std::size(err), "Unknown MSD message encountered at 0x%x: %x", io.tell(), status);
+				snprintf(err, std::size(err), "Unknown MSD message encountered at 0x%lx: %x", io.tell(), status);
 				throw std::runtime_error(err);
 			}
 		}
