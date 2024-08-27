@@ -1,5 +1,5 @@
+#include <cassert>
 #include <cstring>
-#include <limits>
 
 #include "midi.hpp"
 
@@ -17,8 +17,7 @@ static constexpr u8 makeStatus(Status status, u8 channel) {
 }
 
 void File::save(io::DataIO& io) {
-	bool exceptions = io.exceptions(true); // ugh
-	bool eofErrors = io.eofErrors(true);
+	io::ErrorHandler errHandler(io, true, true);
 
 	io.writeArrT(HEADER_MAGIC);
 	io.writeU32BE(6); // chunk size
@@ -111,7 +110,7 @@ void File::save(io::DataIO& io) {
 
 			[&](const auto& msg) {
 				(void)msg;
-				// TODO: perhaps assert or throw logic_error or something
+				assert(!"Recognised MIDI message left unhandled");
 			}
 		}, e);
 	}
@@ -119,9 +118,6 @@ void File::save(io::DataIO& io) {
 	auto endPos = io.tell();
 	io.jump(trackSizePos);
 	io.writeU32BE(endPos - (trackSizePos + sizeof(u32)));
-
-	io.exceptions(exceptions);
-	io.eofErrors(eofErrors);
 }
 
 void File::save(const fs::path& path) {

@@ -1,3 +1,4 @@
+#include <cassert>
 #include <cstdio>
 #include <cstring>
 #include <set>
@@ -98,8 +99,7 @@ void msbDumpMSDs(const fs::path& msbPath) {
 
 				[](const auto& msg) {
 					(void)msg;
-					// perhaps this should assert/throw because it's a bug if we get to this point
-					fprintf(stderr, "Unhandled message encountered!\n");
+					assert(!"Recognised MSD message left unhandled");
 				}
 			}, m);
 		}
@@ -198,8 +198,7 @@ void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
 
 				[](const auto& msg) {
 					(void)msg;
-					// perhaps this should assert/throw because it's a bug if we get to this point
-					fprintf(stderr, "Unhandled message encountered!\n");
+					assert(!"Recognised MSD message left unhandled");
 				}
 			}, m);
 		}

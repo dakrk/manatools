@@ -22,8 +22,7 @@ static u16 readVar(io::DataIO& io, u8 data) {
 }
 
 MSD load(io::DataIO& io) {
-	bool exceptions = io.exceptions(true); // ugh
-	bool eofErrors = io.eofErrors(true);
+	io::ErrorHandler errHandler(io, true, true);
 	MSD msd;
 
 	// we could be reading from anywhere in a file, store the beginning of *our* data
@@ -215,9 +214,6 @@ MSD load(io::DataIO& io) {
 	};
 
 	while (readMessage());
-
-	io.exceptions(exceptions);
-	io.eofErrors(eofErrors);
 
 	return msd;
 }

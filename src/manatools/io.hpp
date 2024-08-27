@@ -279,6 +279,35 @@ namespace manatools::io {
 		VecType& vec_;
 		size_t cur_;
 	};
+
+	/**
+	 * IO code was written at the beginning of the project and I was full of "what if"s when it
+	 * came to error handling, so I allowed multiple types, because EOF might not always be an
+	 * error if you're expecting to see it when reading a file to the very end.
+	 * I'm rather hard set on using exceptions for this now so I could remove support for choosing
+	 * against that, but EOF handling may need to stay.
+	 * 
+	 * ErrorHandler is needed so any function can use their desired error handling type when
+	 * passed a DataIO instance, and to make doing so exception-safe and clean as it automatically
+	 * switches back to the original state upon destruction.
+	 */
+	class ErrorHandler {
+	public:
+		ErrorHandler(DataIO& io, bool exceptions = true, bool eofErrors = true) :
+			io(io),
+			origExceptions(io.exceptions(exceptions)),
+			origEOFErrors(io.eofErrors(eofErrors)) {}
+
+		~ErrorHandler() {
+			io.exceptions(origExceptions);
+			io.eofErrors(origEOFErrors);
+		}
+
+	private:
+		DataIO& io;
+		bool origExceptions;
+		bool origEOFErrors;
+	};
 } // namespace manatools::io
 
 // yep
