@@ -137,8 +137,8 @@ MSD load(io::DataIO& io) {
 				u8 data;
 				io.readU8(&data);
 
-				// TODO: Investigate what pitch is measured in
-				msg.pitch = data & 0x7F;
+				// Convert pitch from to range of -64 to 63 (from 0 to 127)
+				msg.pitch = (data & 0x7F) - 64;
 				msg.step = readVar(io, data);
 
 				msd.messages.push_back(msg);

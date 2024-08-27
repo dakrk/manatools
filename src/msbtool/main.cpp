@@ -85,7 +85,7 @@ void msbDumpMSDs(const fs::path& msbPath) {
 				},
 
 				[](const msd::PitchWheelChange& msg) {
-					printf("[Ch.%02u] Pitch Wheel Chg. : pitch=%u step=%u\n", msg.channel, msg.pitch, msg.step);
+					printf("[Ch.%02u] Pitch Wheel Chg. : pitch=%d step=%u\n", msg.channel, msg.pitch, msg.step);
 				},
 
 				[](const msd::Loop& msg) {
@@ -179,7 +179,8 @@ void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
 				},
 
 				[&](const msd::PitchWheelChange& msg) {
-					midiFile.events.push_back(midi::PitchWheelChange {delta, msg.channel, 0});
+					s16 pitch = ((msg.pitch + 64) << 7) - 8192;
+					midiFile.events.push_back(midi::PitchWheelChange {delta, msg.channel, pitch});
 					curTime += msg.step;
 				},
 

@@ -75,7 +75,8 @@ void File::save(io::DataIO& io) {
 			[&](const PitchWheelChange& event) {
 				io.writeVLQ(event.delta);
 				io.writeU8(makeStatus(Status::PitchWheelChange, event.channel));
-				io.writeU16BE(event.pitch); // TODO
+				io.writeU8((event.pitch + 0x2000) & 0x7F);
+				io.writeU8(((event.pitch + 0x2000) & 0x3F80) >> 7);
 			},
 
 			[&](const MetaEvent& e2) {

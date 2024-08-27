@@ -72,7 +72,7 @@ namespace manatools::midi {
 	struct PitchWheelChange {
 		u32 delta;
 		u8 channel;
-		u16 pitch; // TODO
+		s16 pitch; // -8192 ... 8191
 	};
 
 	struct Marker {

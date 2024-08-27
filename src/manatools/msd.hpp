@@ -128,7 +128,7 @@ namespace manatools::msd {
 
 	struct PitchWheelChange {
 		u8 channel = 0;
-		u8 pitch = 0;
+		s8 pitch = 0; // -64 ... 63
 		u16 step = 0;
 	};
 

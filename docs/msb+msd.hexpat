@@ -229,13 +229,14 @@ namespace msd {
             }
             
             (Status::Loop): {
-                u8 mode;
+                // Seems to be the same data from the original CC31
+                u8 data;
                 
                 /**
                  * The way this works is like MIDI variable-length quantity, but mode and step are unrelated
                  * so we can't just use that
                  */
-                if (mode < 0x80)
+                if (mode & 0x80)
                     u8 step;
                 else
                     u16 step;
