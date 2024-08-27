@@ -164,7 +164,7 @@ void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
 				},
 
 				[&](const msd::ControlChange& msg) {
-					midiFile.events.push_back(midi::ControlChange {delta, msg.channel, static_cast<u8>(msg.controller), msg.value});
+					midiFile.events.push_back(midi::ControlChange {delta, msg.channel, msg.controller, msg.value});
 					curTime += msg.step;
 				},
 

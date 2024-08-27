@@ -22,7 +22,7 @@ Please view [BUILDING.md](BUILDING.md).
 | Name                   | Extension      | Description                                                                                                    | Current state                                             |
 | ---------------------- | -------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
 | MIDI Program/Drum Bank | .mpb, .mdb     | MPB/MDB files store instrument and sample data for music, although sometimes they are also used for SFX.       | Extractable, modifiable                                   |
-| MIDI Sequence Bank     | .msb           | MSB files store data for MIDI sequences. Despite its name, the data doesn't seem very MIDI compliant.          | [Research not yet complete.](docs/msb+msd.hexpat)         |
+| MIDI Sequence Bank     | .msb           | MSB files store data for MIDI sequences. Despite its name, the data doesn't seem very MIDI compliant.          | Extractable, cannot modify yet.                           |
 | Multi-Unit             | .mlt           | MLT files are a collection of these file formats, to get mapped into the AICA sound processor's RAM.           | Extractable, no modifcation tools yet.                    |
 | One Shot Bank          | .osb           | OSB files are used for SFX. They share similar parameters with MPB, minus the MIDI note/velocity stuff.        | Extractable, cannot modify yet.                           |
 

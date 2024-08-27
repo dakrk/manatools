@@ -96,7 +96,7 @@ MSD load(io::DataIO& io) {
 				io.readU8(&type);
 
 				// remove leftmost bit as that's used to indicate step data size
-				msg.controller = static_cast<Controller>(type & 0x7F);
+				msg.controller = type & 0x7F;
 				io.readU8(&msg.value);
 				msg.step = readVar(io, type);
 

@@ -26,6 +26,7 @@ namespace manatools::msd {
 		PitchWheelChange = 0xE0, // 0xE0 ... 0xEF
 	};
 
+	// This should perhaps be put in midi.hpp instead?
 	enum class Controller : u8 {
 		BankSelect_MSB          = 0,
 		ModulationWheel_MSB     = 1,
@@ -106,10 +107,9 @@ namespace manatools::msd {
 		u16 step = 0;
 	};
 
-	// Bank Select (MSB) is index 0, so good default to make GCC not warn
 	struct ControlChange {
 		u8 channel = 0;
-		Controller controller = Controller::BankSelect_MSB;
+		u8 controller = 0;
 		u8 value = 0;
 		u16 step = 0;
 	};
