@@ -34,16 +34,17 @@ namespace msd {
     
     // TODO
     enum Status : u8 {
-        Note            = 0x00 ... 0x3F,
+        Note             = 0x00 ... 0x3F,
         
-        Reference       = 0x81,
-        Loop            = 0x82,
-        EndOfTrack      = 0x83,
-        TempoChange     = 0x84,
+        Reference        = 0x81,
+        Loop             = 0x82,
+        EndOfTrack       = 0x83,
+        TempoChange      = 0x84,
         
-        ControlChange   = 0xB0 ... 0xBF,
-        ProgramChange   = 0xC0 ... 0xCF,
-        ChannelPressure = 0xD0 ... 0xDF
+        ControlChange    = 0xB0 ... 0xBF,
+        ProgramChange    = 0xC0 ... 0xCF,
+        ChannelPressure  = 0xD0 ... 0xDF,
+        PitchWheelChange = 0xE0 ... 0xEF
     };
     
     /**
@@ -116,7 +117,12 @@ namespace msd {
         step16Bit : 1;
         pressure : 7;
     } [[bitfield_order(BITFIELD_ORDER, 8)]];
-    
+
+    bitfield PitchWheelChangeBits {
+        step16Bit : 1;
+        pitch : 7;
+    } [[bitfield_order(BITFIELD_ORDER, 8)]];
+
     // BPM = 60 * 1e3 / tempo
     // Tempo in MIDI is usually from usecs/quarter note, but in MSD it's msecs? (1e6 vs 1e3)
     struct Message {
@@ -193,6 +199,15 @@ namespace msd {
                 ChannelPressureBits cpData;
                  
                  if (cpData.step16Bit)
+                    u16 step;
+                 else
+                    u8 step;
+            }
+            
+            (Status::PitchWheelChange): {
+                PitchWheelChangeBits pwcData;
+                 
+                 if (pwcData.step16Bit)
                     u16 step;
                  else
                     u8 step;
