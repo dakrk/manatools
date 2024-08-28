@@ -7,6 +7,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 add_executable(mltgui
 	main.cpp
 	MainWindow.cpp
+	MLTModel.cpp
 )
 
 target_link_libraries(mltgui PRIVATE

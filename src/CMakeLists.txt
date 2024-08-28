@@ -15,13 +15,18 @@ add_subdirectory(osbtool)
 add_subdirectory(mltgui)
 add_subdirectory(mpbgui)
 
-install(TARGETS
-	manatools
+install(
+	TARGETS
+		manatools
 
-	mpbtool
-	mlttool
-	osbtool
+		mlttool
+		mpbtool
+		msbtool
+		osbtool
 
-	mpbgui
-	mltgui
+		mltgui
+		mpbgui
+
+	RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+	LIBRARY DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )

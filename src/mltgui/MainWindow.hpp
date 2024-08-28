@@ -1,6 +1,10 @@
 #pragma once
 #include <QMainWindow>
 #include <QSettings>
+#include <QTableView>
+#include <manatools/mlt.hpp>
+
+#include "MLTModel.hpp"
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -15,4 +19,10 @@ protected:
 
 private:
 	QSettings settings;
+	QString curFile;
+
+	QTableView* table;
+	MLTModel* model;
+
+	manatools::mlt::MLT mlt;
 };

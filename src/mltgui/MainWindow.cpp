@@ -8,6 +8,12 @@ MainWindow::MainWindow(QWidget* parent) :
 	settings()
 {
 	restoreSettings();
+
+	table = new QTableView(this);
+	model = new MLTModel(&mlt, this);
+	table->setModel(model);
+
+	setCentralWidget(table);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {
