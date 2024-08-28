@@ -209,7 +209,7 @@ bool MainWindow::loadFile(const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
 
 	try {
-		bank = manatools::mpb::load(path.toStdString());
+		bank = manatools::mpb::load(path.toStdWString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
 		QMessageBox::warning(this, "", tr("Failed to load bank file: %1").arg(err.what()));
@@ -246,7 +246,7 @@ bool MainWindow::saveFile(const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
 
 	try {
-		bank.save(path.toStdString());
+		bank.save(path.toStdWString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
 		QMessageBox::warning(this, "", tr("Failed to save bank file: %1").arg(err.what()));
@@ -262,6 +262,7 @@ bool MainWindow::saveFile(const QString& path) {
 bool MainWindow::exportSF2File(const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
 
+	// TODO: sf2cute doesn't support using wstring or filesystem::path
 	try {
 		auto sf2 = manatools::sf2::fromMPB(bank, QFileInfo(curFile).baseName().toStdString());
 		sf2.Write(path.toStdString());

@@ -127,8 +127,8 @@ OSB load(const fs::path& path) {
 
 		// TODO: More data
 
-		osb.programs.push_back(std::move(program));
 		ptrsToneData.push_back(program.ptrToneData_);
+		osb.programs.push_back(std::move(program));
 
 		io.jump(pos);
 	}

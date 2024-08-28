@@ -223,17 +223,27 @@ namespace manatools::io {
 
 	class FileIO : public DataIO {
 	public:
-		FileIO(const char* path,         const char* mode, bool exceptions = true, bool eofErrors = true);
-		FileIO(const std::string& path,  const char* mode, bool exceptions = true, bool eofErrors = true) :
-			FileIO(path.c_str(), mode, exceptions, eofErrors) {}
-		FileIO(const fs::path& path,     const char* mode, bool exceptions = true, bool eofErrors = true) :
-			FileIO(path.string().c_str(), mode, exceptions, eofErrors) {}
+		FileIO(const char* path, const char* mode, bool exceptions = true, bool eofErrors = true) : DataIO(exceptions, eofErrors) {
+			open(path, mode);
+		}
+
+		FileIO(const std::string& path, const char* mode, bool exceptions = true, bool eofErrors = true) : DataIO(exceptions, eofErrors) {
+			open(path.c_str(), mode);
+		}
+
+		FileIO(const fs::path& path, const char* mode, bool exceptions = true, bool eofErrors = true) : DataIO(exceptions, eofErrors) {
+			open(path.native().c_str(), mode);
+		}
 
 		// all this wide char and string stuff. i hate windows
 		#ifdef _WIN32
-		FileIO(const wchar_t* path,      const wchar_t* mode, bool exceptions = true, bool eofErrors = true);
-		FileIO(const std::wstring& path, const wchar_t* mode, bool exceptions = true, bool eofErrors = true) :
-			FileIO(path.c_str(), mode, exceptions, eofErrors) {}
+		FileIO(const wchar_t* path, const char* mode, bool exceptions = true, bool eofErrors = true) : DataIO(exceptions, eofErrors) {
+			open(path, mode);
+		}
+
+		FileIO(const std::wstring& path, const char* mode, bool exceptions = true, bool eofErrors = true) : DataIO(exceptions, eofErrors) {
+			open(path.c_str(), mode);
+		}
 		#endif
 
 		~FileIO() override;
@@ -249,6 +259,11 @@ namespace manatools::io {
 		bool isOpen() const { return handle_; }
 
 	private:
+		void open(const char* path, const char* mode);
+		#ifdef _WIN32
+		void open(const wchar_t* path, const char* mode);
+		#endif
+
 		FILE* handle_ = nullptr;
 	};
 

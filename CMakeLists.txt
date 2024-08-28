@@ -25,3 +25,6 @@ include(FindPkgConfigModule)
 
 add_subdirectory(third_party)
 add_subdirectory(src)
+
+include(CPack)
+set(CPACK_STRIP_FILES ON)

@@ -36,7 +36,12 @@ bool importDialog(manatools::mpb::Split& split, const QString& basePath, QWidget
 
 bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* parent) {
 	CursorOverride cursor(Qt::WaitCursor);
+
+	#ifdef _WIN32
+	SndfileHandle sndFile(path.toStdWString().c_str());
+	#else
 	SndfileHandle sndFile(path.toStdString());
+	#endif
 
 	/**
 	 * well... for `!sndFile` it wouldn't even be able to get a message because
@@ -210,12 +215,12 @@ bool exportFile(const manatools::mpb::Split& split, const QString& path, FileTyp
 				wav.data.resize(split.tone.samples());
 				decoder.decode(wav.data);
 				
-				wav.save(path.toStdString());
+				wav.save(path.toStdWString());
 				break;
 			}
 
 			case FileType::DAT: {
-				manatools::io::FileIO file(path.toStdString(), "wb");
+				manatools::io::FileIO file(path.toStdWString(), "wb");
 				file.writeVec(*split.tone.data);
 				break;
 			}

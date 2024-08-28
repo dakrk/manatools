@@ -189,8 +189,8 @@ Bank load(const fs::path& path) {
 
 					io.readU8(&split.unk4);
 					
-					layer.splits.push_back(std::move(split));
 					ptrsToneData.push_back(split.ptrToneData_);
+					layer.splits.push_back(std::move(split));
 				}
 				assert(layer.splits.size() == numSplits);
 

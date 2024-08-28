@@ -40,7 +40,7 @@ std::error_code DataIO::make_error_code(Error e) {
  *          FileIO          *
  * ======================== */
 
-FileIO::FileIO(const char* path, const char* mode, bool exceptions, bool eofErrors) : DataIO(exceptions, eofErrors) {
+void FileIO::open(const char* path, const char* mode) {
 	handle_ = fopen(path, mode);
 
 	if (!handle_)
@@ -48,8 +48,12 @@ FileIO::FileIO(const char* path, const char* mode, bool exceptions, bool eofErro
 }
 
 #ifdef _WIN32
-FileIO::FileIO(const wchar_t* path, const wchar_t* mode, bool exceptions, bool eofErrors) : DataIO(exceptions, eofErrors) {
-	handle_ = _wfopen(path, mode);
+void FileIO::open(const wchar_t* path, const char* mode) {
+	wchar_t modeW[10];
+	size_t len = mbstowcs(modeW, mode, std::size(modeW));
+	modeW[len] = '\0';
+
+	handle_ = _wfopen(path, modeW);
 
 	if (!handle_)
 		setError(POSIX_ERROR_CODE(errno));
