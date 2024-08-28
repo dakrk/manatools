@@ -26,13 +26,9 @@ void mltListUnits(const fs::path& mltPath) {
 	for (size_t u = 0; u < mlt.units.size(); u++) {
 		const auto& unit = mlt.units[u];
 
-		char type[5];
-		memcpy(type, unit.fourCC, 4);
-		type[4] = '\0';
-
 		// Will become misaligned if something is too big, but such chances are low
 		printf("%4zu  %4s  %4u  %13x  %11u  %13x  %11zu\n",
-		       u, type, unit.bank, unit.aicaDataPtr_, unit.aicaDataSize_,
+		       u, unit.fourCC, unit.bank, unit.aicaDataPtr_, unit.aicaDataSize_,
 		       unit.fileDataPtr_, unit.data.size());
 	}
 }
@@ -44,8 +40,9 @@ void mltExtractUnits(const fs::path& mltPath, const fs::path& unitOutPath) {
 		const auto& unit = mlt.units[u];
 
 		if (!unit.data.size()) {
-			// TODO: Print FourCC of unit (as no data makes sense for SFPW)
-			fprintf(stderr, "Warning: Unit %zu has no data\n", u);
+			char msg[40];
+			snprintf(msg, std::size(msg), "Warning: Unit %zu (%s) has no data\n", u, unit.fourCC);
+			fputs(msg, stderr);
 			continue;
 		}
 

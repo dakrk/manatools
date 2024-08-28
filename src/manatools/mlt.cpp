@@ -32,7 +32,7 @@ MLT load(const fs::path& path) {
 		Unit unit;
 		u32 fileDataSize;
 
-		io.readArrT(unit.fourCC);
+		io.read(unit.fourCC, sizeof(char), 4);
 		io.readU32LE(&unit.bank);
 		io.readU32LE(&unit.aicaDataPtr_);
 		io.readU32LE(&unit.aicaDataSize_);
@@ -85,7 +85,7 @@ void MLT::save(const fs::path& path) {
 	for (size_t i = 0; i < units.size(); i++) {
 		auto& unit = units[i];
 
-		io.writeArrT(unit.fourCC);
+		io.write(unit.fourCC, sizeof(char), 4);
 		io.writeU32LE(unit.bank);
 
 		// Pushed to a vector so offsets can be written later once they're known

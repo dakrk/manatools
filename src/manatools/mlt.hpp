@@ -16,7 +16,7 @@ namespace manatools::mlt {
 	 * how much RAM to allocate to FX
 	 */
 	struct Unit {
-		u8 fourCC[4];
+		char fourCC[5]{};
 		u32 bank;
 		u32 aicaDataPtr_;
 		u32 aicaDataSize_;
