@@ -19,9 +19,6 @@ add_executable(mpbgui
 	SplitEditor.cpp
 	SplitUnkEditor.ui
 	SplitUnkEditor.cpp
-	tone.cpp
-	TonePlayer.cpp
-	InstDataDialog.cpp
 	VelCurveWidget.cpp
 )
 
@@ -29,8 +26,6 @@ target_link_libraries(mpbgui PRIVATE
 	manatools::manatools
 	manatools::guicommon
 	Qt6::Widgets
-	PortAudio::portaudio
-	SndFile::sndfile
 )
 
 set_target_properties(mpbgui PROPERTIES

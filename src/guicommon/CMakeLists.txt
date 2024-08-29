@@ -6,8 +6,12 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 
 add_library(guicommon
 	AmpEnvelopeWidget.cpp
-	FilterEnvelopeWidget.cpp
+	AudioSystem.cpp
 	CursorOverride.hpp
+	FilterEnvelopeWidget.cpp
+	InstDataDialog.cpp
+	tone.cpp
+	TonePlayer.cpp
 	UIntValidator.cpp
 	utils.cpp
 )
@@ -15,6 +19,8 @@ add_library(guicommon
 target_link_libraries(guicommon PUBLIC
 	manatools::manatools
 	Qt6::Widgets
+	PortAudio::portaudio
+	SndFile::sndfile
 )
 
 set_target_properties(guicommon PROPERTIES

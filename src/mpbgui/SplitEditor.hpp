@@ -3,9 +3,9 @@
 #include <QDialog>
 #include <QSettings>
 #include <manatools/mpb.hpp>
+#include <guicommon/TonePlayer.hpp>
 
 #include "ui_SplitEditor.h"
-#include "TonePlayer.hpp"
 
 class SplitEditor : public QDialog {
 	Q_OBJECT

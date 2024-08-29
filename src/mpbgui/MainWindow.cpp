@@ -8,6 +8,8 @@
 #include <manatools/sf2.hpp>
 #include <manatools/wav.hpp>
 #include <guicommon/CursorOverride.hpp>
+#include <guicommon/tone.hpp>
+#include <guicommon/TonePlayer.hpp>
 #include <guicommon/utils.hpp>
 
 #include "MainWindow.hpp"
@@ -17,8 +19,7 @@
 #include "SplitsModel.hpp"
 #include "LayerEditor.hpp"
 #include "SplitEditor.hpp"
-#include "TonePlayer.hpp"
-#include "tone.hpp"
+#include "mpbgui.hpp"
 
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow(parent),
@@ -459,10 +460,11 @@ void MainWindow::about() {
 		tr(
 			"<h3>About mpbgui</h3>"
 			"<small>Version %1</small>" // TODO: Show commit hash here
-			"<p>GUI for editing and converting Sega MIDI Program Bank and MIDI Drum Bank files used by Dreamcast titles.</p>"
-			"<p>This is part of manatools. For more information, visit <a href=\"%2\">%2</a>.</p>"
+			"<p>%2</p>"
+			"<p>This is part of manatools. For more information, visit <a href=\"%3\">%3</a>.</p>"
 		)
 		.arg(QApplication::applicationVersion())
+		.arg(tr(APP_DESCRIPTION))
 		.arg("https://github.com/dakrk/manatools")
 	);
 }

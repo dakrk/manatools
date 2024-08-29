@@ -5,11 +5,11 @@
 #include <QScreen>
 #include <QThread>
 #include <utility>
+#include <guicommon/tone.hpp>
 #include <guicommon/utils.hpp>
 
 #include "SplitEditor.hpp"
 #include "SplitUnkEditor.hpp"
-#include "tone.hpp"
 
 SplitEditor::SplitEditor(QWidget* parent) :
 	QDialog(parent),

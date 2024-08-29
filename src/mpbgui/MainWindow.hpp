@@ -2,12 +2,12 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <manatools/mpb.hpp>
+#include <guicommon/TonePlayer.hpp>
 
 #include "ui_MainWindow.h"
 #include "ProgramsModel.hpp"
 #include "LayersModel.hpp"
 #include "SplitsModel.hpp"
-#include "TonePlayer.hpp"
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
