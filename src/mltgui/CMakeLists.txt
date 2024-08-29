@@ -8,11 +8,11 @@ add_executable(mltgui
 	main.cpp
 	MainWindow.cpp
 	MLTModel.cpp
-	utils.cpp
 )
 
 target_link_libraries(mltgui PRIVATE
 	manatools::manatools
+	manatools::guicommon
 	Qt6::Widgets
 )
 

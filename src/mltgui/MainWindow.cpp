@@ -11,13 +11,13 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 #include <manatools/io.hpp>
+#include <guicommon/CursorOverride.hpp>
+#include <guicommon/utils.hpp>
 #include <functional>
 #include <utility>
 
 #include "MainWindow.hpp"
-#include "CursorOverride.hpp"
 #include "mltgui.hpp"
-#include "utils.hpp"
 
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow(parent),
@@ -279,21 +279,15 @@ void MainWindow::reloadTable() {
 
 QString MainWindow::maybeDropEvent(QDropEvent* event) {
 	const QMimeData* mimeData = event->mimeData();
-
 	if (!mimeData->hasUrls())
 		return {};
 
 	const QList<QUrl> urls = mimeData->urls();
-
 	if (urls.size() != 1)
 		return {};
 
 	const QString path = urls[0].toLocalFile();
-
-	if (path.isEmpty())
-		return {};
-
-	if (!QFileInfo(path).isFile())
+	if (path.isEmpty() || !QFileInfo(path).isFile())
 		return {};
 
 	event->acceptProposedAction();

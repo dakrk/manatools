@@ -19,3 +19,7 @@ QString getOutPath(const QString& curFile, bool dirOnly, const QString& newExten
 	QFileInfo info(curFile);
 	return info.dir().filePath(info.baseName() += '.' + newExtension);
 }
+
+QString formatPtr32(u32 ptr) {
+	return QString("0x%1").arg(ptr, 8, 16, QChar('0'));
+}

@@ -540,21 +540,15 @@ void MainWindow::reloadTables() {
 
 QString MainWindow::maybeDropEvent(QDropEvent* event) {
 	const QMimeData* mimeData = event->mimeData();
-
 	if (!mimeData->hasUrls())
 		return {};
 
 	const QList<QUrl> urls = mimeData->urls();
-
 	if (urls.size() != 1)
 		return {};
 
 	const QString path = urls[0].toLocalFile();
-
-	if (path.isEmpty())
-		return {};
-
-	if (!QFileInfo(path).isFile())
+	if (path.isEmpty() || !QFileInfo(path).isFile())
 		return {};
 
 	event->acceptProposedAction();

@@ -1,6 +1,6 @@
 #include <QPalette>
+#include <guicommon/utils.hpp>
 #include "MLTModel.hpp"
-#include "utils.hpp"
 
 MLTModel::MLTModel(manatools::mlt::MLT* mlt, QObject* parent) :
 	QAbstractTableModel(parent),
