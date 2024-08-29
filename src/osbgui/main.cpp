@@ -3,7 +3,7 @@
 #include <QStyleFactory>
 #include <guicommon/AudioSystem.hpp>
 
-//#include "MainWindow.hpp"
+#include "MainWindow.hpp"
 #include "osbgui.hpp"
 
 int main(int argc, char** argv) {
@@ -30,12 +30,11 @@ int main(int argc, char** argv) {
 	const QStringList args = cmdline.positionalArguments();
 	const QString filePath = args.size() ? args.at(0) : QString();
 
-/*	MainWindow mainWindow;
+	MainWindow mainWindow;
 	mainWindow.show();
 	
-	if (filePath.size())
-		mainWindow.loadFile(filePath);
-*/
+/*	if (filePath.size())
+		mainWindow.loadFile(filePath);*/
 
 	return app.exec();
 }

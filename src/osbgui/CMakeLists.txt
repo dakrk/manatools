@@ -6,6 +6,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 
 add_executable(osbgui
 	main.cpp
+	MainWindow.cpp
 )
 
 target_link_libraries(osbgui PRIVATE
