@@ -2,7 +2,7 @@
 #include <QPainterPath>
 
 #include "AmpEnvelopeWidget.hpp"
-#include "utilities.hpp"
+#include "utils.hpp"
 
 AmpEnvelopeWidget::AmpEnvelopeWidget(QWidget* parent) :
 	QFrame(parent)

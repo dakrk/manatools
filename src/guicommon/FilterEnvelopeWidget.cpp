@@ -2,7 +2,7 @@
 #include <QPainterPath>
 
 #include "FilterEnvelopeWidget.hpp"
-#include "utilities.hpp"
+#include "utils.hpp"
 
 FilterEnvelopeWidget::FilterEnvelopeWidget(QWidget* parent) :
 	QFrame(parent)

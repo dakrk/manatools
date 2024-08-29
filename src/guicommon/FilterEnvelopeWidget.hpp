@@ -1,11 +1,11 @@
 #pragma once
 #include <QFrame>
-#include <manatools/mpb.hpp>
+#include <manatools/common.hpp>
 
 class FilterEnvelopeWidget : public QFrame {
 	Q_OBJECT
 public:
-	typedef manatools::mpb::FilterEnvelope FilterEnvelope;
+	typedef manatools::common::FilterEnvelope FilterEnvelope;
 
 	explicit FilterEnvelopeWidget(QWidget* parent = nullptr);
 	FilterEnvelopeWidget(const FilterEnvelope& filterEnvelope, QWidget* parent = nullptr);

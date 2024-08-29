@@ -1,12 +1,14 @@
+#include <QCloseEvent>
+#include <QFileDialog>
+#include <QKeySequence>
+#include <QMimeData>
 #include <QScreen>
 #include <QStyle>
-#include <QKeySequence>
-#include <QFileDialog>
-#include <QCloseEvent>
-#include <QMimeData>
 #include <stdexcept>
 #include <manatools/sf2.hpp>
 #include <manatools/wav.hpp>
+#include <guicommon/CursorOverride.hpp>
+#include <guicommon/utils.hpp>
 
 #include "MainWindow.hpp"
 #include "BankPropertiesDialog.hpp"
@@ -15,10 +17,8 @@
 #include "SplitsModel.hpp"
 #include "LayerEditor.hpp"
 #include "SplitEditor.hpp"
-#include "CursorOverride.hpp"
 #include "TonePlayer.hpp"
 #include "tone.hpp"
-#include "utilities.hpp"
 
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow(parent),
@@ -253,7 +253,6 @@ bool MainWindow::saveFile(const QString& path) {
 		return false;
 	}
 
-	cursor.restore();
 	setCurrentFile(path);
 
 	return true;

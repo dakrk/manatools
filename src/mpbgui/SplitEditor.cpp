@@ -1,15 +1,15 @@
-#include <QScreen>
-#include <QMessageBox>
 #include <QCloseEvent>
-#include <QThread>
-#include <QMenu>
 #include <QFileInfo>
+#include <QMenu>
+#include <QMessageBox>
+#include <QScreen>
+#include <QThread>
 #include <utility>
+#include <guicommon/utils.hpp>
 
 #include "SplitEditor.hpp"
 #include "SplitUnkEditor.hpp"
 #include "tone.hpp"
-#include "utilities.hpp"
 
 SplitEditor::SplitEditor(QWidget* parent) :
 	QDialog(parent),

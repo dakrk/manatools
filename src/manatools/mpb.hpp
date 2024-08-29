@@ -3,6 +3,7 @@
 #include <optional>
 #include <vector>
 
+#include "common.hpp"
 #include "filesystem.hpp"
 #include "tone.hpp"
 #include "types.hpp"
@@ -17,36 +18,9 @@ namespace manatools::mpb {
 	constexpr size_t MAX_SPLITS     = 128; // per layer
 	constexpr size_t MAX_VELOCITIES = 31;
 
-	enum class LFOWaveType : u8 {
-		Saw      = 0,
-		Square   = 1,
-		Triangle = 2,
-		Noise    = 3
-	};
-	
-	struct AmpEnvelope {
-		u8 attackRate     = 31; // [0 -> 31]
-		u8 decayRate1     = 0;  // [0 -> 31]
-		u8 decayRate2     = 0;  // [0 -> 31]
-		u8 releaseRate    = 31; // [0 -> 31]
-		u8 decayLevel     = 0;  // [0 -> 31]
-		u8 keyRateScaling = 0;  // [0 -> 15]
-	};
-
-	struct FilterEnvelope {
-		u8 resonance     = 4;    // [0 -> 31]
-
-		u16 startLevel   = 8184; // [0 -> 8184]
-		u16 attackLevel  = 8184; // [0 -> 8184]
-		u16 decayLevel1  = 8184; // [0 -> 8184]
-		u16 decayLevel2  = 8184; // [0 -> 8184]
-		u16 releaseLevel = 8184; // [0 -> 8184]
-
-		u8 decayRate1    = 25;   // [0 -> 31]
-		u8 attackRate    = 25;   // [0 -> 31]
-		u8 releaseRate   = 25;   // [0 -> 31]
-		u8 decayRate2    = 25;   // [0 -> 31]
-	};
+	using common::LFOWaveType;
+	using common::AmpEnvelope;
+	using common::FilterEnvelope;
 
 	struct SplitLFO {
 		u8 ampDepth   = 0; // [0 -> 7]

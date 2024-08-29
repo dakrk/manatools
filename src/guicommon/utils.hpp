@@ -1,6 +1,6 @@
 #pragma once
-#include <QString>
 #include <QPointF>
+#include <QString>
 #include <manatools/types.hpp>
 
 QString noteToString(u8 note);

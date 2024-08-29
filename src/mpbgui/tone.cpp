@@ -1,13 +1,13 @@
-#include <QMessageBox>
 #include <QFileDialog>
+#include <QMessageBox>
+#include <guicommon/CursorOverride.hpp>
+#include <manatools/tone.hpp>
 #include <manatools/tonedecoder.hpp>
 #include <manatools/wav.hpp>
 #include <sndfile.hh>
 
 #include "tone.hpp"
-#include "CursorOverride.hpp"
 #include "InstDataDialog.hpp"
-#include "manatools/tone.hpp"
 
 // we're not in a class, and can't make aliases to a static method with default args
 constexpr auto tr = [](const char* sourceText, const char* disambiguation = nullptr, int n = -1) {

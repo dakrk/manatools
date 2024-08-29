@@ -6,6 +6,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 add_subdirectory(manatools)
+add_subdirectory(guicommon)
 
 add_subdirectory(mlttool)
 add_subdirectory(mpbtool)

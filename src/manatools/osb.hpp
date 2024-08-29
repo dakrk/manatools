@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 
+#include "common.hpp"
 #include "filesystem.hpp"
 #include "tone.hpp"
 #include "types.hpp"
@@ -10,36 +11,9 @@ namespace manatools::osb {
 	constexpr u8 OSB_MAGIC[4] = {'S', 'O', 'S', 'B'};
 	constexpr u8 OSP_MAGIC[4] = {'S', 'O', 'S', 'P'};
 
-	enum class LFOWaveType : u8 {
-		Saw      = 0,
-		Square   = 1,
-		Triangle = 2,
-		Noise    = 3
-	};
-
-	struct AmpEnvelope {
-		u8 attackRate     = 31; // [0 -> 31]
-		u8 decayRate1     = 0;  // [0 -> 31]
-		u8 decayRate2     = 0;  // [0 -> 31]
-		u8 releaseRate    = 31; // [0 -> 31]
-		u8 decayLevel     = 0;  // [0 -> 31]
-		u8 keyRateScaling = 0;  // [0 -> 15]
-	};
-
-	struct FilterEnvelope {
-		u8 resonance     = 0;    // [0 -> 31]
-
-		u16 startLevel   = 8184; // [8 -> 8184]
-		u16 attackLevel  = 8184; // [8 -> 8184]
-		u16 decayLevel1  = 8184; // [8 -> 8184]
-		u16 decayLevel2  = 8184; // [8 -> 8184]
-		u16 releaseLevel = 8184; // [8 -> 8184]
-
-		u8 decayRate1    = 25;   // [0 -> 31]
-		u8 attackRate    = 25;   // [0 -> 31]
-		u8 releaseRate   = 25;   // [0 -> 31]
-		u8 decayRate2    = 25;   // [0 -> 31]
-	};
+	using common::LFOWaveType;
+	using common::AmpEnvelope;
+	using common::FilterEnvelope;
 
 	struct ProgramLFO {
 		u8 ampDepth   = 0; // [0 -> 7]

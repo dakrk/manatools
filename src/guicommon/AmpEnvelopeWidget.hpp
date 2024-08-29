@@ -1,11 +1,11 @@
 #pragma once
 #include <QFrame>
-#include <manatools/mpb.hpp>
+#include <manatools/common.hpp>
 
 class AmpEnvelopeWidget : public QFrame {
 	Q_OBJECT
 public:
-	typedef manatools::mpb::AmpEnvelope AmpEnvelope;
+	typedef manatools::common::AmpEnvelope AmpEnvelope;
 
 	explicit AmpEnvelopeWidget(QWidget* parent = nullptr);
 	AmpEnvelopeWidget(const AmpEnvelope& ampEnvelope, QWidget* parent = nullptr);

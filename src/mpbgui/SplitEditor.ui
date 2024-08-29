@@ -1373,13 +1373,13 @@
   <customwidget>
    <class>AmpEnvelopeWidget</class>
    <extends>QFrame</extends>
-   <header>AmpEnvelopeWidget.hpp</header>
+   <header>guicommon/AmpEnvelopeWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>FilterEnvelopeWidget</class>
    <extends>QFrame</extends>
-   <header>FilterEnvelopeWidget.hpp</header>
+   <header>guicommon/FilterEnvelopeWidget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
