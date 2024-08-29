@@ -59,7 +59,7 @@ MLT load(const fs::path& path) {
 }
 
 void MLT::save(const fs::path& path) {
-	io::FileIO io(path, "rb");
+	io::FileIO io(path, "wb");
 
 	io.writeArrT(MLT_MAGIC);
 	io.writeU32LE(2); // TODO: 2 surely wouldn't always be right (assuming this is version)

@@ -12,7 +12,7 @@ int MLTModel::rowCount(const QModelIndex& parent) const {
 }
 
 int MLTModel::columnCount(const QModelIndex& parent) const {
-	return parent.isValid() ? 0 : 7;
+	return parent.isValid() ? 0 : 6;
 }
 
 QVariant MLTModel::data(const QModelIndex& index, int role) const {
@@ -23,13 +23,12 @@ QVariant MLTModel::data(const QModelIndex& index, int role) const {
 
 	if (role == Qt::DisplayRole || role == Qt::EditRole) {
 		switch (index.column()) {
-			case 0: return index.row() + 1;
-			case 1: return QString::fromUtf8({unit.fourCC, 4});
-			case 2: return unit.bank;
-			case 3: return unit.aicaDataPtr_;
-			case 4: return unit.aicaDataSize_;
-			case 5: return unit.fileDataPtr_;
-			case 6: return QVariant::fromValue(unit.data.size());
+			case 0: return QString::fromUtf8({unit.fourCC, 4});
+			case 1: return unit.bank;
+			case 2: return unit.aicaDataPtr_;
+			case 3: return unit.aicaDataSize_;
+			case 4: return unit.fileDataPtr_;
+			case 5: return QVariant::fromValue(unit.data.size());
 		}
 	} else if (role == Qt::TextAlignmentRole) {
 		if (index.column() == 0) {
@@ -47,15 +46,20 @@ QVariant MLTModel::data(const QModelIndex& index, int role) const {
 QVariant MLTModel::headerData(int section, Qt::Orientation orientation, int role) const {
 	if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
 		switch (section) {
-			case 0: return tr("Unit");
-			case 1: return tr("Type");
-			case 2: return tr("Bank");
-			case 3: return tr("Offset [AICA]");
-			case 4: return tr("Size [AICA]");
-			case 5: return tr("Offset [File]");
-			case 6: return tr("Size [File]");
+			case 0: return tr("Type");
+			case 1: return tr("Bank");
+			case 2: return tr("Offset [AICA]");
+			case 3: return tr("Size [AICA]");
+			case 4: return tr("Offset [File]");
+			case 5: return tr("Size [File]");
 		}
 	}
 
 	return QAbstractItemModel::headerData(section, orientation, role);
+}
+
+void MLTModel::setMLT(manatools::mlt::MLT* newMLT) {
+	beginResetModel();
+	mlt = newMLT;
+	endResetModel();
 }
