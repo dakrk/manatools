@@ -20,6 +20,9 @@ public slots:
 	bool save();
 	bool saveAs();
 	void about();
+	void addUnit(const QString& fourCC);
+	bool importUnitDialog();
+	bool exportUnitDialog();
 
 protected:
 	void closeEvent(QCloseEvent* event) override;
@@ -27,6 +30,9 @@ protected:
 	void dropEvent(QDropEvent* event) override;
 
 private:
+	bool importUnit(manatools::mlt::Unit& unit, const QString& path);
+	bool exportUnit(const manatools::mlt::Unit& unit, const QString& path);
+
 	void resetTableLayout();
 	void reloadTable();
 

@@ -4,9 +4,11 @@
 
 MLTModel::MLTModel(manatools::mlt::MLT* mlt, QObject* parent) :
 	QAbstractTableModel(parent),
+	dimmedTextColor(QPalette().color(QPalette::WindowText)),
 	mlt(mlt)
 {
 	headerFont.setBold(true);
+	dimmedTextColor.setAlpha(96);
 }
 
 int MLTModel::rowCount(const QModelIndex& parent) const {
@@ -30,10 +32,10 @@ QVariant MLTModel::data(const QModelIndex& index, int role) const {
 			case 2: return formatPtr32(unit.aicaDataPtr_);
 			case 3: return unit.aicaDataSize_;
 			case 4: {
-				if (unit.fileDataPtr_ == manatools::mlt::UNUSED) {
+				if (unit.fileDataPtr() == manatools::mlt::UNUSED) {
 					return !strcmp(unit.fourCC, "SFPW") ? "N/A" : tr("None");
 				}
-				return formatPtr32(unit.fileDataPtr_);
+				return formatPtr32(unit.fileDataPtr());
 			}
 			case 5: return QVariant::fromValue(unit.data.size());
 		}
@@ -46,10 +48,8 @@ QVariant MLTModel::data(const QModelIndex& index, int role) const {
 			return headerFont;
 		}
 	} else if (role == Qt::ForegroundRole) {
-		if (unit.fileDataPtr_ == manatools::mlt::UNUSED) {
-			QColor color = QPalette().color(QPalette::WindowText);
-			color.setAlpha(96);
-			return color;
+		if (unit.fileDataPtr() == manatools::mlt::UNUSED) {
+			return dimmedTextColor;
 		}
 	}
 
@@ -73,6 +73,16 @@ QVariant MLTModel::headerData(int section, Qt::Orientation orientation, int role
 	}
 
 	return QAbstractItemModel::headerData(section, orientation, role);
+}
+
+Qt::ItemFlags MLTModel::flags(const QModelIndex& index) const {
+	Qt::ItemFlags f = QAbstractTableModel::flags(index);
+
+	if (index.isValid() && index.column() < 4) {
+		// f |= Qt::ItemIsEditable;
+	}
+
+	return f;
 }
 
 void MLTModel::setMLT(manatools::mlt::MLT* newMLT) {

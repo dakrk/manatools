@@ -8,7 +8,11 @@
 #include <QMimeData>
 #include <QPushButton>
 #include <QScreen>
+#include <QToolButton>
 #include <QVBoxLayout>
+#include <manatools/io.hpp>
+#include <functional>
+#include <utility>
 
 #include "MainWindow.hpp"
 #include "CursorOverride.hpp"
@@ -22,7 +26,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	restoreSettings();
 
 	QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
-	fileMenu->addAction(QIcon::fromTheme("document-new"), tr("&New"), QKeySequence::New,this, &MainWindow::newFile);
+	fileMenu->addAction(QIcon::fromTheme("document-new"), tr("&New"), QKeySequence::New, this, &MainWindow::newFile);
 	fileMenu->addAction(QIcon::fromTheme("document-open"), tr("&Open"), QKeySequence::Open, this, &MainWindow::open);
 	fileMenu->addSeparator();
 	fileMenu->addAction(QIcon::fromTheme("document-save"), tr("&Save"), QKeySequence::Save, this, &MainWindow::save);
@@ -34,21 +38,39 @@ MainWindow::MainWindow(QWidget* parent) :
 	helpMenu->addAction(QIcon::fromTheme("help-about"), tr("&About"), this, &MainWindow::about);
 	helpMenu->addAction(tr("About Qt"), this, [this]() { QMessageBox::aboutQt(this); });
 
+	QMenu* unitTypeMenu = new QMenu(this);
+	unitTypeMenu->addAction(tr("MIDI Sequence Bank [MSB]"), std::bind(&MainWindow::addUnit, this, "SMSB"));
+	unitTypeMenu->addAction(tr("MIDI Program Bank [MPB]"), std::bind(&MainWindow::addUnit, this, "SMPB"));
+	unitTypeMenu->addAction(tr("MIDI Drum Bank [MDB]"), std::bind(&MainWindow::addUnit, this, "SMDB"));
+	unitTypeMenu->addAction(tr("One Shot Bank [OSB]"), std::bind(&MainWindow::addUnit, this, "SOSB"));
+	unitTypeMenu->addAction(tr("FX Program Bank [FPB]"), std::bind(&MainWindow::addUnit, this, "SFPB"));
+	unitTypeMenu->addAction(tr("FX Output Bank [FOB]"), std::bind(&MainWindow::addUnit, this, "SFOB"));
+	unitTypeMenu->addAction(tr("FX Program Work [FPW]"), std::bind(&MainWindow::addUnit, this, "SFPW"));
+	unitTypeMenu->addAction(tr("PCM Stream Ring Buffer [PSR]"), std::bind(&MainWindow::addUnit, this, "SPSR"));
+
 	table = new QTableView(this);
 	model = new MLTModel(&mlt, this);
-	//table->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	table->setSelectionBehavior(QAbstractItemView::SelectRows);
+	table->setSelectionMode(QAbstractItemView::SingleSelection);
 	table->setModel(model);
 
 	setCurrentFile();
 	resetTableLayout();
 
-	QPushButton* btnAddUnit = new QPushButton(QIcon::fromTheme("list-add"), "");
+	QToolButton* toolbtnAddUnit = new QToolButton();
+	toolbtnAddUnit->setIcon(QIcon::fromTheme("list-add"));
+	toolbtnAddUnit->setPopupMode(QToolButton::InstantPopup);
+	toolbtnAddUnit->setMenu(unitTypeMenu);
+
 	QPushButton* btnDelUnit = new QPushButton(QIcon::fromTheme("list-remove"), "");
 	QPushButton* btnImportUnitData = new QPushButton(QIcon::fromTheme("document-open"), "");
 	QPushButton* btnExportUnitData = new QPushButton(QIcon::fromTheme("document-save-as"), "");
 
+	connect(btnImportUnitData, &QPushButton::clicked, this, &MainWindow::importUnitDialog);
+	connect(btnExportUnitData, &QPushButton::clicked, this, &MainWindow::exportUnitDialog);
+
 	QHBoxLayout* btnLayout = new QHBoxLayout();
-	btnLayout->addWidget(btnAddUnit);
+	btnLayout->addWidget(toolbtnAddUnit);
 	btnLayout->addWidget(btnDelUnit);
 	btnLayout->addStretch(1);
 	btnLayout->addWidget(btnImportUnitData);
@@ -156,6 +178,44 @@ void MainWindow::about() {
 	);
 }
 
+void MainWindow::addUnit(const QString& fourCC) {
+	assert(fourCC.size() == 4);
+	QMessageBox::information(this, "test", fourCC);
+}
+
+bool MainWindow::importUnitDialog() {
+	return false;
+}
+
+bool MainWindow::exportUnitDialog() {
+	auto curIdx = table->selectionModel()->currentIndex();
+	if (!curIdx.isValid() || std::cmp_greater_equal(curIdx.row(), mlt.units.size()))
+		return false;
+
+	const auto& unit = mlt.units[curIdx.row()];
+	QString unitExt = unit.fourCC + 1;
+
+	auto defPath = QDir(getOutPath(curFile, true)).filePath(
+		QString("%1_%2-%3.%4")
+			.arg(QFileInfo(curFile).baseName())
+			.arg(curIdx.row())
+			.arg(unit.bank)
+			.arg(unitExt.toLower())
+	);
+
+	const QString path = QFileDialog::getSaveFileName(
+		this,
+		tr("Export unit"),
+		defPath,
+		tr("%1 file (*.%2);;All files (*.*)").arg(unitExt).arg(unitExt.toLower())
+	);
+
+	if (path.isEmpty())
+		return false;
+
+	return exportUnit(unit, path);
+}
+
 void MainWindow::closeEvent(QCloseEvent* event) {
 	saveSettings();
 	if (maybeSave()) {
@@ -174,6 +234,33 @@ void MainWindow::dropEvent(QDropEvent* event) {
 	if (!path.isEmpty() && maybeSave()) {
 		loadFile(path);
 	}
+}
+
+bool MainWindow::importUnit(manatools::mlt::Unit& unit, const QString& path) {
+	Q_UNUSED(unit)
+	Q_UNUSED(path)
+	return false;
+}
+
+bool MainWindow::exportUnit(const manatools::mlt::Unit& unit, const QString& path) {
+	CursorOverride cursor(Qt::WaitCursor);
+
+	if (unit.fileDataPtr() == manatools::mlt::UNUSED) {
+		cursor.restore();
+		QMessageBox::warning(this, "", tr("Selected unit has no data (no file offset), cannot export."));
+		return false;
+	}
+
+	try {
+		manatools::io::FileIO file(path.toStdWString(), "wb");
+		file.writeVec(unit.data);
+	} catch (const std::runtime_error& err) {
+		cursor.restore();
+		QMessageBox::warning(this, "", tr("Failed to export unit: %1").arg(err.what()));
+		return false;
+	}
+	
+	return true;
 }
 
 void MainWindow::resetTableLayout() {

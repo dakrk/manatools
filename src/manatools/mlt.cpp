@@ -10,7 +10,7 @@
 
 namespace manatools::mlt {
 
-MLT load(const fs::path& path) {
+MLT MLT::load(const fs::path& path) {
 	io::FileIO io(path, "rb");
 	MLT mlt;
 
@@ -122,8 +122,9 @@ void MLT::save(const fs::path& path) {
 
 		curAICAOffset += unit.aicaDataSize_;
 		if (curAICAOffset >= AICA_MAX) {
-			// TODO: what unit?
-			throw std::runtime_error("MLT unit exceeds available AICA RAM");
+			char err[48];
+			snprintf(err, std::size(err), "MLT unit %zu exceeds available AICA RAM (>%u)", i, AICA_MAX);
+			throw std::runtime_error(err);
 		}
 	}
 

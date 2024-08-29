@@ -1,5 +1,6 @@
 #pragma once
 #include <QAbstractTableModel>
+#include <QColor>
 #include <QFont>
 #include <manatools/mlt.hpp>
 
@@ -14,9 +15,12 @@ public:
 	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
+	Qt::ItemFlags flags(const QModelIndex& index) const override;
+
 	void setMLT(manatools::mlt::MLT* newMLT);
 
 private:
+	QColor dimmedTextColor;
 	QFont headerFont;
 	manatools::mlt::MLT* mlt;
 };

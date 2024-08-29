@@ -20,15 +20,22 @@ namespace manatools::mlt {
 		u32 bank;
 		u32 aicaDataPtr_;
 		u32 aicaDataSize_;
-		u32 fileDataPtr_;
+		u32 fileDataPtr() const { return fileDataPtr_; }
 		std::vector<u8> data;
+
+	private:
+		friend struct MLT;
+		u32 fileDataPtr_;
 	};
 
 	struct MLT {
+		static MLT load(const fs::path& path);
 		void save(const fs::path& path);
 
 		std::vector<Unit> units;
 	};
 
-	MLT load(const fs::path& path);
+	inline MLT load(const fs::path& path) {
+		return MLT::load(path);
+	}
 } // namespace manatools::mlt
