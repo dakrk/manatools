@@ -642,30 +642,21 @@ uint Program::usedLayers() const {
 }
 
 s8 Split::fromPanPot(u8 in, u32 version) {
-	s8 panPot = 0;
+	if (version == 2)
+		return in >= 32 ? (s8)in - 32 : 16 - (s8)in;
+	else if (version == 1)
+		return in >= 16 ? 16 - (s8)in : (s8)in;
 
-	if (version == 2) {
-		panPot = in & 0xF;
-		if ((in & 0x30) >> 4 == 2)
-			panPot *= -1;
-	} else {
-		// TODO: not sure about version 1 panning, sorry
-	}
-
-	return panPot;
+	return 0;
 }
 
 u8 Split::toPanPot(s8 in, u32 version) {
-	s8 panPot = 0;
+	if (version == 2)
+		return in >= 0 ? (s8)in + 32 : 16 - (s8)in;
+	else if (version == 1)
+		return in >= 0 ? (s8)in : 16 - (s8)in;
 
-	if (version == 2) {
-		WRITEBITS(panPot, abs(in), 0, 4);
-		WRITEBITS(panPot, (in > 0 ? 1 : 2), 4, 2);
-	} else {
-		// TODO: not sure about version 1 panning, sorry
-	}
-
-	return panPot;
+	return 0;
 }
 
 } // namespace manatools::mpb
