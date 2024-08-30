@@ -652,9 +652,9 @@ s8 Split::fromPanPot(u8 in, u32 version) {
 
 u8 Split::toPanPot(s8 in, u32 version) {
 	if (version == 2)
-		return in >= 0 ? (s8)in + 32 : 16 - (s8)in;
+		return in >= 0 ? in + 32 : 16 - in;
 	else if (version == 1)
-		return in >= 0 ? (s8)in : 16 - (s8)in;
+		return in >= 0 ? in : 16 - in;
 
 	return 0;
 }
