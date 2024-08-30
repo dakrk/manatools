@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QStyleFactory>
+#include <manatools/version.hpp>
 
 #include "MainWindow.hpp"
 #include "mltgui.hpp"
@@ -9,7 +10,7 @@ int main(int argc, char** argv) {
 	QApplication app(argc, argv);
 	app.setApplicationName("mltgui");
 	app.setApplicationDisplayName("mltgui");
-	app.setApplicationVersion("0.1.0");
+	app.setApplicationVersion(manatools::versionString);
 	app.setOrganizationName("DarkOK");
 	app.setOrganizationDomain("darkok.xyz");
 

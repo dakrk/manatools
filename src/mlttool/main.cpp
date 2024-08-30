@@ -4,6 +4,7 @@
 #include <manatools/filesystem.hpp>
 #include <manatools/io.hpp>
 #include <manatools/mlt.hpp>
+#include <manatools/version.hpp>
 
 namespace fs = manatools::fs;
 namespace io = manatools::io;
@@ -88,7 +89,7 @@ int main(int argc, char** argv) {
 invalid:
 	fprintf(
 		stderr,
-		"mlttool - Dreamcast Multi-Unit file tool [version 0.1.0]\n"
+		"mlttool - Dreamcast Multi-Unit file tool [version %s]\n"
 		"https://github.com/dakrk/manatools\n"
 		"\n"
 		"Usage: %s extract <in.mlt> <outdir>\n"
@@ -108,6 +109,7 @@ invalid:
 		"alignment requirements.\n"
 		"\n"
 		"The aforementioned usage syntax is not final and will be revised.\n",
+		manatools::versionString,
 		argv[0],
 		argv[0],
 		argv[0]

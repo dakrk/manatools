@@ -9,6 +9,7 @@
 #include <manatools/msb.hpp>
 #include <manatools/msd.hpp>
 #include <manatools/note.hpp>
+#include <manatools/version.hpp>
 
 namespace fs = manatools::fs;
 namespace io = manatools::io;
@@ -244,7 +245,7 @@ int main(int argc, char** argv) {
 invalid:
 	fprintf(
 		stderr,
-		"msbtool - Dreamcast MIDI Sequence Bank tool [version 0.1.0]\n"
+		"msbtool - Dreamcast MIDI Sequence Bank tool [version %s]\n"
 		"https://github.com/dakrk/manatools\n"
 		"\n"
 		"Usage: %s extract <in.msb> <outdir>\n"
@@ -262,6 +263,7 @@ invalid:
 		"      previously repeated sequence.\n"
 		"\n"
 		"The aforementioned usage syntax is not final and will be revised.\n",
+		manatools::versionString,
 		argv[0],
 		argv[0]
 	);

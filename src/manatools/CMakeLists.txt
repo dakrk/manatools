@@ -11,6 +11,8 @@ add_library(manatools
 	yadpcm.cpp
 )
 
+configure_file(version.hpp.in version.hpp)
+
 target_link_libraries(manatools PUBLIC
 	sf2cute::sf2cute
 )

@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QStyleFactory>
+#include <manatools/version.hpp>
 #include <guicommon/AudioSystem.hpp>
 
 #include "MainWindow.hpp"
@@ -11,7 +12,7 @@ int main(int argc, char** argv) {
 	QApplication app(argc, argv);
 	app.setApplicationName("mpbgui");
 	app.setApplicationDisplayName("mpbgui");
-	app.setApplicationVersion("0.1.0");
+	app.setApplicationVersion(manatools::versionString);
 	app.setOrganizationName("DarkOK");
 	app.setOrganizationDomain("darkok.xyz");
 

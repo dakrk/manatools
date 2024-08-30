@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstring>
+#include <manatools/version.hpp>
 
 #include "operations.hpp"
 
@@ -47,7 +48,7 @@ int main(int argc, char** argv) {
 invalid:
 	fprintf(
 		stderr,
-		"mpbtool - Dreamcast MIDI Program Bank tool [version 0.1.0]\n"
+		"mpbtool - Dreamcast MIDI Program Bank tool [version %s]\n"
 		"https://github.com/dakrk/manatools\n"
 		"\n"
 		"Usage: %s convert <in.mpb> <out.sf2>\n"
@@ -67,6 +68,7 @@ invalid:
 		"have the same file format internally.\n"
 		"\n"
 		"The aforementioned usage syntax is not final and will be revised.\n",
+		manatools::versionString,
 		argv[0],
 		argv[0],
 		argv[0]

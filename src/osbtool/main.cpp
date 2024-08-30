@@ -5,6 +5,7 @@
 #include <manatools/io.hpp>
 #include <manatools/osb.hpp>
 #include <manatools/tonedecoder.hpp>
+#include <manatools/version.hpp>
 #include <manatools/wav.hpp>
 
 namespace fs = manatools::fs;
@@ -93,7 +94,7 @@ int main(int argc, char** argv) {
 invalid:
 	fprintf(
 		stderr,
-		"osbtool - Dreamcast One Shot Bank tool [version 0.1.0]\n"
+		"osbtool - Dreamcast One Shot Bank tool [version %s]\n"
 		"https://github.com/dakrk/manatools\n"
 		"\n"
 		"Usage: %s extract <format> <in.osb> <outdir>\n"
@@ -107,6 +108,7 @@ invalid:
 		"An OSB file is a collection of samples used for SFX.\n"
 		"\n"
 		"The aforementioned usage syntax is not final and will be revised.\n",
+		manatools::versionString,
 		argv[0]
 	);
 
