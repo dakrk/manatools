@@ -94,7 +94,6 @@ invalid:
 		"\n"
 		"Usage: %s extract <in.mlt> <outdir>\n"
 		"       %s list <in.mlt>\n"
-		"       %s exportmidis <in.mlt> <outdir>\n"
 		"\n"
 		"An MLT file groups multiple audio-related files (called \"units\" or \"blocks\")\n"
 		"together into a single file. The MLT file specifies where each unit shall be\n"
@@ -110,7 +109,6 @@ invalid:
 		"\n"
 		"The aforementioned usage syntax is not final and will be revised.\n",
 		manatools::versionString,
-		argv[0],
 		argv[0],
 		argv[0]
 	);
