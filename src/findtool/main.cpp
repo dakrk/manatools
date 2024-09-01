@@ -9,6 +9,8 @@
 #include <manatools/version.hpp>
 #include <mio/mmap.hpp>
 
+#define BEGIN_END(c) std::begin(c), std::end(c)
+
 namespace fs = manatools::fs;
 namespace io = manatools::io;
 
@@ -34,7 +36,13 @@ void searchAll(It1 first, It1 last, It2 s_first, It2 s_last, Callback cb) {
 	}
 }
 
-#define BEGIN_END(c) std::begin(c), std::end(c)
+void strToLower(char* str) {
+	char ch;
+	do {
+		ch = *str;
+		*str++ = tolower(ch);
+	} while (ch);
+}
 
 void findFiles(const fs::path& inPath, const fs::path& outPath = fs::path()) {
 	// a ummap_source would be more suitable, but a SpanIO isn't const
@@ -43,7 +51,7 @@ void findFiles(const fs::path& inPath, const fs::path& outPath = fs::path()) {
 
 	bool dryRun = outPath.empty();
 
-	searchAll(BEGIN_END(inSink), BEGIN_END(MPB_FOURCC), [&](auto it) {
+	auto checkCommon = [&](auto it, const char* name) {
 		std::ptrdiff_t startPos = it - inSink.begin();
 
 		// EOF is not expected during init, but is later
@@ -55,28 +63,52 @@ void findFiles(const fs::path& inPath, const fs::path& outPath = fs::path()) {
 		u32 version;
 		if (!inIO.readU32LE(&version)) return;
 		if (version != 1 && version != 2) {
-			fprintf(stderr, "[%08lx] MPB FourCC found, but unknown/invalid version encountered.\n", startPos);
+			fprintf(stderr, "[%08lx] %s FourCC found, but unknown/invalid version encountered.\n", startPos, name);
 			return;
 		}
 
 		u32 fileSize;
-		if (!inIO.readU32LE(&fileSize))        return;
-		if (!inIO.jump(startPos + fileSize))   return;
-		if (!inIO.backward(4))                 return;
-
 		u8 endCC[4];
-		if (!inIO.readArrT(endCC))             return;
-		if (memcmp(ENDB_FOURCC, endCC, 4))     {
-			printf("%lx 6 %x.%x.%x.%x %c%c%c%c\n", startPos, endCC[0], endCC[1], endCC[2], endCC[3], endCC[0], endCC[1], endCC[2], endCC[3]); return;
+		if (!inIO.readU32LE(&fileSize))      return;
+		if (!inIO.jump(startPos + fileSize)) return;
+		if (!inIO.backward(4))               return;
+		if (!inIO.readArrT(endCC))           return;
+
+		if (memcmp(ENDB_FOURCC, endCC, 4)) {
+			fprintf(stderr, "[%08lx] %s FourCC found, but couldn't find ENDB after supposed fileSize.\n", startPos, name);
+			return;
 		}
 
-		printf("[%08lx] Found MPB, size=%u\n", startPos, fileSize);
+		printf("[%08lx] Found %s, size=%u\n", startPos, name, fileSize);
 
 		if (!dryRun) {
-			fs::path fileName = inPath.stem().concat("_0x" + std::to_string(startPos) += ".mpb");
+			char nameSuffix[24];
+			snprintf(nameSuffix, std::size(nameSuffix), "_0x%lx.%s", startPos, name);
+			strToLower(nameSuffix);
+			fs::path fileName = inPath.stem().concat(nameSuffix);
 			io::FileIO outFile(outPath / fileName, "wb");
 			outFile.writeSpan(inIO.span().subspan(startPos, fileSize));
 		}
+	};
+
+	searchAll(BEGIN_END(inSink), BEGIN_END(MLT_FOURCC), [&](auto it) {
+
+	});
+
+	searchAll(BEGIN_END(inSink), BEGIN_END(MPB_FOURCC), [&](auto it) {
+		checkCommon(it, "MPB");
+	});
+
+	searchAll(BEGIN_END(inSink), BEGIN_END(MDB_FOURCC), [&](auto it) {
+		checkCommon(it, "MDB");
+	});
+
+	searchAll(BEGIN_END(inSink), BEGIN_END(MSB_FOURCC), [&](auto it) {
+		checkCommon(it, "MSB");
+	});
+
+	searchAll(BEGIN_END(inSink), BEGIN_END(OSB_FOURCC), [&](auto it) {
+		checkCommon(it, "OSB");
 	});
 }
 
@@ -116,7 +148,7 @@ invalid:
 		"unknown packed formats.\n"
 		"NOTE: This is not a magic tool that will always find everything, some things\n"
 		"may be compressed, or data may not be stored contingous (so feeding whole game\n"
-		"rips may not fully work either)."
+		"rips may not fully work either).\n"
 		"\n"
 		"The aforementioned usage syntax is not final and will be revised.\n",
 		manatools::versionString,
