@@ -245,4 +245,73 @@ long DynBufIO::tell() {
 	return cur_;
 }
 
+/* ======================== *
+ *          SpanIO          *
+ * ======================== */
+
+size_t SpanIO::read(void* buf, size_t size, size_t count) {
+	size_t bytes = size * count;
+
+	if (cur_ >= span_.size() || !bytes) {
+		eof_ = true;
+		setError(Error::EndOfFile);
+		return 0;
+	}
+
+	size_t toRead = std::min(bytes, span_.size() - cur_);
+
+	memcpy(buf, span_.data() + cur_, toRead);
+	cur_ += toRead;
+
+	if (toRead != bytes) {
+		eof_ = true;
+		setError(Error::EndOfFile);
+	}
+
+	return toRead / size;
+}
+
+size_t SpanIO::write(const void* buf, size_t size, size_t count) {
+	size_t bytes = size * count;
+
+	if (!bytes)
+		return 0;
+
+	memcpy(span_.data() + cur_, buf, bytes);
+	cur_ += bytes;
+
+	return size;
+}
+
+bool SpanIO::seek(long offset, Seek origin) {
+	eof_ = false;
+
+	switch (origin) {
+		case Seek::Set: {
+			cur_ = offset;
+			break;
+		}
+
+		case Seek::Cur: {
+			cur_ += offset;
+			break;
+		}
+
+		case Seek::End: {
+			cur_ = span_.size() - offset;
+			break;
+		}
+
+		default: {
+			assert(!"Invalid seek origin");
+		}
+	}
+
+	return true;
+}
+
+long SpanIO::tell() {
+	return cur_;
+}
+
 } // namespace manatools::io

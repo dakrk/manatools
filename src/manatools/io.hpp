@@ -30,6 +30,7 @@ namespace manatools::io {
 
 		bool jump(long offset)                             { return seek(offset, Seek::Set); }
 		bool forward(long offset)                          { return seek(offset, Seek::Cur); }
+		bool backward(long offset)                         { return seek(-offset, Seek::Cur); }
 		bool end(long offset = 0)                          { return seek(offset, Seek::End); }
 
 		bool readU8(u8* out)                               { return read(out, sizeof(*out), 1) == 1; }
@@ -292,6 +293,26 @@ namespace manatools::io {
 
 	private:
 		VecType& vec_;
+		size_t cur_;
+	};
+
+	class SpanIO : public DataIO {
+	public:
+		typedef std::span<u8> SpanType;
+
+		SpanIO(SpanType span, bool exceptions = true, bool eofErrors = true) :
+			DataIO(exceptions, eofErrors), span_(span), cur_(0) {}
+
+		size_t read(void* buf, size_t size, size_t count) override;
+		size_t write(const void* buf, size_t size, size_t count) override;
+		bool seek(long offset, Seek origin) override;
+		long tell() override;
+
+		SpanType span()                         { return span_; }
+		SpanType::size_type size() const        { return span_.size(); }
+
+	private:
+		SpanType span_;
 		size_t cur_;
 	};
 

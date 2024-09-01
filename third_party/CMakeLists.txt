@@ -32,3 +32,6 @@ if(NOT SndFile_FOUND)
 	set(BUILD_TESTING OFF)
 	add_subdirectory(libsndfile)
 endif()
+
+######## mio ########
+add_subdirectory(mio)

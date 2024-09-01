@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <cstdio>
@@ -6,84 +7,77 @@
 #include <manatools/filesystem.hpp>
 #include <manatools/io.hpp>
 #include <manatools/version.hpp>
+#include <mio/mmap.hpp>
 
 namespace fs = manatools::fs;
 namespace io = manatools::io;
 
-constexpr u8 MLT_MAGIC[4] = {'S', 'M', 'L', 'T'};
-constexpr u8 MPB_MAGIC[4] = {'S', 'M', 'P', 'B'};
-constexpr u8 MDB_MAGIC[4] = {'S', 'M', 'D', 'B'};
-constexpr u8 MSB_MAGIC[4] = {'S', 'M', 'S', 'B'};
-constexpr u8 OSB_MAGIC[4] = {'S', 'O', 'S', 'B'};
+constexpr u8 MLT_FOURCC[4] = {'S', 'M', 'L', 'T'};
+constexpr u8 MPB_FOURCC[4] = {'S', 'M', 'P', 'B'};
+constexpr u8 MDB_FOURCC[4] = {'S', 'M', 'D', 'B'};
+constexpr u8 MSB_FOURCC[4] = {'S', 'M', 'S', 'B'};
+constexpr u8 OSB_FOURCC[4] = {'S', 'O', 'S', 'B'};
+constexpr u8 ENDB_FOURCC[4] = {'E', 'N', 'D', 'B'};
+
+template<typename It1, typename It2, typename Callback>
+void searchAll(It1 first, It1 last, It2 s_first, It2 s_last, Callback cb) {
+	auto it = first;
+	while (it < last) {
+		it = std::search(it, last, s_first, s_last);
+
+		if (it == last)
+			break;
+
+		cb(it);
+
+		it += std::distance(s_first, s_last);
+	}
+}
+
+#define BEGIN_END(c) std::begin(c), std::end(c)
 
 void findFiles(const fs::path& inPath, const fs::path& outPath = fs::path()) {
-	io::FileIO io(inPath, "rb", true, false);
+	// a ummap_source would be more suitable, but a SpanIO isn't const
+	mio::ummap_sink inSink(inPath.string());
+	io::SpanIO inIO(inSink, true, false);
+
 	bool dryRun = outPath.empty();
 
-	constexpr auto validFourCCs = std::to_array({
-		MLT_MAGIC,
-		MPB_MAGIC,
-		MDB_MAGIC,
-		MSB_MAGIC,
-		OSB_MAGIC
+	searchAll(BEGIN_END(inSink), BEGIN_END(MPB_FOURCC), [&](auto it) {
+		std::ptrdiff_t startPos = it - inSink.begin();
+
+		// EOF is not expected during init, but is later
+		inIO.eofErrors(true);
+		inIO.jump(startPos);
+		inIO.forward(4); // jump over header FourCC
+		inIO.eofErrors(false);
+
+		u32 version;
+		if (!inIO.readU32LE(&version)) return;
+		if (version != 1 && version != 2) {
+			fprintf(stderr, "[%08lx] MPB FourCC found, but unknown/invalid version encountered.\n", startPos);
+			return;
+		}
+
+		u32 fileSize;
+		if (!inIO.readU32LE(&fileSize))        return;
+		if (!inIO.jump(startPos + fileSize))   return;
+		if (!inIO.backward(4))                 return;
+
+		u8 endCC[4];
+		if (!inIO.readArrT(endCC))             return;
+		if (memcmp(ENDB_FOURCC, endCC, 4))     {
+			printf("%lx 6 %x.%x.%x.%x %c%c%c%c\n", startPos, endCC[0], endCC[1], endCC[2], endCC[3], endCC[0], endCC[1], endCC[2], endCC[3]); return;
+		}
+
+		printf("[%08lx] Found MPB, size=%u\n", startPos, fileSize);
+
+		if (!dryRun) {
+			fs::path fileName = inPath.stem().concat("_0x" + std::to_string(startPos) += ".mpb");
+			io::FileIO outFile(outPath / fileName, "wb");
+			outFile.writeSpan(inIO.span().subspan(startPos, fileSize));
+		}
 	});
-
-	/**
-	 * Dumb, *really* inefficient searcher. I'm slow with thinking of algorithms so this will have
-	 * to do for now. Perhaps mmap would give a good boost as that should be easier than buffering
-	 * and isn't reading a byte a time, expecting the libc to do a good job with fread and doing
-	 * its own buffering
-	 */
-	bool processNewChar = true;
-	uint tries = 0;
-	u8 chr;
-	u8 fourCCBuf[4];
-	u8 fourCCPos = 0;
-	while (true) {
-		if (processNewChar && !io.readU8(&chr)) {
-			// reached end of file
-			break;
-		}
-
-		bool foundMatch = false;
-
-		for (size_t i = 0; i < std::size(validFourCCs); i++) {
-			if (chr == validFourCCs[i][fourCCPos]) {
-				foundMatch = true;
-				fourCCBuf[fourCCPos++] = chr;
-
-				if (fourCCPos != 4)
-					continue;
-
-				tries = 0;
-				fourCCPos = 0;
-
-				// 4 bytes, so could easily be optimised to be a switch case with 32 bit uints
-				if (!memcmp(fourCCBuf, MLT_MAGIC, 4)) {
-					puts("found MLT");
-				} else if (!memcmp(fourCCBuf, MPB_MAGIC, 4)) {
-					puts("found MPB");
-				} else if (!memcmp(fourCCBuf, MDB_MAGIC, 4)) {
-					puts("found MDB");
-				} else if (!memcmp(fourCCBuf, MSB_MAGIC, 4)) {
-					puts("found MSB")
-				} else if (!memcmp(fourCCBuf, OSB_MAGIC, 4)) {
-					puts("found OSB");
-				} else {
-					assert(!"Unhandled FourCC encountered");
-				}
-
-				break;
-			}
-		}
-
-		// restart sequence on current byte, and go to next byte if still not
-		if (!foundMatch) {
-			tries++;
-			processNewChar = tries >= 2;
-			fourCCPos = 0;
-		}
-	}
 }
 
 int main(int argc, char** argv) {
@@ -120,6 +114,9 @@ invalid:
 		"This tool looks through a larger file to find valid files that are supported by\n"
 		"manatools nested inside it. This may help if you're dealing with otherwise\n"
 		"unknown packed formats.\n"
+		"NOTE: This is not a magic tool that will always find everything, some things\n"
+		"may be compressed, or data may not be stored contingous (so feeding whole game\n"
+		"rips may not fully work either)."
 		"\n"
 		"The aforementioned usage syntax is not final and will be revised.\n",
 		manatools::versionString,

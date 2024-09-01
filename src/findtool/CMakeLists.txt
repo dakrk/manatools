@@ -4,6 +4,7 @@ add_executable(findtool
 
 target_link_libraries(findtool PRIVATE
 	manatools::manatools
+	mio::mio
 )
 
 manatools_target(findtool)

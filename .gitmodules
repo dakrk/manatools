@@ -10,3 +10,7 @@
 	path = third_party/libsndfile
 	url = https://github.com/libsndfile/libsndfile
 	shallow = true
+[submodule "third_party/mio"]
+	path = third_party/mio
+	url = https://github.com/vimpunk/mio
+	shallow = true
