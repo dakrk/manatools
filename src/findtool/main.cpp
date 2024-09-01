@@ -10,6 +10,7 @@
 #include <mio/mmap.hpp>
 
 #define BEGIN_END(c) std::begin(c), std::end(c)
+#define TRY_RET(cond) if (cond) return;
 
 namespace fs = manatools::fs;
 namespace io = manatools::io;
@@ -44,6 +45,14 @@ void strToLower(char* str) {
 	} while (ch);
 }
 
+fs::path makeFileName(const fs::path& inPath, uintptr_t pos, const char* name) {
+	char nameSuffix[24];
+	snprintf(nameSuffix, std::size(nameSuffix), "_0x%zx.%s", pos, name);
+	strToLower(nameSuffix);
+
+	return inPath.stem().concat(nameSuffix);
+}
+
 void findFiles(const fs::path& inPath, const fs::path& outPath = fs::path()) {
 	// a ummap_source would be more suitable, but a SpanIO isn't const
 	mio::ummap_sink inSink(inPath.string());
@@ -52,7 +61,7 @@ void findFiles(const fs::path& inPath, const fs::path& outPath = fs::path()) {
 	bool dryRun = outPath.empty();
 
 	auto checkCommon = [&](auto it, const char* name) {
-		std::ptrdiff_t startPos = it - inSink.begin();
+		uintptr_t startPos = it - inSink.begin();
 
 		// EOF is not expected during init, but is later
 		inIO.eofErrors(true);
@@ -61,38 +70,77 @@ void findFiles(const fs::path& inPath, const fs::path& outPath = fs::path()) {
 		inIO.eofErrors(false);
 
 		u32 version;
-		if (!inIO.readU32LE(&version)) return;
+		TRY_RET(!inIO.readU32LE(&version));
 		if (version != 1 && version != 2) {
-			fprintf(stderr, "[%08lx] %s FourCC found, but unknown/invalid version encountered.\n", startPos, name);
+			// zx should consistently be suitable for printing a uintptr_t I'd hope
+			fprintf(stderr, "[%08zx] %s FourCC found, but unknown/invalid version encountered.\n", startPos, name);
 			return;
 		}
 
 		u32 fileSize;
 		u8 endCC[4];
-		if (!inIO.readU32LE(&fileSize))      return;
-		if (!inIO.jump(startPos + fileSize)) return;
-		if (!inIO.backward(4))               return;
-		if (!inIO.readArrT(endCC))           return;
+		TRY_RET(!inIO.readU32LE(&fileSize));
+		TRY_RET(!inIO.jump(startPos + fileSize));
+		TRY_RET(!inIO.backward(4));
+		TRY_RET(!inIO.readArrT(endCC));
 
 		if (memcmp(ENDB_FOURCC, endCC, 4)) {
-			fprintf(stderr, "[%08lx] %s FourCC found, but couldn't find ENDB after supposed fileSize.\n", startPos, name);
+			fprintf(stderr, "[%08zx] %s FourCC found, but couldn't find ENDB after supposed fileSize.\n", startPos, name);
 			return;
 		}
 
-		printf("[%08lx] Found %s, size=%u\n", startPos, name, fileSize);
+		printf("[%08zx] Found %s, size=%u\n", startPos, name, fileSize);
 
 		if (!dryRun) {
-			char nameSuffix[24];
-			snprintf(nameSuffix, std::size(nameSuffix), "_0x%lx.%s", startPos, name);
-			strToLower(nameSuffix);
-			fs::path fileName = inPath.stem().concat(nameSuffix);
+			fs::path fileName = makeFileName(inPath, startPos, name);
 			io::FileIO outFile(outPath / fileName, "wb");
 			outFile.writeSpan(inIO.span().subspan(startPos, fileSize));
 		}
 	};
 
+	// More error prone, as there isn't a footer I can easily check against
 	searchAll(BEGIN_END(inSink), BEGIN_END(MLT_FOURCC), [&](auto it) {
+		uintptr_t startPos = it - inSink.begin();
 
+		inIO.eofErrors(true);
+		inIO.jump(startPos);
+		inIO.forward(4);
+		inIO.eofErrors(false);
+
+		u32 numUnits;
+		TRY_RET(!inIO.forward(4)); // perhaps version, but weird
+		TRY_RET(!inIO.readU32LE(&numUnits));
+		TRY_RET(!inIO.forward(20));
+
+		u32 highPtr = 0;
+		u32 highSize = 0;
+
+		/**
+		 * TODO: Don't check for failure every read, and only later?
+		 * Could perhaps remove the need for this dumb macro
+		 */
+		for (u32 i = 0; i < numUnits; i++) {
+			u32 filePtr, fileSize;
+			TRY_RET(!inIO.forward(4 * 4)); // Skip FourCC, bank, and AICA fields
+			TRY_RET(!inIO.readU32LE(&filePtr));
+			TRY_RET(!inIO.readU32LE(&fileSize));
+			TRY_RET(!inIO.forward(8));
+
+			if (filePtr != 0xFFFFFFFF && fileSize != 0xFFFFFFFF) {
+				if (filePtr > highPtr) {
+					highPtr = filePtr;
+					highSize = fileSize;
+				}
+			}
+		}
+
+		printf("[%08zx] Found MLT, size=%u\n", startPos, highSize);
+
+		if (!dryRun) {
+			fs::path fileName = makeFileName(inPath, startPos, "MLT");
+			io::FileIO outFile(outPath / fileName, "wb");
+			outFile.writeSpan(inIO.span().subspan(startPos, highPtr + highSize));
+		}
 	});
 
 	searchAll(BEGIN_END(inSink), BEGIN_END(MPB_FOURCC), [&](auto it) {
@@ -146,9 +194,11 @@ invalid:
 		"This tool looks through a larger file to find valid files that are supported by\n"
 		"manatools nested inside it. This may help if you're dealing with otherwise\n"
 		"unknown packed formats.\n"
-		"NOTE: This is not a magic tool that will always find everything, some things\n"
-		"may be compressed, or data may not be stored contingous (so feeding whole game\n"
-		"rips may not fully work either).\n"
+		"\n"
+		"NOTE: This is not a magic tool that will always find everything and extract\n"
+		"perfectly. Some things may be compressed, or data may not be stored\n"
+		"continuously, meaning feeding whole game rips may not fully work and could miss\n"
+		"out files or output broken ones. This can affect MLT extraction the most.\n"
 		"\n"
 		"The aforementioned usage syntax is not final and will be revised.\n",
 		manatools::versionString,
