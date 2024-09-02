@@ -126,10 +126,48 @@ void MLT::save(const fs::path& path) {
 	 * this is.
 	 */
 	auto pos = io.tell();
-	int padding = utils::roundUp(pos, 32l) - pos;
+	int padding = utils::roundUp(pos, UNIT_ALIGN) - pos;
 	for (int i = 0; i < padding; i++) {
 		io.writeU8(0);
 	}
+}
+
+void MLT::adjust() {
+	auto& first = units[0];
+	first.aicaDataPtr = utils::roundUp(first.aicaDataPtr, first.alignment());
+	first.aicaDataSize = utils::roundUp(first.aicaDataSize, UNIT_ALIGN);
+
+	for (size_t i = 1; i < units.size(); i++) {
+		auto& prev = units[i - 1];
+		auto& cur = units[i];
+
+		cur.aicaDataSize = utils::roundUp(cur.aicaDataSize, UNIT_ALIGN);
+
+		u32 minPtr = prev.aicaDataPtr + prev.aicaDataSize;
+		minPtr = utils::roundUp(minPtr, cur.alignment());
+
+		if (cur.aicaDataPtr < minPtr) {
+			cur.aicaDataPtr = minPtr;
+		}
+	}
+}
+
+void MLT::pack(bool useAICASizes) {
+	u32 curAICAOffset = AICA_BASE;
+
+	for (auto& unit : units) {
+		u32 origSize = useAICASizes ? unit.aicaDataSize : unit.data.size();
+		unit.aicaDataPtr = utils::roundUp(curAICAOffset, unit.alignment());
+		unit.aicaDataSize = utils::roundUp(origSize, UNIT_ALIGN);
+		curAICAOffset = unit.aicaDataPtr + unit.aicaDataSize;
+	}
+}
+
+u32 Unit::alignment() const {
+	if (!memcmp(FPW_MAGIC, &fourCC, 4))
+		return FPW_ALIGN;
+
+	return UNIT_ALIGN;
 }
 
 } // namespace manatools::mlt

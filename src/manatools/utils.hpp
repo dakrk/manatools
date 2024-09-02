@@ -13,8 +13,8 @@
 	cls& operator=(cls&&) = delete;
 
 namespace manatools::utils {
-	template <std::integral T>
-	constexpr T roundUp(T num, T mul) {
+	template <std::integral T, std::integral T2>
+	constexpr T roundUp(T num, T2 mul) {
 		if (mul == 0)
 			return num;
 
