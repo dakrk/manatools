@@ -34,8 +34,8 @@ MLT MLT::load(const fs::path& path) {
 
 		io.read(unit.fourCC, sizeof(char), 4);
 		io.readU32LE(&unit.bank);
-		io.readU32LE(&unit.aicaDataPtr_);
-		io.readU32LE(&unit.aicaDataSize_);
+		io.readU32LE(&unit.aicaDataPtr);
+		io.readU32LE(&unit.aicaDataSize);
 		io.readU32LE(&unit.fileDataPtr_);
 		io.readU32LE(&fileDataSize);
 		io.forward(8);
@@ -74,25 +74,23 @@ void MLT::save(const fs::path& path) {
 		io.writeU32LE(UNUSED);
 	}
 
-	std::vector<u32> unitOffsets(units.size());
-	u32 curAICAOffset = AICA_BASE;
-
 	/**
 	 * Seemingly there can be up to 16 of a Unit type.
 	 * (MPB and MDB are treated as the same though)
 	 */
-
+	std::vector<u32> unitOffsets(units.size());
 	for (size_t i = 0; i < units.size(); i++) {
 		auto& unit = units[i];
 
+		// Trust that the AICA fields are valid and aligned
 		io.write(unit.fourCC, sizeof(char), 4);
 		io.writeU32LE(unit.bank);
+		io.writeU32LE(unit.aicaDataPtr);
+		io.writeU32LE(unit.aicaDataSize);
 
-		// Pushed to a vector so offsets can be written later once they're known
+		// Write file data offset once known
 		unitOffsets[i] = io.tell();
-		io.writeU32LE(0); // AICA Data Offset
-		io.writeU32LE(0); // AICA Data Size
-		io.writeU32LE(0); // File Data Offset
+		io.writeU32LE(0);
 
 		if (unit.data.size() >= std::numeric_limits<u32>::max()) {
 			throw std::runtime_error("MLT unit too large");
@@ -101,27 +99,21 @@ void MLT::save(const fs::path& path) {
 		io.writeU32LE(unit.data.size());
 
 		// Reserved space?
-		for (int p = 0; p < 2; p++) {
-			io.writeU32LE(0);
-		}
+		io.writeU32LE(0);
+		io.writeU32LE(0);
 	}
 
 	for (size_t i = 0; i < units.size(); i++) {
 		auto& unit = units[i];
 
-		unit.aicaDataPtr_ = curAICAOffset;
-		unit.aicaDataSize_ = unit.data.size();
 		unit.fileDataPtr_ = io.tell();
 
 		io.jump(unitOffsets[i]);
-		io.writeU32LE(unit.aicaDataPtr_);
-		io.writeU32LE(unit.aicaDataSize_);
 		io.writeU32LE(unit.fileDataPtr_);
 		io.jump(unit.fileDataPtr_);
 		io.writeVec(unit.data);
 
-		curAICAOffset += unit.aicaDataSize_;
-		if (curAICAOffset >= AICA_MAX) {
+		if ((unit.aicaDataPtr + unit.aicaDataSize) >= AICA_MAX) {
 			char err[48];
 			snprintf(err, std::size(err), "MLT unit %zu exceeds available AICA RAM (>%u)", i, AICA_MAX);
 			throw std::runtime_error(err);

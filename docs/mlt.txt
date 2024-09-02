@@ -1,0 +1,2 @@
+- SFPW starts at a multiple of 0x1000 (4096)
+- All other units at 0x20 (32)

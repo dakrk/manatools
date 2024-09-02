@@ -29,8 +29,8 @@ QVariant MLTModel::data(const QModelIndex& index, int role) const {
 		switch (index.column()) {
 			case 0: return QString(unit.fourCC);
 			case 1: return unit.bank;
-			case 2: return formatPtr32(unit.aicaDataPtr_);
-			case 3: return unit.aicaDataSize_;
+			case 2: return formatPtr32(unit.aicaDataPtr);
+			case 3: return unit.aicaDataSize;
 			case 4: {
 				if (unit.fileDataPtr() == manatools::mlt::UNUSED) {
 					return !strcmp(unit.fourCC, "SFPW") ? "N/A" : tr("None");

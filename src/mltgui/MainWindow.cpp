@@ -196,7 +196,7 @@ bool MainWindow::exportUnitDialog() {
 	QString unitExt = unit.fourCC + 1;
 
 	auto defPath = QDir(getOutPath(curFile, true)).filePath(
-		QString("%1_%2-%3.%4")
+		QString("%1_u%2-b%3.%4")
 			.arg(QFileInfo(curFile).baseName())
 			.arg(curIdx.row())
 			.arg(unit.bank)
