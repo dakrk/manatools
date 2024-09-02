@@ -20,6 +20,8 @@ public slots:
 	bool save();
 	bool saveAs();
 	void about();
+	void adjustMLT();
+	void packMLT(bool useAICASizes);
 	void addUnit(const QString& fourCC);
 	bool importUnitDialog();
 	bool exportUnitDialog();

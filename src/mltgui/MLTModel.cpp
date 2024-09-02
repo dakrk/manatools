@@ -25,7 +25,7 @@ QVariant MLTModel::data(const QModelIndex& index, int role) const {
 
 	manatools::mlt::Unit& unit = mlt->units[index.row()];
 
-	if (role == Qt::DisplayRole || role == Qt::EditRole) {
+	if (role == Qt::DisplayRole) {
 		switch (index.column()) {
 			case 0: return QString(unit.fourCC);
 			case 1: return unit.bank;
@@ -38,6 +38,13 @@ QVariant MLTModel::data(const QModelIndex& index, int role) const {
 				return formatPtr32(unit.fileDataPtr());
 			}
 			case 5: return QVariant::fromValue(unit.data.size());
+		}
+	} else if (role == Qt::EditRole) {
+		switch (index.column()) {
+			case 0: return QString(unit.fourCC);
+			case 1: return unit.bank;
+			case 2: return unit.aicaDataPtr;
+			case 3: return unit.aicaDataSize;
 		}
 	} else if (role == Qt::TextAlignmentRole) {
 		if (index.column() == 0) {
@@ -75,11 +82,28 @@ QVariant MLTModel::headerData(int section, Qt::Orientation orientation, int role
 	return QAbstractItemModel::headerData(section, orientation, role);
 }
 
+bool MLTModel::setData(const QModelIndex& index, const QVariant& value, int role) {
+	if (!index.isValid())
+		return false;
+
+	manatools::mlt::Unit& unit = mlt->units[index.row()];
+
+	if (role == Qt::EditRole) {
+		switch (index.column()) {
+			case 1: return changeData(index, unit.bank,         value.toUInt());
+			case 2: return changeData(index, unit.aicaDataPtr,  value.toUInt());
+			case 3: return changeData(index, unit.aicaDataSize, value.toUInt());
+		}
+	}
+
+	return false;
+}
+
 Qt::ItemFlags MLTModel::flags(const QModelIndex& index) const {
 	Qt::ItemFlags f = QAbstractTableModel::flags(index);
 
-	if (index.isValid() && index.column() < 4) {
-		// f |= Qt::ItemIsEditable;
+	if (index.isValid() && (1 <= index.column() && index.column() <= 3)) {
+		f |= Qt::ItemIsEditable;
 	}
 
 	return f;

@@ -34,6 +34,14 @@ MainWindow::MainWindow(QWidget* parent) :
 	fileMenu->addSeparator();
 	fileMenu->addAction(QIcon::fromTheme("application-exit"), tr("&Quit"), QKeySequence::Quit, this, &QApplication::quit);
 
+	QMenu* editMenu = menuBar()->addMenu(tr("&Edit"));
+	QMenu* packMenu = editMenu->addMenu(tr("&Pack"));
+	packMenu->addAction(tr("By &AICA Size"), std::bind(&MainWindow::packMLT, this, true));
+	packMenu->addAction(tr("By &File Size"), std::bind(&MainWindow::packMLT, this, false));
+
+	// temp. TODO: do this automatically upon offset/size edit
+	editMenu->addAction(tr("&Adjust"), this, &MainWindow::adjustMLT);
+
 	QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addAction(QIcon::fromTheme("help-about"), tr("&About"), this, &MainWindow::about);
 	helpMenu->addAction(tr("About Qt"), this, [this]() { QMessageBox::aboutQt(this); });
@@ -178,6 +186,16 @@ void MainWindow::about() {
 	);
 }
 
+void MainWindow::adjustMLT() {
+	mlt.adjust();
+	reloadTable();
+}
+
+void MainWindow::packMLT(bool useAICASizes) {
+	mlt.pack(useAICASizes);
+	reloadTable();
+}
+
 void MainWindow::addUnit(const QString& fourCC) {
 	assert(fourCC.size() == 4);
 	QMessageBox::information(this, "test", fourCC);
@@ -196,7 +214,7 @@ bool MainWindow::exportUnitDialog() {
 	QString unitExt = unit.fourCC + 1;
 
 	auto defPath = QDir(getOutPath(curFile, true)).filePath(
-		QString("%1_u%2-b%3.%4")
+		QString("%1_%2-%3.%4")
 			.arg(QFileInfo(curFile).baseName())
 			.arg(curIdx.row())
 			.arg(unit.bank)
