@@ -1,3 +1,4 @@
+#include <guicommon/utils.hpp>
 #include "SplitUnkEditor.hpp"
 
 SplitUnkEditor::SplitUnkEditor(QWidget* parent) :
@@ -29,7 +30,7 @@ void SplitUnkEditor::init() {
 
 void SplitUnkEditor::connectSpinnerHexLabel(QSpinBox* spinner, QLabel* label) {
 	connect(spinner, &QSpinBox::valueChanged, this, [label](int value) {
-		label->setText(QString("0x%1").arg(value, 0, 16));
+		label->setText(formatHex(value, 0));
 	});
 }
 

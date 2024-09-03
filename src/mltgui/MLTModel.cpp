@@ -5,6 +5,7 @@
 MLTModel::MLTModel(manatools::mlt::MLT* mlt, QObject* parent) :
 	QAbstractTableModel(parent),
 	dimmedTextColor(QPalette().color(QPalette::WindowText)),
+	monoFont("monospace"),
 	mlt(mlt)
 {
 	headerFont.setBold(true);
@@ -25,34 +26,31 @@ QVariant MLTModel::data(const QModelIndex& index, int role) const {
 
 	manatools::mlt::Unit& unit = mlt->units[index.row()];
 
-	if (role == Qt::DisplayRole) {
+	if (role == Qt::DisplayRole || role == Qt::EditRole) {
 		switch (index.column()) {
 			case 0: return QString(unit.fourCC);
 			case 1: return unit.bank;
-			case 2: return formatPtr32(unit.aicaDataPtr);
-			case 3: return unit.aicaDataSize;
+			case 2: return formatHex(unit.aicaDataPtr);
+			case 3: return formatHex(unit.aicaDataSize, 0);
 			case 4: {
 				if (unit.fileDataPtr() == manatools::mlt::UNUSED) {
 					return !strcmp(unit.fourCC, "SFPW") ? "N/A" : tr("None");
 				}
-				return formatPtr32(unit.fileDataPtr());
+				return formatHex(unit.fileDataPtr());
 			}
-			case 5: return QVariant::fromValue(unit.data.size());
-		}
-	} else if (role == Qt::EditRole) {
-		switch (index.column()) {
-			case 0: return QString(unit.fourCC);
-			case 1: return unit.bank;
-			case 2: return unit.aicaDataPtr;
-			case 3: return unit.aicaDataSize;
+			case 5: return formatHex(unit.data.size(), 0);
 		}
 	} else if (role == Qt::TextAlignmentRole) {
 		if (index.column() == 0) {
 			return QVariant(Qt::AlignCenter | Qt::AlignVCenter);
 		}
 	} else if (role == Qt::FontRole) {
-		if (index.column() == 0) {
-			return headerFont;
+		switch (index.column()) {
+			case 0: return headerFont;
+			case 2: return monoFont;
+			case 3: return monoFont;
+			case 4: return monoFont;
+			case 5: return monoFont;
 		}
 	} else if (role == Qt::ForegroundRole) {
 		if (unit.fileDataPtr() == manatools::mlt::UNUSED) {
@@ -89,10 +87,15 @@ bool MLTModel::setData(const QModelIndex& index, const QVariant& value, int role
 	manatools::mlt::Unit& unit = mlt->units[index.row()];
 
 	if (role == Qt::EditRole) {
+		bool ok = false;
+		uint val = value.toString().toUInt(&ok, 0);
+		if (!ok)
+			return false;
+
 		switch (index.column()) {
-			case 1: return changeData(index, unit.bank,         value.toUInt());
-			case 2: return changeData(index, unit.aicaDataPtr,  value.toUInt());
-			case 3: return changeData(index, unit.aicaDataSize, value.toUInt());
+			case 1: return changeData(index, unit.bank,         val);
+			case 2: return changeData(index, unit.aicaDataPtr,  val);
+			case 3: return changeData(index, unit.aicaDataSize, val);
 		}
 	}
 

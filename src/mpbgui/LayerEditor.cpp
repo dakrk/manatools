@@ -1,3 +1,4 @@
+#include <guicommon/utils.hpp>
 #include "LayerEditor.hpp"
 
 LayerEditor::LayerEditor(Layer* layer, QWidget* parent) :
@@ -26,7 +27,7 @@ void LayerEditor::setPath(size_t programIdx, size_t layerIdx) {
 
 void LayerEditor::connectSpinnerHexLabel(QSpinBox* spinner, QLabel* label) {
 	connect(spinner, &QSpinBox::valueChanged, this, [label](int value) {
-		label->setText(QString("0x%1").arg(value, 0, 16));
+		label->setText(formatHex(value, 0));
 	});
 }
 

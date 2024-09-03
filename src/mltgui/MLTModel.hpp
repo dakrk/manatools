@@ -34,5 +34,6 @@ private:
 
 	QColor dimmedTextColor;
 	QFont headerFont;
+	QFont monoFont;
 	manatools::mlt::MLT* mlt;
 };
