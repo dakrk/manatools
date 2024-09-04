@@ -35,12 +35,10 @@ MainWindow::MainWindow(QWidget* parent) :
 	fileMenu->addAction(QIcon::fromTheme("application-exit"), tr("&Quit"), QKeySequence::Quit, this, &QApplication::quit);
 
 	QMenu* editMenu = menuBar()->addMenu(tr("&Edit"));
+	editMenu->addAction(QIcon::fromTheme("document-properties"), tr("Preference&s"), this, [] { /* TODO */ });
 	QMenu* packMenu = editMenu->addMenu(tr("&Pack"));
 	packMenu->addAction(tr("By &AICA Size"), std::bind(&MainWindow::packMLT, this, true));
 	packMenu->addAction(tr("By &File Size"), std::bind(&MainWindow::packMLT, this, false));
-
-	// temp. TODO: do this automatically upon offset/size edit
-	editMenu->addAction(tr("&Adjust"), this, &MainWindow::adjustMLT);
 
 	QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addAction(QIcon::fromTheme("help-about"), tr("&About"), this, &MainWindow::about);
@@ -65,6 +63,20 @@ MainWindow::MainWindow(QWidget* parent) :
 	setCurrentFile();
 	resetTableLayout();
 
+	connect(model, &QAbstractTableModel::dataChanged, this,
+	        [this](const QModelIndex& tl, const QModelIndex& br, const QList<int>& roles) {
+		Q_UNUSED(tl);
+		Q_UNUSED(br);
+		Q_UNUSED(roles);
+		if (roles.contains(Qt::DisplayRole) || roles.contains(Qt::EditRole) || roles.isEmpty()) {
+			dataModified();
+		}
+	});
+
+	connect(model, &QAbstractTableModel::rowsInserted, this, &MainWindow::dataModified);
+	connect(model, &QAbstractTableModel::rowsMoved, this, &MainWindow::dataModified);
+	connect(model, &QAbstractTableModel::rowsRemoved, this, &MainWindow::dataModified);
+
 	QToolButton* toolbtnAddUnit = new QToolButton();
 	toolbtnAddUnit->setIcon(QIcon::fromTheme("list-add"));
 	toolbtnAddUnit->setPopupMode(QToolButton::InstantPopup);
@@ -73,6 +85,12 @@ MainWindow::MainWindow(QWidget* parent) :
 	QPushButton* btnDelUnit = new QPushButton(QIcon::fromTheme("list-remove"), "");
 	QPushButton* btnImportUnitData = new QPushButton(QIcon::fromTheme("document-open"), "");
 	QPushButton* btnExportUnitData = new QPushButton(QIcon::fromTheme("document-save-as"), "");
+
+	connect(btnDelUnit, &QPushButton::clicked, this, [&]() {
+		QModelIndex cur = table->currentIndex();
+		if (cur.isValid())
+			model->removeRow(cur.row());
+	});
 
 	connect(btnImportUnitData, &QPushButton::clicked, this, &MainWindow::importUnitDialog);
 	connect(btnExportUnitData, &QPushButton::clicked, this, &MainWindow::exportUnitDialog);
@@ -186,9 +204,9 @@ void MainWindow::about() {
 	);
 }
 
-void MainWindow::adjustMLT() {
+void MainWindow::dataModified() {
+	setWindowModified(true);
 	mlt.adjust();
-	reloadTable();
 }
 
 void MainWindow::packMLT(bool useAICASizes) {

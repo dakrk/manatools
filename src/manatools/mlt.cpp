@@ -141,6 +141,7 @@ void MLT::adjust() {
 		auto& prev = units[i - 1];
 		auto& cur = units[i];
 
+		cur.aicaDataPtr = utils::roundUp(cur.aicaDataPtr, cur.alignment());
 		cur.aicaDataSize = utils::roundUp(cur.aicaDataSize, UNIT_ALIGN);
 
 		u32 minPtr = prev.aicaDataPtr + prev.aicaDataSize;

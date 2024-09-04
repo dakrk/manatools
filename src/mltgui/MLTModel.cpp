@@ -102,6 +102,24 @@ bool MLTModel::setData(const QModelIndex& index, const QVariant& value, int role
 	return false;
 }
 
+bool MLTModel::insertRows(int row, int count, const QModelIndex& parent) {
+	Q_UNUSED(row);
+	Q_UNUSED(count);
+	Q_UNUSED(parent);
+	return false;
+}
+
+bool MLTModel::removeRows(int row, int count, const QModelIndex& parent) {
+	Q_UNUSED(parent);
+
+	auto begin = mlt->units.begin() + row;
+	beginRemoveRows({}, row, row + count - 1);
+	mlt->units.erase(begin, begin + count);
+	endRemoveRows();
+
+	return true;
+}
+
 Qt::ItemFlags MLTModel::flags(const QModelIndex& index) const {
 	Qt::ItemFlags f = QAbstractTableModel::flags(index);
 
