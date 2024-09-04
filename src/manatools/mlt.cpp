@@ -132,14 +132,23 @@ void MLT::save(const fs::path& path) {
 	}
 }
 
-void MLT::adjust() {
+bool MLT::adjust() {
+	bool dataChanged = false;
 	auto& first = units[0];
+	u32 origPtr = first.aicaDataPtr;
+	u32 origSize = first.aicaDataSize;
+
 	first.aicaDataPtr = utils::roundUp(first.aicaDataPtr, first.alignment());
 	first.aicaDataSize = utils::roundUp(first.aicaDataSize, UNIT_ALIGN);
+
+	if (first.aicaDataPtr != origPtr || first.aicaDataSize != origSize)
+		dataChanged = true;
 
 	for (size_t i = 1; i < units.size(); i++) {
 		auto& prev = units[i - 1];
 		auto& cur = units[i];
+		origPtr = cur.aicaDataPtr;
+		origSize = cur.aicaDataSize;
 
 		cur.aicaDataPtr = utils::roundUp(cur.aicaDataPtr, cur.alignment());
 		cur.aicaDataSize = utils::roundUp(cur.aicaDataSize, UNIT_ALIGN);
@@ -147,21 +156,34 @@ void MLT::adjust() {
 		u32 minPtr = prev.aicaDataPtr + prev.aicaDataSize;
 		minPtr = utils::roundUp(minPtr, cur.alignment());
 
-		if (cur.aicaDataPtr < minPtr) {
+		if (cur.aicaDataPtr < minPtr)
 			cur.aicaDataPtr = minPtr;
-		}
+
+		if (cur.aicaDataPtr != origPtr || cur.aicaDataSize != origSize)
+			dataChanged = true;
 	}
+
+	return dataChanged;
 }
 
-void MLT::pack(bool useAICASizes) {
+bool MLT::pack(bool useAICASizes) {
+	bool dataChanged = false;
 	u32 curAICAOffset = AICA_BASE;
 
 	for (auto& unit : units) {
+		u32 origPtr = unit.aicaDataPtr;
 		u32 origSize = useAICASizes ? unit.aicaDataSize : unit.data.size();
+
 		unit.aicaDataPtr = utils::roundUp(curAICAOffset, unit.alignment());
 		unit.aicaDataSize = utils::roundUp(origSize, UNIT_ALIGN);
+
+		if (unit.aicaDataPtr != origPtr || unit.aicaDataSize != origSize)
+			dataChanged = true;
+
 		curAICAOffset = unit.aicaDataPtr + unit.aicaDataSize;
 	}
+
+	return dataChanged;
 }
 
 u32 Unit::alignment() const {

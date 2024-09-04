@@ -210,8 +210,17 @@ void MainWindow::dataModified() {
 }
 
 void MainWindow::packMLT(bool useAICASizes) {
-	mlt.pack(useAICASizes);
-	reloadTable();
+	if (mlt.pack(useAICASizes)) {
+		/**
+		 * Getting all rows that actually changed is a bit ugh, but it's inevitable
+		 * once the time comes to implement undo/redo
+		 */
+		emit model->dataChanged(
+			model->index(0, 0),
+			model->index(model->rowCount(), model->columnCount()),
+			{ Qt::DisplayRole, Qt::EditRole }
+		);
+	}
 }
 
 void MainWindow::addUnit(const QString& fourCC) {
@@ -281,6 +290,7 @@ bool MainWindow::importUnit(manatools::mlt::Unit& unit, const QString& path) {
 bool MainWindow::exportUnit(const manatools::mlt::Unit& unit, const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
 
+	// This should be done the moment you click the button but, redundant checks much?
 	if (unit.fileDataPtr() == manatools::mlt::UNUSED) {
 		cursor.restore();
 		QMessageBox::warning(this, "", tr("Selected unit has no data (no file offset), cannot export."));

@@ -32,8 +32,8 @@ namespace manatools::mlt {
 		static MLT load(const fs::path& path);
 		void save(const fs::path& path);
 
-		void adjust();
-		void pack(bool useAICASizes);
+		bool adjust();
+		bool pack(bool useAICASizes);
 
 		std::vector<Unit> units;
 	};
