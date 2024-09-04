@@ -91,12 +91,11 @@ void MLT::save(const fs::path& path) {
 		// Write file data offset once known
 		unitOffsets[i] = io.tell();
 		io.writeU32LE(0);
+		io.writeU32LE(0);
 
 		if (unit.data.size() >= std::numeric_limits<u32>::max()) {
 			throw std::runtime_error("MLT unit too large");
 		}
-
-		io.writeU32LE(unit.data.size());
 
 		// Reserved space?
 		io.writeU32LE(0);
@@ -105,13 +104,22 @@ void MLT::save(const fs::path& path) {
 
 	for (size_t i = 0; i < units.size(); i++) {
 		auto& unit = units[i];
-
-		unit.fileDataPtr_ = io.tell();
+		auto pos = io.tell();
 
 		io.jump(unitOffsets[i]);
-		io.writeU32LE(unit.fileDataPtr_);
-		io.jump(unit.fileDataPtr_);
-		io.writeVec(unit.data);
+
+		if (!unit.data.empty()) {
+			unit.fileDataPtr_ = pos;
+			io.writeU32LE(unit.fileDataPtr_);
+			io.writeU32LE(unit.data.size());
+			io.jump(pos);
+			io.writeVec(unit.data);
+		} else {
+			unit.fileDataPtr_ = UNUSED;
+			io.writeU32LE(unit.fileDataPtr_);
+			io.writeU32LE(UNUSED);
+			io.jump(pos);
+		}
 
 		if ((unit.aicaDataPtr + unit.aicaDataSize) >= AICA_MAX) {
 			char err[48];
