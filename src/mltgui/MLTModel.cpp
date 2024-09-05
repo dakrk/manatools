@@ -102,11 +102,20 @@ bool MLTModel::setData(const QModelIndex& index, const QVariant& value, int role
 	return false;
 }
 
+bool MLTModel::insertUnits(int row, int count, const QString& fourCC) {
+	assert(fourCC.size() == 4);
+	auto it = mlt->units.insert(mlt->units.begin() + row, count, {});
+	return true;
+}
+
 bool MLTModel::insertRows(int row, int count, const QModelIndex& parent) {
-	Q_UNUSED(row);
-	Q_UNUSED(count);
 	Q_UNUSED(parent);
-	return false;
+
+	beginInsertRows({}, row, row + count - 1);
+	bool ret = insertUnits(row, count);
+	endInsertRows();
+
+	return ret;
 }
 
 bool MLTModel::removeRows(int row, int count, const QModelIndex& parent) {
