@@ -17,7 +17,7 @@ public:
 	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
 
 	bool insertUnits(int row, int count, const QString& fourCC = "????");
-	bool insertRows(int row, int count, const QModelIndex& parent = {}) override;
+	bool insertRows(int row, int count, const QModelIndex& parent = {}) override; // unused, use insertUnits
 	bool removeRows(int row, int count, const QModelIndex& parent = {}) override;
 
 	Qt::ItemFlags flags(const QModelIndex& index) const override;

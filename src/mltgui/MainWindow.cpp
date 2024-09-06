@@ -35,10 +35,10 @@ MainWindow::MainWindow(QWidget* parent) :
 	fileMenu->addAction(QIcon::fromTheme("application-exit"), tr("&Quit"), QKeySequence::Quit, this, &QApplication::quit);
 
 	QMenu* editMenu = menuBar()->addMenu(tr("&Edit"));
-	editMenu->addAction(QIcon::fromTheme("document-properties"), tr("Preference&s"), this, [] { /* TODO */ });
 	QMenu* packMenu = editMenu->addMenu(tr("&Pack"));
 	packMenu->addAction(tr("By &AICA Size"), std::bind(&MainWindow::packMLT, this, true));
 	packMenu->addAction(tr("By &File Size"), std::bind(&MainWindow::packMLT, this, false));
+	editMenu->addAction(QIcon::fromTheme("document-properties"), tr("Preference&s"), this, [] { /* TODO */ });
 
 	QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addAction(QIcon::fromTheme("help-about"), tr("&About"), this, &MainWindow::about);
@@ -223,9 +223,9 @@ void MainWindow::packMLT(bool useAICASizes) {
 	}
 }
 
-void MainWindow::addUnit(const QString& fourCC) {
-	assert(fourCC.size() == 4);
-	QMessageBox::information(this, "test", fourCC);
+bool MainWindow::addUnit(const QString& fourCC) {
+	QModelIndex cur = table->currentIndex();
+	return model->insertUnits(cur.isValid() ? cur.row() : 0, 1, fourCC);
 }
 
 bool MainWindow::importUnitDialog() {

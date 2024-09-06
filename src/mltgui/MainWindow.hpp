@@ -22,7 +22,7 @@ public slots:
 	void about();
 	void dataModified();
 	void packMLT(bool useAICASizes);
-	void addUnit(const QString& fourCC);
+	bool addUnit(const QString& fourCC);
 	bool importUnitDialog();
 	bool exportUnitDialog();
 

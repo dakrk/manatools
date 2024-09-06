@@ -104,18 +104,23 @@ bool MLTModel::setData(const QModelIndex& index, const QVariant& value, int role
 
 bool MLTModel::insertUnits(int row, int count, const QString& fourCC) {
 	assert(fourCC.size() == 4);
-	auto it = mlt->units.insert(mlt->units.begin() + row, count, {});
+
+	beginInsertRows({}, row, row + count - 1);
+	auto startIt = mlt->units.insert(mlt->units.begin() + row, count, {});
+	for (auto it = startIt; it < startIt + count; it++) {
+		// TODO: FourCC class that makes all this stuff more sane
+		strncpy(it->fourCC, fourCC.toUtf8().data(), 4);
+	}
+	endInsertRows();
+
 	return true;
 }
 
 bool MLTModel::insertRows(int row, int count, const QModelIndex& parent) {
+	Q_UNUSED(row);
+	Q_UNUSED(count);
 	Q_UNUSED(parent);
-
-	beginInsertRows({}, row, row + count - 1);
-	bool ret = insertUnits(row, count);
-	endInsertRows();
-
-	return ret;
+	return false;
 }
 
 bool MLTModel::removeRows(int row, int count, const QModelIndex& parent) {
