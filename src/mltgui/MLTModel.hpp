@@ -18,6 +18,7 @@ public:
 
 	bool insertUnits(int row, int count, const manatools::FourCC fourCC);
 	bool insertRows(int row, int count, const QModelIndex& parent = {}) override; // unused, use insertUnits
+	bool moveRows(const QModelIndex& srcParent, int srcRow, int count, const QModelIndex& destParent, int destChild) override;
 	bool removeRows(int row, int count, const QModelIndex& parent = {}) override;
 
 	Qt::ItemFlags flags(const QModelIndex& index) const override;

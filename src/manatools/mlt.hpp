@@ -1,4 +1,5 @@
 #pragma once
+#include <deque>
 #include <vector>
 
 #include "filesystem.hpp"
@@ -15,18 +16,27 @@ namespace manatools::mlt {
 	constexpr u32 UNIT_ALIGN = 0x20;
 	constexpr u32 FPW_ALIGN  = 0x1000;
 
-	struct Unit {
+	class Unit {
+	public:
+		Unit() : bank(0), aicaDataPtr(0), aicaDataSize(0) {}
+
+		Unit(FourCC fourCC, u32 bank = 0, u32 aicaDataPtr = 0, u32 aicaDataSize = 0) :
+			fourCC(fourCC), bank(bank), aicaDataPtr(aicaDataPtr), aicaDataSize(aicaDataSize) {}
+
+		Unit(FourCC fourCC, const std::vector<u8>& data, u32 bank = 0, u32 aicaDataPtr = 0, u32 aicaDataSize = 0) :
+			fourCC(fourCC), bank(bank), aicaDataPtr(aicaDataPtr), aicaDataSize(aicaDataSize), data(data) {}
+
 		FourCC fourCC;
 		u32 bank;
 		u32 aicaDataPtr;
 		u32 aicaDataSize;
-		u32 fileDataPtr() const { return fileDataPtr_; }
-		u32 alignment() const;
 		std::vector<u8> data;
 
+		u32 fileDataPtr() const { return fileDataPtr_; }
+		u32 alignment() const;
 	private:
 		friend struct MLT;
-		u32 fileDataPtr_;
+		u32 fileDataPtr_ = UNUSED;
 	};
 
 	struct MLT {
@@ -36,7 +46,7 @@ namespace manatools::mlt {
 		bool adjust();
 		bool pack(bool useAICASizes);
 
-		std::vector<Unit> units;
+		std::deque<Unit> units;
 	};
 
 	inline MLT load(const fs::path& path) {

@@ -104,12 +104,8 @@ bool MLTModel::setData(const QModelIndex& index, const QVariant& value, int role
 
 bool MLTModel::insertUnits(int row, int count, const manatools::FourCC fourCC) {
 	beginInsertRows({}, row, row + count - 1);
-	auto startIt = mlt->units.insert(mlt->units.begin() + row, count, {});
-	for (auto it = startIt; it < startIt + count; it++) {
-		it->fourCC = fourCC;
-	}
+	mlt->units.insert(mlt->units.begin() + row, count, { fourCC });
 	endInsertRows();
-
 	return true;
 }
 
@@ -120,6 +116,17 @@ bool MLTModel::insertRows(int row, int count, const QModelIndex& parent) {
 	return false;
 }
 
+bool MLTModel::moveRows(const QModelIndex& srcParent, int srcRow, int count, const QModelIndex& destParent, int destChild) {
+	Q_UNUSED(srcParent);
+	Q_UNUSED(destParent);
+
+	auto begin = mlt->units.begin() + srcRow;
+	beginMoveRows({}, srcRow, srcRow + count - 1, {}, destChild);
+	std::move(begin, begin + count, mlt->units.begin() + destChild);
+	endMoveRows();
+	return true;
+}
+
 bool MLTModel::removeRows(int row, int count, const QModelIndex& parent) {
 	Q_UNUSED(parent);
 
@@ -127,7 +134,6 @@ bool MLTModel::removeRows(int row, int count, const QModelIndex& parent) {
 	beginRemoveRows({}, row, row + count - 1);
 	mlt->units.erase(begin, begin + count);
 	endRemoveRows();
-
 	return true;
 }
 

@@ -52,7 +52,7 @@ namespace manatools::io {
 		bool writeVLQ(u32 in);
 		bool writeBool(bool in);
 		bool writeStr(const std::string_view in)           { return write(in.data(), sizeof(char), in.size()) == in.size(); }
-		bool writeFourCC(const FourCC& in)                 { return write(in.data(), sizeof(char), 4) == 4; }
+		bool writeFourCC(const FourCC in)                  { return write(in.data(), sizeof(char), 4) == 4; }
 
 		template <typename T>
 		bool readT(T* out)                                 { return read(out, sizeof(*out), 1) == 1; }

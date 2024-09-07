@@ -26,8 +26,6 @@ MLT MLT::load(const fs::path& path) {
 	io.readU32LE(&numUnits);
 	io.forward(20);
 
-	mlt.units.reserve(numUnits);
-
 	for (u32 i = 0; i < numUnits; i++) {
 		Unit unit;
 		u32 fileDataSize;
@@ -146,7 +144,7 @@ bool MLT::adjust() {
 	u32 origPtr = first.aicaDataPtr;
 	u32 origSize = first.aicaDataSize;
 
-	first.aicaDataPtr = utils::roundUp(first.aicaDataPtr, first.alignment());
+	first.aicaDataPtr = utils::roundUp(std::max(first.aicaDataPtr, AICA_BASE), first.alignment());
 	first.aicaDataSize = utils::roundUp(first.aicaDataSize, UNIT_ALIGN);
 
 	if (first.aicaDataPtr != origPtr || first.aicaDataSize != origSize)
