@@ -2,6 +2,7 @@
 #include <QMainWindow>
 #include <QSettings>
 #include <QTableView>
+#include <manatools/fourcc.hpp>
 #include <manatools/mlt.hpp>
 
 #include "MLTModel.hpp"
@@ -22,7 +23,7 @@ public slots:
 	void about();
 	void dataModified();
 	void packMLT(bool useAICASizes);
-	bool addUnit(const QString& fourCC);
+	bool addUnit(const manatools::FourCC fourCC);
 	bool importUnitDialog();
 	bool exportUnitDialog();
 

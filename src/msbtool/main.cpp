@@ -18,7 +18,7 @@ namespace msb = manatools::msb;
 namespace msd = manatools::msd;
 
 // more sane way to use visitors in our case
-template<class... Ts>
+template <class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
 
 struct NoteQueueItem {

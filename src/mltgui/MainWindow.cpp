@@ -44,15 +44,16 @@ MainWindow::MainWindow(QWidget* parent) :
 	helpMenu->addAction(QIcon::fromTheme("help-about"), tr("&About"), this, &MainWindow::about);
 	helpMenu->addAction(tr("About Qt"), this, [this]() { QMessageBox::aboutQt(this); });
 
+	// Have to explicitly construct a manatools::FourCC because std::bind & Qt stuff doesn't like doing it implicitly
 	QMenu* unitTypeMenu = new QMenu(this);
-	unitTypeMenu->addAction(tr("MIDI Sequence Bank [MSB]"), std::bind(&MainWindow::addUnit, this, "SMSB"));
-	unitTypeMenu->addAction(tr("MIDI Program Bank [MPB]"), std::bind(&MainWindow::addUnit, this, "SMPB"));
-	unitTypeMenu->addAction(tr("MIDI Drum Bank [MDB]"), std::bind(&MainWindow::addUnit, this, "SMDB"));
-	unitTypeMenu->addAction(tr("One Shot Bank [OSB]"), std::bind(&MainWindow::addUnit, this, "SOSB"));
-	unitTypeMenu->addAction(tr("FX Program Bank [FPB]"), std::bind(&MainWindow::addUnit, this, "SFPB"));
-	unitTypeMenu->addAction(tr("FX Output Bank [FOB]"), std::bind(&MainWindow::addUnit, this, "SFOB"));
-	unitTypeMenu->addAction(tr("FX Program Work [FPW]"), std::bind(&MainWindow::addUnit, this, "SFPW"));
-	unitTypeMenu->addAction(tr("PCM Stream Ring Buffer [PSR]"), std::bind(&MainWindow::addUnit, this, "SPSR"));
+	unitTypeMenu->addAction(tr("MIDI Sequence Bank [MSB]"), std::bind(&MainWindow::addUnit, this, manatools::FourCC("SMSB")));
+	unitTypeMenu->addAction(tr("MIDI Program Bank [MPB]"), std::bind(&MainWindow::addUnit, this, manatools::FourCC("SMPB")));
+	unitTypeMenu->addAction(tr("MIDI Drum Bank [MDB]"), std::bind(&MainWindow::addUnit, this, manatools::FourCC("SMDB")));
+	unitTypeMenu->addAction(tr("One Shot Bank [OSB]"), std::bind(&MainWindow::addUnit, this, manatools::FourCC("SOSB")));
+	unitTypeMenu->addAction(tr("FX Program Bank [FPB]"), std::bind(&MainWindow::addUnit, this, manatools::FourCC("SFPB")));
+	unitTypeMenu->addAction(tr("FX Output Bank [FOB]"), std::bind(&MainWindow::addUnit, this, manatools::FourCC("SFOB")));
+	unitTypeMenu->addAction(tr("FX Program Work [FPW]"), std::bind(&MainWindow::addUnit, this, manatools::FourCC("SFPW")));
+	unitTypeMenu->addAction(tr("PCM Stream Ring Buffer [PSR]"), std::bind(&MainWindow::addUnit, this, manatools::FourCC("SPSR")));
 
 	table = new QTableView(this);
 	model = new MLTModel(&mlt, this);
@@ -223,7 +224,7 @@ void MainWindow::packMLT(bool useAICASizes) {
 	}
 }
 
-bool MainWindow::addUnit(const QString& fourCC) {
+bool MainWindow::addUnit(const manatools::FourCC fourCC) {
 	QModelIndex cur = table->currentIndex();
 	return model->insertUnits(cur.isValid() ? cur.row() : 0, 1, fourCC);
 }
@@ -238,7 +239,7 @@ bool MainWindow::exportUnitDialog() {
 		return false;
 
 	const auto& unit = mlt.units[curIdx.row()];
-	QString unitExt = unit.fourCC + 1;
+	QString unitExt = unit.fourCC.data() + 1;
 
 	auto defPath = QDir(getOutPath(curFile, true)).filePath(
 		QString("%1_%2-%3.%4")

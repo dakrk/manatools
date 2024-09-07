@@ -22,7 +22,7 @@ constexpr u8 MSB_FOURCC[4] = {'S', 'M', 'S', 'B'};
 constexpr u8 OSB_FOURCC[4] = {'S', 'O', 'S', 'B'};
 constexpr u8 ENDB_FOURCC[4] = {'E', 'N', 'D', 'B'};
 
-template<typename It1, typename It2, typename Callback>
+template <typename It1, typename It2, typename Callback>
 void searchAll(It1 first, It1 last, It2 s_first, It2 s_last, Callback cb) {
 	auto it = first;
 	while (it < last) {

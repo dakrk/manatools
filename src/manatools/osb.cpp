@@ -23,12 +23,12 @@ OSB load(const fs::path& path) {
 	OSB osb;
 	std::vector<u32> ptrsToneData;
 
-	u8 magic[sizeof(OSB_MAGIC)];
+	FourCC magic;
 	u32 fileSize;
 	u32 numPrograms;
 
-	io.readArrT(magic);
-	if (memcmp(OSB_MAGIC, magic, sizeof(magic))) {
+	io.readFourCC(&magic);
+	if (magic != OSB_MAGIC) {
 		throw std::runtime_error("Invalid OSB file");
 	}
 
@@ -52,8 +52,8 @@ OSB load(const fs::path& path) {
 
 		Program program;
 
-		io.readArrT(magic);
-		if (memcmp(OSP_MAGIC, magic, sizeof(magic))) {
+		io.readFourCC(&magic);
+		if (magic != OSP_MAGIC) {
 			throw std::runtime_error("Encountered invalid OSB data");
 		}
 

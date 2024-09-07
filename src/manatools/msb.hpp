@@ -2,10 +2,11 @@
 #include <vector>
 
 #include "filesystem.hpp"
+#include "fourcc.hpp"
 #include "types.hpp"
 
 namespace manatools::msb {
-	constexpr u8 MSB_MAGIC[4] = {'S', 'M', 'S', 'B'};
+	constexpr FourCC MSB_MAGIC("SMSB");
 
 	struct MSD {
 		std::vector<u8> data;

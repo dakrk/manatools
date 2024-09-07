@@ -5,13 +5,14 @@
 
 #include "common.hpp"
 #include "filesystem.hpp"
+#include "fourcc.hpp"
 #include "tone.hpp"
 #include "types.hpp"
 
 namespace manatools::mpb {
-	constexpr u8 MPB_MAGIC[4] = {'S', 'M', 'P', 'B'};
-	constexpr u8 MDB_MAGIC[4] = {'S', 'M', 'D', 'B'};
-	constexpr u8 MPB_END[4]   = {'E', 'N', 'D', 'B'};
+	constexpr FourCC MPB_MAGIC("SMPB");
+	constexpr FourCC MDB_MAGIC("SMDB");
+	constexpr FourCC MPB_END("ENDB");
 
 	constexpr size_t MAX_PROGRAMS   = 128;
 	constexpr size_t MAX_LAYERS     = 4;

@@ -28,9 +28,9 @@ MSD load(io::DataIO& io) {
 	// we could be reading from anywhere in a file, store the beginning of *our* data
 	auto startPos = io.tell();
 
-	u8 magic[4];
-	io.readArrT(magic);
-	if (memcmp(MSD_MAGIC, magic, sizeof(magic))) {
+	FourCC magic;
+	io.readFourCC(&magic);
+	if (magic != MSD_MAGIC) {
 		throw std::runtime_error("Invalid MSD data");
 	}
 

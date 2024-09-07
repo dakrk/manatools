@@ -28,13 +28,13 @@ QVariant MLTModel::data(const QModelIndex& index, int role) const {
 
 	if (role == Qt::DisplayRole || role == Qt::EditRole) {
 		switch (index.column()) {
-			case 0: return QString(unit.fourCC);
+			case 0: return QString(unit.fourCC.data());
 			case 1: return unit.bank;
 			case 2: return formatHex(unit.aicaDataPtr);
 			case 3: return formatHex(unit.aicaDataSize, 0);
 			case 4: {
 				if (unit.fileDataPtr() == manatools::mlt::UNUSED) {
-					return !strcmp(unit.fourCC, "SFPW") ? "N/A" : tr("None");
+					return unit.fourCC == "SFPW" ? "N/A" : tr("None");
 				}
 				return formatHex(unit.fileDataPtr());
 			}
@@ -102,14 +102,11 @@ bool MLTModel::setData(const QModelIndex& index, const QVariant& value, int role
 	return false;
 }
 
-bool MLTModel::insertUnits(int row, int count, const QString& fourCC) {
-	assert(fourCC.size() == 4);
-
+bool MLTModel::insertUnits(int row, int count, const manatools::FourCC fourCC) {
 	beginInsertRows({}, row, row + count - 1);
 	auto startIt = mlt->units.insert(mlt->units.begin() + row, count, {});
 	for (auto it = startIt; it < startIt + count; it++) {
-		// TODO: FourCC class that makes all this stuff more sane
-		strncpy(it->fourCC, fourCC.toUtf8().data(), 4);
+		it->fourCC = fourCC;
 	}
 	endInsertRows();
 

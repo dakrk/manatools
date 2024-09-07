@@ -14,11 +14,11 @@ MLT MLT::load(const fs::path& path) {
 	io::FileIO io(path, "rb");
 	MLT mlt;
 
-	u8 magic[sizeof(MLT_MAGIC)];
+	FourCC magic;
 	u32 numUnits;
 
-	io.readArrT(magic);
-	if (memcmp(MLT_MAGIC, magic, sizeof(magic))) {
+	io.readFourCC(&magic);
+	if (magic != MLT_MAGIC) {
 		throw std::runtime_error("Invalid MLT file");
 	}
 
@@ -32,7 +32,7 @@ MLT MLT::load(const fs::path& path) {
 		Unit unit;
 		u32 fileDataSize;
 
-		io.read(unit.fourCC, sizeof(char), 4);
+		io.readFourCC(&unit.fourCC);
 		io.readU32LE(&unit.bank);
 		io.readU32LE(&unit.aicaDataPtr);
 		io.readU32LE(&unit.aicaDataSize);
@@ -61,7 +61,7 @@ MLT MLT::load(const fs::path& path) {
 void MLT::save(const fs::path& path) {
 	io::FileIO io(path, "wb");
 
-	io.writeArrT(MLT_MAGIC);
+	io.writeFourCC(MLT_MAGIC);
 	io.writeU32LE(2); // TODO: 2 surely wouldn't always be right (assuming this is version)
 
 	if (units.size() >= std::numeric_limits<u32>::max()) {
@@ -83,7 +83,7 @@ void MLT::save(const fs::path& path) {
 		auto& unit = units[i];
 
 		// Trust that the AICA fields are valid and aligned
-		io.write(unit.fourCC, sizeof(char), 4);
+		io.writeFourCC(unit.fourCC);
 		io.writeU32LE(unit.bank);
 		io.writeU32LE(unit.aicaDataPtr);
 		io.writeU32LE(unit.aicaDataSize);
@@ -195,7 +195,7 @@ bool MLT::pack(bool useAICASizes) {
 }
 
 u32 Unit::alignment() const {
-	if (!memcmp(FPW_MAGIC, &fourCC, 4))
+	if (fourCC == FPW_MAGIC)
 		return FPW_ALIGN;
 
 	return UNIT_ALIGN;

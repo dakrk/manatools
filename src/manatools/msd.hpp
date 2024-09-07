@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "filesystem.hpp"
+#include "fourcc.hpp"
 #include "io.hpp"
 #include "types.hpp"
 
@@ -11,7 +12,7 @@
  * Is MSD version based off of its parent MSB? *Are* there multiple MSD versions?
  */
 namespace manatools::msd {
-	constexpr u8 MSD_MAGIC[4] = {'S', 'M', 'S', 'D'};
+	constexpr FourCC MSD_MAGIC("SMSD");
 
 	// For statuses with ranges, the last 4 bits indicates channel
 	enum class Status : u8 {

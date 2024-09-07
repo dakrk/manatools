@@ -26,17 +26,17 @@ Bank load(const fs::path& path) {
 	Bank bank;
 	std::vector<u32> ptrsToneData;
 
-	u8 magic[4];
+	FourCC magic;
 	u32 fileSize;
 	u32 ptrPrograms;
 	u32 numPrograms;
 	u32 ptrVelocities;
 	u32 numVelocities;
 
-	io.readArrT(magic);
-	if (!memcmp(MPB_MAGIC, magic, sizeof(magic))) {
+	io.readFourCC(&magic);
+	if (magic == MPB_MAGIC) {
 		bank.drum = false;
-	} else if (!memcmp(MDB_MAGIC, magic, sizeof(magic))) {
+	} else if (magic == MDB_MAGIC) {
 		bank.drum = true;
 	} else {
 		throw std::runtime_error("Invalid MPB file");
@@ -287,7 +287,7 @@ void Bank::save(const fs::path& path) {
 
 	// ============ Start header ============
 
-	io.writeArrT(drum ? MDB_MAGIC : MPB_MAGIC);
+	io.writeFourCC(drum ? MDB_MAGIC : MPB_MAGIC);
 	io.writeU32LE(version);
 
 	auto fileSizePos = io.tell();
@@ -577,7 +577,7 @@ void Bank::save(const fs::path& path) {
 	}
 
 	io.writeU32LE(checksum);
-	io.writeArrT(MPB_END);
+	io.writeFourCC(MPB_END);
 
 	// Almost same situation as MLT, I hope this is right though
 	auto pos = io.tell();

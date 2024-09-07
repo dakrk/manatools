@@ -2,11 +2,12 @@
 #include <vector>
 
 #include "filesystem.hpp"
+#include "fourcc.hpp"
 #include "types.hpp"
 
 namespace manatools::mlt {
-	constexpr u8 MLT_MAGIC[4] = {'S', 'M', 'L', 'T'};
-	constexpr u8 FPW_MAGIC[4] = {'S', 'F', 'P', 'W'};
+	constexpr FourCC MLT_MAGIC("SMLT");
+	constexpr FourCC FPW_MAGIC("SFPW");
 
 	constexpr u32 AICA_BASE  = 0x018000;
 	constexpr u32 AICA_MAX   = 0x200000;
@@ -15,7 +16,7 @@ namespace manatools::mlt {
 	constexpr u32 FPW_ALIGN  = 0x1000;
 
 	struct Unit {
-		char fourCC[5]{};
+		FourCC fourCC;
 		u32 bank;
 		u32 aicaDataPtr;
 		u32 aicaDataSize;

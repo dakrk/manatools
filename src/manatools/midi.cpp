@@ -3,7 +3,7 @@
 
 #include "midi.hpp"
 
-template<class... Ts>
+template <class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
 
 namespace manatools::midi {
@@ -19,13 +19,13 @@ static constexpr u8 makeStatus(Status status, u8 channel) {
 void File::save(io::DataIO& io) {
 	io::ErrorHandler errHandler(io, true, true);
 
-	io.writeArrT(HEADER_MAGIC);
+	io.writeFourCC(HEADER_MAGIC);
 	io.writeU32BE(6); // chunk size
 	io.writeU16BE(0); // format 0 (SMF0)
 	io.writeU16BE(1); // only 1 track
 	io.writeU16BE(division);
 
-	io.writeArrT(TRACK_MAGIC);
+	io.writeFourCC(TRACK_MAGIC);
 	auto trackSizePos = io.tell(); // we'll write it once we're finished
 	io.writeU32BE(0);
 

@@ -3,13 +3,14 @@
 
 #include "common.hpp"
 #include "filesystem.hpp"
+#include "fourcc.hpp"
 #include "tone.hpp"
 #include "types.hpp"
 
 // For the most part, an OSB "Program" has the same characteristics as an MPB Split
 namespace manatools::osb {
-	constexpr u8 OSB_MAGIC[4] = {'S', 'O', 'S', 'B'};
-	constexpr u8 OSP_MAGIC[4] = {'S', 'O', 'S', 'P'};
+	constexpr FourCC OSB_MAGIC("SOSB");
+	constexpr FourCC OSP_MAGIC("SOSP");
 
 	using common::LFOWaveType;
 	using common::AmpEnvelope;

@@ -6,6 +6,7 @@
 
 #include "endian.hpp"
 #include "filesystem.hpp"
+#include "fourcc.hpp"
 #include "types.hpp"
 
 // messy and not very good but whatever. works well enough.
@@ -40,6 +41,7 @@ namespace manatools::io {
 		bool readU32LE(u32* out);
 		bool readU32BE(u32* out);
 		bool readBool(bool* out);
+		bool readFourCC(FourCC* out)                       { return read(out->data(), sizeof(char), 4) == 4; }
 
 		bool writeU8(u8 in)                                { return write(&in, sizeof(in), 1) == 1; }
 		bool writeS8(s8 in)                                { return write(&in, sizeof(in), 1) == 1; }
@@ -50,6 +52,7 @@ namespace manatools::io {
 		bool writeVLQ(u32 in);
 		bool writeBool(bool in);
 		bool writeStr(const std::string_view in)           { return write(in.data(), sizeof(char), in.size()) == in.size(); }
+		bool writeFourCC(const FourCC& in)                 { return write(in.data(), sizeof(char), 4) == 4; }
 
 		template <typename T>
 		bool readT(T* out)                                 { return read(out, sizeof(*out), 1) == 1; }
@@ -348,6 +351,6 @@ namespace manatools::io {
 
 // yep
 namespace std {
-	template<>
+	template <>
 	struct is_error_code_enum<manatools::io::DataIO::Error> : true_type {};
 } // namespace std

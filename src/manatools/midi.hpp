@@ -4,12 +4,13 @@
 #include <vector>
 
 #include "filesystem.hpp"
+#include "fourcc.hpp"
 #include "io.hpp"
 #include "types.hpp"
 
 namespace manatools::midi {
-	constexpr u8 HEADER_MAGIC[4] = {'M', 'T', 'h', 'd'};
-	constexpr u8 TRACK_MAGIC[4] = {'M', 'T', 'r', 'k'};
+	constexpr FourCC HEADER_MAGIC("MThd");
+	constexpr FourCC TRACK_MAGIC("MTrk");
 
 	enum class Status : u8 {
 		NoteOff          = 0x80, // 0x80 ... 0x8F

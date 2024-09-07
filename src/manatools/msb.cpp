@@ -11,12 +11,12 @@ MSB load(const fs::path& path) {
 	MSB msb;
 	std::vector<u32> ptrsSeqData;
 
-	u8 magic[4];
+	FourCC magic;
 	u32 fileSize;
 	u32 numSequences;
 
-	io.readArrT(magic);
-	if (memcmp(MSB_MAGIC, magic, sizeof(magic))) {
+	io.readFourCC(&magic);
+	if (magic != MSB_MAGIC) {
 		throw std::runtime_error("Invalid MSB file");
 	}
 

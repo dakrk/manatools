@@ -29,7 +29,7 @@ void mltListUnits(const fs::path& mltPath) {
 
 		// Will become misaligned if something is too big, but such chances are low
 		printf("%4zu  %4s  %4u  %13x  %11u  %13x  %11zu\n",
-		       u, unit.fourCC, unit.bank, unit.aicaDataPtr, unit.aicaDataSize,
+		       u, unit.fourCC.data(), unit.bank, unit.aicaDataPtr, unit.aicaDataSize,
 		       unit.fileDataPtr(), unit.data.size());
 	}
 }
@@ -49,7 +49,7 @@ void mltExtractUnits(const fs::path& mltPath, const fs::path& unitOutPath) {
 
 		// Cheat by using the fact that the file extensions are the last 3 characters of the FourCC
 		char type[5];
-		memcpy(type + 1, unit.fourCC + 1, 3);
+		memcpy(type + 1, unit.fourCC.data() + 1, 3);
 		type[0] = '.';
 		for (int i = 1; i < 4; i++) {
 			type[i] = tolower(type[i]);
