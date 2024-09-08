@@ -34,7 +34,7 @@ QVariant MLTModel::data(const QModelIndex& index, int role) const {
 			case 3: return formatHex(unit.aicaDataSize, 0);
 			case 4: {
 				if (unit.fileDataPtr() == manatools::mlt::UNUSED) {
-					return unit.fourCC == "SFPW" ? "N/A" : tr("None");
+					return unit.shouldHaveData() ? tr("None") : tr("N/A");
 				}
 				return formatHex(unit.fileDataPtr());
 			}

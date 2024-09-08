@@ -84,6 +84,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	toolbtnAddUnit->setMenu(unitTypeMenu);
 
 	QPushButton* btnDelUnit = new QPushButton(QIcon::fromTheme("list-remove"), "");
+	QPushButton* btnClearUnitData = new QPushButton(QIcon::fromTheme("edit-clear"), "");
 	QPushButton* btnImportUnitData = new QPushButton(QIcon::fromTheme("document-open"), "");
 	QPushButton* btnExportUnitData = new QPushButton(QIcon::fromTheme("document-save-as"), "");
 
@@ -93,6 +94,7 @@ MainWindow::MainWindow(QWidget* parent) :
 			model->removeRow(cur.row());
 	});
 
+	connect(btnClearUnitData, &QPushButton::clicked, this, &MainWindow::clearUnitData);
 	connect(btnImportUnitData, &QPushButton::clicked, this, &MainWindow::importUnitDialog);
 	connect(btnExportUnitData, &QPushButton::clicked, this, &MainWindow::exportUnitDialog);
 
@@ -100,6 +102,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	btnLayout->addWidget(toolbtnAddUnit);
 	btnLayout->addWidget(btnDelUnit);
 	btnLayout->addStretch(1);
+	btnLayout->addWidget(btnClearUnitData);
 	btnLayout->addWidget(btnImportUnitData);
 	btnLayout->addWidget(btnExportUnitData);
 
@@ -215,6 +218,8 @@ void MainWindow::packMLT(bool useAICASizes) {
 		/**
 		 * Getting all rows that actually changed is a bit ugh, but it's inevitable
 		 * once the time comes to implement undo/redo
+		 * Emitting dataChanged is also kind of wasteful, as then a redundant
+		 * mlt.adjust() would be ran
 		 */
 		emit model->dataChanged(
 			model->index(0, 0),
@@ -229,8 +234,38 @@ bool MainWindow::addUnit(const manatools::FourCC fourCC) {
 	return model->insertUnits(cur.isValid() ? cur.row() : 0, 1, fourCC);
 }
 
+void MainWindow::clearUnitData() {
+	auto curIdx = table->selectionModel()->currentIndex();
+	if (!curIdx.isValid() || std::cmp_greater_equal(curIdx.row(), mlt.units.size()))
+		return;
+
+	mlt.units[curIdx.row()].data.clear();
+	emitRowChanged(model, curIdx.row());
+}
+
 bool MainWindow::importUnitDialog() {
-	return false;
+	auto curIdx = table->selectionModel()->currentIndex();
+	if (!curIdx.isValid() || std::cmp_greater_equal(curIdx.row(), mlt.units.size()))
+		return false;
+
+	auto& unit = mlt.units[curIdx.row()];
+
+	const QString path = QFileDialog::getOpenFileName(
+		this,
+		tr("Import unit"),
+		getOutPath(curFile, true),
+		tr("Supported files (*.fob *.fpb *.mdb *.mpb *.msb *.osb);;All files (*.*)")
+	);
+
+	if (path.isEmpty())
+		return false;
+
+	// emitting rowChanged should be the responsibility of importUnit, but urghhhhh
+	bool ret = importUnit(unit, path);
+	if (ret)
+		emitRowChanged(model, curIdx.row());
+
+	return ret;
 }
 
 bool MainWindow::exportUnitDialog() {
@@ -283,9 +318,25 @@ void MainWindow::dropEvent(QDropEvent* event) {
 }
 
 bool MainWindow::importUnit(manatools::mlt::Unit& unit, const QString& path) {
-	Q_UNUSED(unit)
-	Q_UNUSED(path)
-	return false;
+	CursorOverride cursor(Qt::WaitCursor);
+
+	if (!unit.shouldHaveData()) {
+		QMessageBox::warning(this, "", tr("Selected unit is of type that should not contain data. Continuing anyway."));
+	}
+
+	try {
+		manatools::io::FileIO file(path.toStdWString(), "rb");
+		file.end();
+		unit.data.resize(file.tell());
+		file.jump(0);
+		file.readVec(unit.data);
+	} catch (const std::runtime_error& err) {
+		cursor.restore();
+		QMessageBox::warning(this, "", tr("Failed to import unit: %1").arg(err.what()));
+		return false;
+	}
+
+	return true;
 }
 
 bool MainWindow::exportUnit(const manatools::mlt::Unit& unit, const QString& path) {
@@ -308,6 +359,12 @@ bool MainWindow::exportUnit(const manatools::mlt::Unit& unit, const QString& pat
 	}
 	
 	return true;
+}
+
+void MainWindow::emitRowChanged(QAbstractItemModel* model, int row) {
+	auto topLeft = model->index(row, 0);
+	auto bottomRight = model->index(row, model->columnCount());
+	emit model->dataChanged(topLeft, bottomRight, { Qt::DisplayRole, Qt::EditRole });
 }
 
 void MainWindow::resetTableLayout() {

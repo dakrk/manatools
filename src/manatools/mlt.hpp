@@ -9,6 +9,7 @@
 namespace manatools::mlt {
 	constexpr FourCC MLT_MAGIC("SMLT");
 	constexpr FourCC FPW_MAGIC("SFPW");
+	constexpr FourCC PSR_MAGIC("SPSR");
 
 	constexpr u32 AICA_BASE  = 0x018000;
 	constexpr u32 AICA_MAX   = 0x200000;
@@ -34,6 +35,7 @@ namespace manatools::mlt {
 
 		u32 fileDataPtr() const { return fileDataPtr_; }
 		u32 alignment() const;
+		bool shouldHaveData() const;
 	private:
 		friend struct MLT;
 		u32 fileDataPtr_ = UNUSED;

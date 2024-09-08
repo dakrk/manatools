@@ -24,6 +24,7 @@ public slots:
 	void dataModified();
 	void packMLT(bool useAICASizes);
 	bool addUnit(const manatools::FourCC fourCC);
+	void clearUnitData();
 	bool importUnitDialog();
 	bool exportUnitDialog();
 
@@ -36,11 +37,12 @@ private:
 	bool importUnit(manatools::mlt::Unit& unit, const QString& path);
 	bool exportUnit(const manatools::mlt::Unit& unit, const QString& path);
 
+	void emitRowChanged(QAbstractItemModel* model, int row);
+
 	void resetTableLayout();
 	void reloadTable();
 
 	QString maybeDropEvent(QDropEvent* event);
-
 	bool maybeSave();
 	void setCurrentFile(const QString& path = "");
 

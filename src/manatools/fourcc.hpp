@@ -18,8 +18,9 @@ namespace manatools {
 		}
 
 		constexpr FourCC(const std::string_view str) {
-			std::copy_n(str.begin(), std::max(str.size(), 4lu), data_);
-			data_[4] = '\0';
+			size_t n = std::min(str.size(), 4lu);
+			std::copy_n(str.begin(), n, data_);
+			data_[n] = '\0';
 		}
 
 		constexpr bool operator==(const FourCC& rhs) const {

@@ -199,4 +199,8 @@ u32 Unit::alignment() const {
 	return UNIT_ALIGN;
 }
 
+bool Unit::shouldHaveData() const {
+	return fourCC != FPW_MAGIC && fourCC != PSR_MAGIC;
+}
+
 } // namespace manatools::mlt
