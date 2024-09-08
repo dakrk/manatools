@@ -23,8 +23,8 @@ target_link_libraries(guicommon PUBLIC
 	SndFile::sndfile
 )
 
-set_target_properties(guicommon PROPERTIES
-	WINDOWS_EXPORT_ALL_SYMBOLS ON
+target_compile_definitions(guicommon PRIVATE
+	GUICOMMON_LIBRARY
 )
 
 manatools_target(guicommon)

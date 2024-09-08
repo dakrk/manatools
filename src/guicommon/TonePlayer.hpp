@@ -4,8 +4,9 @@
 #include <manatools/tone.hpp>
 #include <manatools/tonedecoder.hpp>
 #include <manatools/utils.hpp>
+#include "common.hpp"
 
-class TonePlayer : public QObject {
+class GUICOMMON_EXPORT TonePlayer : public QObject {
 	Q_OBJECT
 public:
 	typedef manatools::tone::Tone Tone;

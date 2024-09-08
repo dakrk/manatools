@@ -14,7 +14,6 @@
 #include <guicommon/CursorOverride.hpp>
 #include <guicommon/utils.hpp>
 #include <functional>
-#include <utility>
 
 #include "MainWindow.hpp"
 #include "mltgui.hpp"
@@ -68,7 +67,6 @@ MainWindow::MainWindow(QWidget* parent) :
 	        [this](const QModelIndex& tl, const QModelIndex& br, const QList<int>& roles) {
 		Q_UNUSED(tl);
 		Q_UNUSED(br);
-		Q_UNUSED(roles);
 		if (roles.contains(Qt::DisplayRole) || roles.contains(Qt::EditRole) || roles.isEmpty()) {
 			dataModified();
 		}
@@ -236,16 +234,19 @@ bool MainWindow::addUnit(const manatools::FourCC fourCC) {
 
 void MainWindow::clearUnitData() {
 	auto curIdx = table->selectionModel()->currentIndex();
-	if (!curIdx.isValid() || std::cmp_greater_equal(curIdx.row(), mlt.units.size()))
+	if (!curIdx.isValid())
 		return;
 
-	mlt.units[curIdx.row()].data.clear();
-	emitRowChanged(model, curIdx.row());
+	auto& unit = mlt.units[curIdx.row()];
+	if (!unit.data.empty()) {
+		unit.data.clear();
+		emitRowChanged(model, curIdx.row());
+	}
 }
 
 bool MainWindow::importUnitDialog() {
 	auto curIdx = table->selectionModel()->currentIndex();
-	if (!curIdx.isValid() || std::cmp_greater_equal(curIdx.row(), mlt.units.size()))
+	if (!curIdx.isValid())
 		return false;
 
 	auto& unit = mlt.units[curIdx.row()];
@@ -270,7 +271,7 @@ bool MainWindow::importUnitDialog() {
 
 bool MainWindow::exportUnitDialog() {
 	auto curIdx = table->selectionModel()->currentIndex();
-	if (!curIdx.isValid() || std::cmp_greater_equal(curIdx.row(), mlt.units.size()))
+	if (!curIdx.isValid())
 		return false;
 
 	const auto& unit = mlt.units[curIdx.row()];
@@ -321,7 +322,15 @@ bool MainWindow::importUnit(manatools::mlt::Unit& unit, const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
 
 	if (!unit.shouldHaveData()) {
-		QMessageBox::warning(this, "", tr("Selected unit is of type that should not contain data. Continuing anyway."));
+		auto btn = QMessageBox::warning(
+			this, "",
+			tr("Selected unit is of type that should not contain data. Continue importing?"),
+			QMessageBox::Yes | QMessageBox::No
+		);
+
+		if (btn != QMessageBox::Yes) {
+			return false;
+		}
 	}
 
 	try {

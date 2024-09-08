@@ -18,7 +18,7 @@ namespace manatools {
 		}
 
 		constexpr FourCC(const std::string_view str) {
-			size_t n = std::min(str.size(), 4lu);
+			size_t n = std::min<size_t>(str.size(), 4);
 			std::copy_n(str.begin(), n, data_);
 			data_[n] = '\0';
 		}

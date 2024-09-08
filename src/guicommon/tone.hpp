@@ -2,6 +2,7 @@
 #include <QString>
 #include <QWidget>
 #include <manatools/mpb.hpp>
+#include "common.hpp"
 
 namespace tone {
 	// TODO: Support P04, P08 and P16 formats
@@ -9,12 +10,12 @@ namespace tone {
 		WAV, DAT
 	};
 
-	bool importDialog(manatools::mpb::Split& split, const QString& basePath, QWidget* parent = nullptr);
-	bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* parent = nullptr);
+	GUICOMMON_EXPORT bool importDialog(manatools::mpb::Split& split, const QString& basePath, QWidget* parent = nullptr);
+	GUICOMMON_EXPORT bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* parent = nullptr);
 
-	bool exportDialog(const manatools::mpb::Split& split, const QString& basePath, const QString& baseName,
+	GUICOMMON_EXPORT bool exportDialog(const manatools::mpb::Split& split, const QString& basePath, const QString& baseName,
 	                  const QString& tonePath, QWidget* parent = nullptr);
-	bool exportFile(const manatools::mpb::Split& split, const QString& path, FileType type, QWidget* parent = nullptr);
+	GUICOMMON_EXPORT bool exportFile(const manatools::mpb::Split& split, const QString& path, FileType type, QWidget* parent = nullptr);
 
-	bool convertToADPCM(manatools::tone::Tone& tone, QWidget* parent = nullptr);
+	GUICOMMON_EXPORT bool convertToADPCM(manatools::tone::Tone& tone, QWidget* parent = nullptr);
 } // namespace tone

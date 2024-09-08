@@ -1,8 +1,9 @@
 #pragma once
 #include <QFrame>
 #include <manatools/common.hpp>
+#include "common.hpp"
 
-class FilterEnvelopeWidget : public QFrame {
+class GUICOMMON_EXPORT FilterEnvelopeWidget : public QFrame {
 	Q_OBJECT
 public:
 	typedef manatools::common::FilterEnvelope FilterEnvelope;

@@ -1,8 +1,9 @@
 #pragma once
 #include <QFrame>
 #include <manatools/common.hpp>
+#include "common.hpp"
 
-class AmpEnvelopeWidget : public QFrame {
+class GUICOMMON_EXPORT AmpEnvelopeWidget : public QFrame {
 	Q_OBJECT
 public:
 	typedef manatools::common::AmpEnvelope AmpEnvelope;

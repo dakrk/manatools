@@ -3,7 +3,9 @@
 TonePlayer::TonePlayer(double sampleRate, QObject* parent) :
 	QObject(parent),
 	maxPadFrames(sampleRate * MAX_PAD_DURATION),
-	stream(nullptr)
+	stream(nullptr),
+	padFrames(0),
+	endPadFrames(0)
 {
 	PaError err;
 

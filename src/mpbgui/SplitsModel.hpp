@@ -31,9 +31,7 @@ private:
 	bool changeData(const QModelIndex& index, T& out, const T2& in) {
 		if (out == in)
 			return false;
-
 		out = in;
-
 		emit dataChanged(index, index, { Qt::EditRole });
 		return true;
 	}

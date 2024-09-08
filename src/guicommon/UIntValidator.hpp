@@ -1,7 +1,8 @@
 #pragma once
 #include <QValidator>
+#include "common.hpp"
 
-class UIntValidator : public QValidator {
+class GUICOMMON_EXPORT UIntValidator : public QValidator {
 	Q_OBJECT
 public:
 	explicit UIntValidator(QObject* parent = nullptr) :

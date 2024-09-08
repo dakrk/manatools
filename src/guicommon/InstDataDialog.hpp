@@ -5,8 +5,9 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <manatools/types.hpp>
+#include "common.hpp"
 
-class InstDataDialog : public QDialog {
+class GUICOMMON_EXPORT InstDataDialog : public QDialog {
 	Q_OBJECT
 public:
 	struct Data {

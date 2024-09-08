@@ -27,7 +27,7 @@ bool MainWindow::loadFile(const QString& path) {
 		osb = manatools::osb::load(path.toStdWString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
-		QMessageBox::warning(this, "", tr("Failed to load multi-unit file: %1").arg(err.what()));
+		QMessageBox::warning(this, "", tr("Failed to load bank file: %1").arg(err.what()));
 		return false;
 	}
 
@@ -43,7 +43,7 @@ bool MainWindow::saveFile(const QString& path) {
 		osb.save(path.toStdWString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
-		QMessageBox::warning(this, "", tr("Failed to save multi-unit file: %1").arg(err.what()));
+		QMessageBox::warning(this, "", tr("Failed to save bank file: %1").arg(err.what()));
 		return false;
 	}
 
