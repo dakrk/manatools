@@ -122,7 +122,7 @@ bool MainWindow::loadFile(const QString& path) {
 		mlt = manatools::mlt::load(path.toStdWString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
-		QMessageBox::warning(this, "", tr("Failed to load multi-unit file: %1").arg(err.what()));
+		QMessageBox::warning(this, tr("Open Multi-Unit file"), tr("Failed to load multi-unit file: %1").arg(err.what()));
 		return false;
 	}
 
@@ -138,7 +138,7 @@ bool MainWindow::saveFile(const QString& path) {
 		mlt.save(path.toStdWString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
-		QMessageBox::warning(this, "", tr("Failed to save multi-unit file: %1").arg(err.what()));
+		QMessageBox::warning(this, tr("Save Multi-Unit file"), tr("Failed to save multi-unit file: %1").arg(err.what()));
 		return false;
 	}
 
@@ -324,8 +324,9 @@ bool MainWindow::importUnit(manatools::mlt::Unit& unit, const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
 
 	if (!unit.shouldHaveData()) {
-		auto btn = QMessageBox::warning(
-			this, "",
+		const auto btn = QMessageBox::warning(
+			this,
+			tr("Import unit"),
 			tr("Selected unit is of type that should not contain data. Continue importing?"),
 			QMessageBox::Yes | QMessageBox::No
 		);
@@ -343,7 +344,7 @@ bool MainWindow::importUnit(manatools::mlt::Unit& unit, const QString& path) {
 		file.readVec(unit.data);
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
-		QMessageBox::warning(this, "", tr("Failed to import unit: %1").arg(err.what()));
+		QMessageBox::warning(this, tr("Import unit"), tr("Failed to import unit: %1").arg(err.what()));
 		return false;
 	}
 
@@ -356,7 +357,7 @@ bool MainWindow::exportUnit(const manatools::mlt::Unit& unit, const QString& pat
 	// This should be done the moment you click the button but, redundant checks much?
 	if (unit.fileDataPtr() == manatools::mlt::UNUSED) {
 		cursor.restore();
-		QMessageBox::warning(this, "", tr("Selected unit has no data (no file offset), cannot export."));
+		QMessageBox::warning(this, tr("Export unit"), tr("Selected unit has no data (no file offset), cannot export."));
 		return false;
 	}
 
@@ -365,7 +366,7 @@ bool MainWindow::exportUnit(const manatools::mlt::Unit& unit, const QString& pat
 		file.writeVec(unit.data);
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
-		QMessageBox::warning(this, "", tr("Failed to export unit: %1").arg(err.what()));
+		QMessageBox::warning(this, tr("Export unit"), tr("Failed to export unit: %1").arg(err.what()));
 		return false;
 	}
 	
@@ -413,7 +414,7 @@ bool MainWindow::maybeSave() {
 	if (!isWindowModified())
 		return true;
 
-	const QMessageBox::StandardButton btn = QMessageBox::warning(
+	const auto btn = QMessageBox::warning(
 		this,
 		tr("Save changes to file?"),
 		tr("File has been modified. Would you like to save changes?"),

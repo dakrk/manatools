@@ -24,7 +24,7 @@ constexpr const size_t READ_SIZE = 512;
 bool importDialog(manatools::mpb::Split& split, const QString& basePath, QWidget* parent) {
 	const QString path = QFileDialog::getOpenFileName(
 		parent,
-		tr("Import split tone"),
+		tr("Import tone"),
 		basePath
 	);
 
@@ -49,7 +49,7 @@ bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* pare
 	 */
 	if (!sndFile || sndFile.error() != SF_ERR_NO_ERROR) {
 		cursor.restore();
-		QMessageBox::warning(parent, "", tr("Failed to import sound file: %1").arg(sndFile.strError()));
+		QMessageBox::warning(parent, tr("Import tone"), tr("Failed to import sound file: %1").arg(sndFile.strError()));
 		return false;
 	}
 
@@ -57,7 +57,8 @@ bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* pare
 	if (std::cmp_greater(sndFile.frames(), manatools::tone::MAX_SAMPLES)) {
 		cursor.restore();
 		QMessageBox::warning(
-			parent, "",
+			parent,
+			tr("Import tone"),
 			tr(
 				"Cannot use imported sound file as it contains more than %1 samples (%2).\n\n"
 				"Tip: Try reducing its sample rate."
@@ -70,7 +71,8 @@ bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* pare
 	auto channels = sndFile.channels();
 	if (channels > 1) {
 		QMessageBox::warning(
-			parent, "",
+			parent,
+			tr("Import tone"),
 			tr("More than 1 channel was found in the imported file. Only channel 1 will be read.")
 		);
 	}
@@ -98,7 +100,7 @@ bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* pare
 
 	if (totalFramesRead != sndFile.frames()) {
 		cursor.restore();
-		QMessageBox::warning(parent, "", tr("Could not fully read audio data from imported sound file."));
+		QMessageBox::warning(parent, tr("Import tone"), tr("Could not fully read audio data from imported sound file."));
 		return false;
 	}
 
@@ -106,7 +108,7 @@ bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* pare
 	if (sndFile.command(SFC_GET_INSTRUMENT, &instrument, sizeof(instrument))) {
 		if (instrument.loop_count >= 1) {
 			if (instrument.loop_count > 1)
-				QMessageBox::warning(parent, "", tr("Imported sound file has more than one loop. Using first loop."));
+				QMessageBox::warning(parent, tr("Import tone"), tr("Imported sound file has more than one loop. Using first loop."));
 
 			auto loop = instrument.loops[0];
 			split.loop = loop.mode != SF_LOOP_NONE;
@@ -165,7 +167,7 @@ bool exportDialog(const manatools::mpb::Split& split, const QString& basePath, c
 
 	const QString path = QFileDialog::getSaveFileName(
 		parent,
-		tr("Export split tone"),
+		tr("Export tone"),
 		defPath,
 		filters.join(";;"),
 		&selectedFilter
@@ -188,7 +190,7 @@ bool exportFile(const manatools::mpb::Split& split, const QString& path, FileTyp
 
 	if (!split.tone.data) {
 		cursor.restore();
-		QMessageBox::warning(parent, "", tr("Selected split has no tone data."));
+		QMessageBox::warning(parent, tr("Export tone"), tr("Selected split has no tone data."));
 		return false;
 	}
 
@@ -231,7 +233,7 @@ bool exportFile(const manatools::mpb::Split& split, const QString& path, FileTyp
 		}
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
-		QMessageBox::warning(parent, "", tr("Failed to export tone: %1").arg(err.what()));
+		QMessageBox::warning(parent, tr("Export tone"), tr("Failed to export tone: %1").arg(err.what()));
 		return false;
 	}
 
@@ -249,7 +251,7 @@ bool convertToADPCM(manatools::tone::Tone& tone, QWidget* parent) {
 
 		case PCM16: {
 			if (tone.data->size() % 2) {
-				QMessageBox::warning(parent, "", tr("Cannot convert tone to ADPCM: Size of PCM-16 data must be a multiple of 2 bytes."));
+				QMessageBox::warning(parent, tr("Convert to ADPCM"), tr("Cannot convert tone to ADPCM: Size of PCM-16 data must be a multiple of 2 bytes."));
 				return false;
 			}
 

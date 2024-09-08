@@ -213,7 +213,7 @@ bool MainWindow::loadFile(const QString& path) {
 		bank = manatools::mpb::load(path.toStdWString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
-		QMessageBox::warning(this, "", tr("Failed to load bank file: %1").arg(err.what()));
+		QMessageBox::warning(this, tr("Open MIDI program/drum bank"), tr("Failed to load bank file: %1").arg(err.what()));
 		return false;
 	}
 
@@ -250,7 +250,7 @@ bool MainWindow::saveFile(const QString& path) {
 		bank.save(path.toStdWString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
-		QMessageBox::warning(this, "", tr("Failed to save bank file: %1").arg(err.what()));
+		QMessageBox::warning(this, tr("Save MIDI program/drum bank"), tr("Failed to save bank file: %1").arg(err.what()));
 		return false;
 	}
 
@@ -268,7 +268,7 @@ bool MainWindow::exportSF2File(const QString& path) {
 		sf2.Write(path.toStdString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
-		QMessageBox::warning(this, "", tr("Failed to export as SoundFont 2: %1").arg(err.what()));
+		QMessageBox::warning(this, tr("Export as SoundFont 2"), tr("Failed to export as SoundFont 2: %1").arg(err.what()));
 		return false;
 	}
 
@@ -558,7 +558,7 @@ bool MainWindow::maybeSave() {
 	if (!isWindowModified())
 		return true;
 
-	const QMessageBox::StandardButton btn = QMessageBox::warning(
+	const auto btn = QMessageBox::warning(
 		this,
 		tr("Save changes to file?"),
 		tr("File has been modified. Would you like to save changes?"),

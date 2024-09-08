@@ -27,7 +27,7 @@ bool MainWindow::loadFile(const QString& path) {
 		osb = manatools::osb::load(path.toStdWString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
-		QMessageBox::warning(this, "", tr("Failed to load bank file: %1").arg(err.what()));
+		QMessageBox::warning(this, tr("Open One Shot bank"), tr("Failed to load bank file: %1").arg(err.what()));
 		return false;
 	}
 
@@ -43,7 +43,7 @@ bool MainWindow::saveFile(const QString& path) {
 		osb.save(path.toStdWString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
-		QMessageBox::warning(this, "", tr("Failed to save bank file: %1").arg(err.what()));
+		QMessageBox::warning(this, tr("Save One Shot bank"), tr("Failed to save bank file: %1").arg(err.what()));
 		return false;
 	}
 
@@ -64,9 +64,9 @@ bool MainWindow::open() {
 	if (maybeSave()) {
 		const QString path = QFileDialog::getOpenFileName(
 			this,
-			tr("Open One Shot Bank"),
+			tr("Open One Shot bank"),
 			getOutPath(curFile, true),
-			tr("One Shot Bank (*.osb);;All files (*.*)")
+			tr("One Shot bank (*.osb);;All files (*.*)")
 		);
 
 		if (!path.isEmpty()) {
@@ -87,9 +87,9 @@ bool MainWindow::save() {
 bool MainWindow::saveAs() {
 	const QString path = QFileDialog::getSaveFileName(
 		this,
-		tr("Save One Shot Bank"),
+		tr("Save One Shot bank"),
 		getOutPath(curFile),
-		tr("One Shot Bank (*.osb);;All files (*.*)")
+		tr("One Shot bank (*.osb);;All files (*.*)")
 	);
 
 	if (path.isEmpty())
@@ -163,7 +163,7 @@ bool MainWindow::maybeSave() {
 	if (!isWindowModified())
 		return true;
 
-	const QMessageBox::StandardButton btn = QMessageBox::warning(
+	const auto btn = QMessageBox::warning(
 		this,
 		tr("Save changes to file?"),
 		tr("File has been modified. Would you like to save changes?"),
