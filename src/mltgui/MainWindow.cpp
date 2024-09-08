@@ -12,6 +12,7 @@
 #include <QVBoxLayout>
 #include <manatools/io.hpp>
 #include <guicommon/CursorOverride.hpp>
+#include <guicommon/FourCCDelegate.hpp>
 #include <guicommon/utils.hpp>
 #include <functional>
 
@@ -37,7 +38,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	QMenu* packMenu = editMenu->addMenu(tr("&Pack"));
 	packMenu->addAction(tr("By &AICA Size"), std::bind(&MainWindow::packMLT, this, true));
 	packMenu->addAction(tr("By &File Size"), std::bind(&MainWindow::packMLT, this, false));
-	editMenu->addAction(QIcon::fromTheme("document-properties"), tr("Preference&s"), this, [] { /* TODO */ });
+	// editMenu->addAction(QIcon::fromTheme("document-properties"), tr("Preference&s"), this, [] { /* TODO */ });
 
 	QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addAction(QIcon::fromTheme("help-about"), tr("&About"), this, &MainWindow::about);
@@ -59,6 +60,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	table->setSelectionBehavior(QAbstractItemView::SelectRows);
 	table->setSelectionMode(QAbstractItemView::SingleSelection);
 	table->setModel(model);
+	table->setItemDelegateForColumn(0, new FourCCDelegate(true, table));
 
 	setCurrentFile();
 	resetTableLayout();

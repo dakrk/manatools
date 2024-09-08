@@ -87,8 +87,12 @@ bool MLTModel::setData(const QModelIndex& index, const QVariant& value, int role
 	manatools::mlt::Unit& unit = mlt->units[index.row()];
 
 	if (role == Qt::EditRole) {
+		QString str = value.toString();
+		if (index.column() == 0)
+			return changeData(index, unit.fourCC, str.toUtf8().data());
+
 		bool ok = false;
-		uint val = value.toString().toUInt(&ok, 0);
+		uint val = str.toUInt(&ok, 0);
 		if (!ok)
 			return false;
 
@@ -140,7 +144,7 @@ bool MLTModel::removeRows(int row, int count, const QModelIndex& parent) {
 Qt::ItemFlags MLTModel::flags(const QModelIndex& index) const {
 	Qt::ItemFlags f = QAbstractTableModel::flags(index);
 
-	if (index.isValid() && (1 <= index.column() && index.column() <= 3)) {
+	if (index.isValid() && (0 <= index.column() && index.column() <= 3)) {
 		f |= Qt::ItemIsEditable;
 	}
 

@@ -9,6 +9,7 @@ add_library(guicommon
 	AudioSystem.cpp
 	CursorOverride.hpp
 	FilterEnvelopeWidget.cpp
+	FourCCDelegate.cpp
 	InstDataDialog.cpp
 	tone.cpp
 	TonePlayer.cpp
