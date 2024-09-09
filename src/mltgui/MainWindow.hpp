@@ -1,4 +1,5 @@
 #pragma once
+#include <QLabel>
 #include <QMainWindow>
 #include <QSettings>
 #include <QTableView>
@@ -38,6 +39,7 @@ private:
 	bool exportUnit(const manatools::mlt::Unit& unit, const QString& path);
 
 	void emitRowChanged(QAbstractItemModel* model, int row);
+	void updateRAMStatus();
 
 	void resetTableLayout();
 	void reloadTable();
@@ -54,6 +56,7 @@ private:
 
 	QTableView* table;
 	MLTModel* model;
+	QLabel* ramStatus;
 
 	manatools::mlt::MLT mlt;
 };

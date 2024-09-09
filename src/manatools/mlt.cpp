@@ -120,8 +120,8 @@ void MLT::save(const fs::path& path) {
 		}
 
 		if ((unit.aicaDataPtr + unit.aicaDataSize) >= AICA_MAX) {
-			char err[48];
-			snprintf(err, std::size(err), "MLT unit %zu exceeds available AICA RAM (>%u)", i, AICA_MAX);
+			char err[64];
+			snprintf(err, std::size(err), "MLT unit %zu exceeds available AICA RAM (>0x%x)", i, AICA_MAX);
 			throw std::runtime_error(err);
 		}
 	}
@@ -190,6 +190,18 @@ bool MLT::pack(bool useAICASizes) {
 	}
 
 	return dataChanged;
+}
+
+uintptr_t MLT::ramUsed() const {
+	uintptr_t lastTotal = 0;
+
+	for (const auto& unit : units) {
+		uintptr_t total = unit.aicaDataPtr + unit.aicaDataSize;
+		if (total > lastTotal)
+			lastTotal = total;
+	}
+
+	return lastTotal;
 }
 
 u32 Unit::alignment() const {

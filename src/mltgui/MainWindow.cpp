@@ -57,6 +57,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	table = new QTableView(this);
 	model = new MLTModel(&mlt, this);
+	ramStatus = new QLabel(this);
 	table->setSelectionBehavior(QAbstractItemView::SelectRows);
 	table->setSelectionMode(QAbstractItemView::SingleSelection);
 	table->setModel(model);
@@ -64,6 +65,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	setCurrentFile();
 	resetTableLayout();
+	updateRAMStatus();
 
 	connect(model, &QAbstractTableModel::dataChanged, this,
 	        [this](const QModelIndex& tl, const QModelIndex& br, const QList<int>& roles) {
@@ -102,6 +104,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	btnLayout->addWidget(toolbtnAddUnit);
 	btnLayout->addWidget(btnDelUnit);
 	btnLayout->addStretch(1);
+	btnLayout->addWidget(ramStatus);
+	btnLayout->addStretch(1);
 	btnLayout->addWidget(btnClearUnitData);
 	btnLayout->addWidget(btnImportUnitData);
 	btnLayout->addWidget(btnExportUnitData);
@@ -128,6 +132,7 @@ bool MainWindow::loadFile(const QString& path) {
 
 	setCurrentFile(path);
 	reloadTable();
+	updateRAMStatus();
 	return true;
 }
 
@@ -151,6 +156,7 @@ void MainWindow::newFile() {
 		mlt = {};
 		setCurrentFile();
 		reloadTable();
+		updateRAMStatus();
 	}
 }
 
@@ -211,6 +217,7 @@ void MainWindow::about() {
 void MainWindow::dataModified() {
 	setWindowModified(true);
 	mlt.adjust();
+	updateRAMStatus();
 }
 
 void MainWindow::packMLT(bool useAICASizes) {
@@ -377,6 +384,20 @@ void MainWindow::emitRowChanged(QAbstractItemModel* model, int row) {
 	auto topLeft = model->index(row, 0);
 	auto bottomRight = model->index(row, model->columnCount());
 	emit model->dataChanged(topLeft, bottomRight, { Qt::DisplayRole, Qt::EditRole });
+}
+
+void MainWindow::updateRAMStatus() {
+	intptr_t avail = manatools::mlt::AICA_MAX - mlt.ramUsed();
+
+	// TODO: negative should be handled by formatHex for signed types
+	ramStatus->setText(
+		tr("%1 (%2%3) bytes available")
+			.arg(avail)
+			.arg(avail >= 0 ? "" : "-")
+			.arg(formatHex(std::abs(avail), 0))
+	);
+
+	ramStatus->setStyleSheet(avail > 0 ? "" : "QLabel { color: red; }");
 }
 
 void MainWindow::resetTableLayout() {
