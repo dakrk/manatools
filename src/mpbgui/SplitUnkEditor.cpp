@@ -30,7 +30,7 @@ void SplitUnkEditor::init() {
 
 void SplitUnkEditor::connectSpinnerHexLabel(QSpinBox* spinner, QLabel* label) {
 	connect(spinner, &QSpinBox::valueChanged, this, [label](int value) {
-		label->setText(formatHex(value, 0));
+		label->setText(formatHex(value));
 	});
 }
 

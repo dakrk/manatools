@@ -30,15 +30,15 @@ QVariant MLTModel::data(const QModelIndex& index, int role) const {
 		switch (index.column()) {
 			case 0: return QString(unit.fourCC.data());
 			case 1: return unit.bank;
-			case 2: return formatHex(unit.aicaDataPtr);
-			case 3: return formatHex(unit.aicaDataSize, 0);
+			case 2: return formatHex(unit.aicaDataPtr, 8);
+			case 3: return formatHex(unit.aicaDataSize);
 			case 4: {
 				if (unit.fileDataPtr() == manatools::mlt::UNUSED) {
 					return unit.shouldHaveData() ? tr("None") : tr("N/A");
 				}
-				return formatHex(unit.fileDataPtr());
+				return formatHex(unit.fileDataPtr(), 8);
 			}
-			case 5: return formatHex(unit.data.size(), 0);
+			case 5: return formatHex(unit.data.size());
 		}
 	} else if (role == Qt::TextAlignmentRole) {
 		if (index.column() == 0) {

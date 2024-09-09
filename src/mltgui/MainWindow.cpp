@@ -388,15 +388,7 @@ void MainWindow::emitRowChanged(QAbstractItemModel* model, int row) {
 
 void MainWindow::updateRAMStatus() {
 	intptr_t avail = manatools::mlt::AICA_MAX - mlt.ramUsed();
-
-	// TODO: negative should be handled by formatHex for signed types
-	ramStatus->setText(
-		tr("%1 (%2%3) bytes available")
-			.arg(avail)
-			.arg(avail >= 0 ? "" : "-")
-			.arg(formatHex(std::abs(avail), 0))
-	);
-
+	ramStatus->setText(tr("%1 (%2) bytes available").arg(avail).arg(formatHex(avail)));
 	ramStatus->setStyleSheet(avail > 0 ? "" : "QLabel { color: red; }");
 }
 
