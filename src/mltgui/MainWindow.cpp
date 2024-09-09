@@ -389,7 +389,13 @@ void MainWindow::emitRowChanged(QAbstractItemModel* model, int row) {
 void MainWindow::updateRAMStatus() {
 	intptr_t avail = manatools::mlt::AICA_MAX - mlt.ramUsed();
 	ramStatus->setText(tr("%1 (%2) bytes available").arg(avail).arg(formatHex(avail)));
-	ramStatus->setStyleSheet(avail > 0 ? "" : "QLabel { color: red; }");
+
+	if (avail <= 0)
+		ramStatus->setStyleSheet("QLabel { color: red; }");
+	else if (avail <= 131072) // AICA_MAX / 16
+		ramStatus->setStyleSheet("QLabel { color: orange; }");
+	else
+		ramStatus->setStyleSheet("");
 }
 
 void MainWindow::resetTableLayout() {

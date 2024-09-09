@@ -207,7 +207,6 @@ uintptr_t MLT::ramUsed() const {
 u32 Unit::alignment() const {
 	if (fourCC == FPW_MAGIC)
 		return FPW_ALIGN;
-
 	return UNIT_ALIGN;
 }
 
