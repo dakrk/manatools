@@ -143,7 +143,7 @@ void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
 				if (curTime >= it->endTime || flush) {
 					u32 delta = it->endTime - lastTime;
 					lastTime = it->endTime;
-					midiFile.events.push_back(midi::NoteOff {delta, it->channel, it->note, it->velocity});
+					midiFile.events.push_back(midi::NoteOff { delta, it->channel, it->note, it->velocity });
 					it = noteQueue.erase(it);
 				} else {
 					it++;
@@ -159,42 +159,42 @@ void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
 
 			std::visit(overloaded {
 				[&](const msd::Note& msg) {
-					midiFile.events.push_back(midi::NoteOn {delta, msg.channel, msg.note, msg.velocity});
-					noteQueue.insert({curTime + msg.gate, msg.channel, msg.note, msg.velocity});
+					midiFile.events.push_back(midi::NoteOn { delta, msg.channel, msg.note, msg.velocity });
+					noteQueue.insert({ curTime + msg.gate, msg.channel, msg.note, msg.velocity });
 					curTime += msg.step;
 				},
 
 				[&](const msd::ControlChange& msg) {
-					midiFile.events.push_back(midi::ControlChange {delta, msg.channel, msg.controller, msg.value});
+					midiFile.events.push_back(midi::ControlChange { delta, msg.channel, msg.controller, msg.value });
 					curTime += msg.step;
 				},
 
 				[&](const msd::ProgramChange& msg) {
-					midiFile.events.push_back(midi::ProgramChange {delta, msg.channel, msg.program});
+					midiFile.events.push_back(midi::ProgramChange { delta, msg.channel, msg.program });
 					curTime += msg.step;
 				},
 
 				[&](const msd::ChannelPressure& msg) {
-					midiFile.events.push_back(midi::ChannelPressure {delta, msg.channel, msg.pressure});
+					midiFile.events.push_back(midi::ChannelPressure { delta, msg.channel, msg.pressure });
 					curTime += msg.step;
 				},
 
 				[&](const msd::PitchWheelChange& msg) {
 					s16 pitch = ((msg.pitch + 64) << 7) - 8192;
-					midiFile.events.push_back(midi::PitchWheelChange {delta, msg.channel, pitch});
+					midiFile.events.push_back(midi::PitchWheelChange { delta, msg.channel, pitch });
 					curTime += msg.step;
 				},
 
 				[&](const msd::Loop& msg) {
 					// Insert a CC31 for Dreamcast compatibility, and loopStart/loopEnd for other software
-					midiFile.events.push_back(midi::ControlChange {delta, 0, 31, msg.unk1});
-					midiFile.events.push_back(midi::MetaEvent {midi::Marker {delta, startLoop ? "loopStart" : "loopEnd"}});
+					midiFile.events.push_back(midi::ControlChange { delta, 0, 31, msg.unk1 });
+					midiFile.events.push_back(midi::MetaEvent { midi::Marker { delta, startLoop ? "loopStart" : "loopEnd" } });
 					startLoop = !startLoop;
 					curTime += msg.step;
 				},
 
 				[&](const msd::TempoChange& msg) {
-					midiFile.events.push_back(midi::MetaEvent {midi::SetTempo {0, static_cast<u32>(msg.tempo * 1000)}});
+					midiFile.events.push_back(midi::MetaEvent { midi::SetTempo { 0, static_cast<u32>(msg.tempo * 1000) } });
 				},
 
 				[](const auto& msg) {
