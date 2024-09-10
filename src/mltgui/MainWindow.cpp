@@ -62,6 +62,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	table->setSelectionMode(QAbstractItemView::SingleSelection);
 	table->setModel(model);
 	table->setItemDelegateForColumn(0, new FourCCDelegate(true, table));
+	table->setDragEnabled(true);
+	table->setDragDropMode(QAbstractItemView::InternalMove);
 
 	setCurrentFile();
 	resetTableLayout();
@@ -86,6 +88,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	toolbtnAddUnit->setMenu(unitTypeMenu);
 
 	QPushButton* btnDelUnit = new QPushButton(QIcon::fromTheme("list-remove"), "");
+	// QPushButton* btnTest = new QPushButton("test");
 	QPushButton* btnClearUnitData = new QPushButton(QIcon::fromTheme("edit-clear"), "");
 	QPushButton* btnImportUnitData = new QPushButton(QIcon::fromTheme("document-open"), "");
 	QPushButton* btnExportUnitData = new QPushButton(QIcon::fromTheme("document-save-as"), "");
@@ -96,6 +99,10 @@ MainWindow::MainWindow(QWidget* parent) :
 			model->removeRow(cur.row());
 	});
 
+	/* connect(btnTest, &QPushButton::clicked, this, [&]() {
+		model->moveRow({}, 1, {}, 11);
+	}); */
+
 	connect(btnClearUnitData, &QPushButton::clicked, this, &MainWindow::clearUnitData);
 	connect(btnImportUnitData, &QPushButton::clicked, this, &MainWindow::importUnitDialog);
 	connect(btnExportUnitData, &QPushButton::clicked, this, &MainWindow::exportUnitDialog);
@@ -105,6 +112,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	btnLayout->addWidget(btnDelUnit);
 	btnLayout->addStretch(1);
 	btnLayout->addWidget(ramStatus);
+	// btnLayout->addWidget(btnTest);
 	btnLayout->addStretch(1);
 	btnLayout->addWidget(btnClearUnitData);
 	btnLayout->addWidget(btnImportUnitData);

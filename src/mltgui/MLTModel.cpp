@@ -1,6 +1,10 @@
+#include <QIODevice>
+#include <QMimeData>
 #include <QPalette>
 #include <guicommon/utils.hpp>
 #include "MLTModel.hpp"
+
+const QString MLTModel::MIMEType = QStringLiteral("application/x-manatools-mltgui-mltmodel");
 
 MLTModel::MLTModel(manatools::mlt::MLT* mlt, QObject* parent) :
 	QAbstractTableModel(parent),
@@ -126,7 +130,7 @@ bool MLTModel::moveRows(const QModelIndex& srcParent, int srcRow, int count, con
 
 	auto begin = mlt->units.begin() + srcRow;
 	beginMoveRows({}, srcRow, srcRow + count - 1, {}, destChild);
-	std::move(begin, begin + count, mlt->units.begin() + destChild);
+	std::rotate(begin, begin + count, mlt->units.begin() + destChild);
 	endMoveRows();
 	return true;
 }
@@ -144,11 +148,72 @@ bool MLTModel::removeRows(int row, int count, const QModelIndex& parent) {
 Qt::ItemFlags MLTModel::flags(const QModelIndex& index) const {
 	Qt::ItemFlags f = QAbstractTableModel::flags(index);
 
-	if (index.isValid() && (0 <= index.column() && index.column() <= 3)) {
-		f |= Qt::ItemIsEditable;
+	if (index.isValid()) {
+		f |= Qt::ItemIsDragEnabled;
+
+		if (0 <= index.column() && index.column() <= 3) {
+			f |= Qt::ItemIsEditable;
+		}
 	}
 
-	return f;
+	return f | Qt::ItemIsDropEnabled;
+}
+
+// rather broken at the moment
+bool MLTModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) {
+	Q_UNUSED(column);
+
+	if (action != Qt::MoveAction)
+		return action == Qt::IgnoreAction;
+
+	if (!data || !data->hasFormat(MIMEType))
+		return false;
+
+	if (row == -1 && parent.isValid())
+		row = parent.row();
+
+	QList<int> rows;
+	QByteArray encodedData = data->data(MIMEType);
+	QDataStream stream(&encodedData, QIODevice::ReadOnly);
+
+	while (!stream.atEnd()) {
+		int row;
+		stream >> row;
+		rows << row;
+	}
+
+	for (const int r : rows) {
+		moveRow({}, r, {}, parent.row());
+	}
+
+	return true;
+}
+
+QMimeData* MLTModel::mimeData(const QModelIndexList& indexes) const {
+	if (indexes.isEmpty())
+		return nullptr;
+
+	QMimeData* mimeData = new QMimeData();
+	QByteArray encodedData;
+	QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+	for (const auto& index : indexes) {
+		if (index.isValid()) {
+			stream << index.row();
+		}
+	}
+
+	// I think QByteArray uses COW, so passing large data shouldn't be a huge issue
+	mimeData->setData(MIMEType, encodedData);
+	return mimeData;
+}
+
+QStringList MLTModel::mimeTypes() const {
+	return { MIMEType };
+}
+
+Qt::DropActions MLTModel::supportedDropActions() const {
+	return Qt::MoveAction;
 }
 
 void MLTModel::setMLT(manatools::mlt::MLT* newMLT) {
