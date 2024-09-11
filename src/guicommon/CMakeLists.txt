@@ -10,6 +10,7 @@ add_library(guicommon
 	CursorOverride.hpp
 	FilterEnvelopeWidget.cpp
 	FourCCDelegate.cpp
+	HorizontalLineItemDropStyle.cpp
 	InstDataDialog.cpp
 	tone.cpp
 	TonePlayer.cpp
