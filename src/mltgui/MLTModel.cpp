@@ -2,6 +2,7 @@
 #include <QMimeData>
 #include <QPalette>
 #include <guicommon/utils.hpp>
+#include <optional>
 #include "MLTModel.hpp"
 
 const QString MLTModel::MIMEType = QStringLiteral("application/x-manatools-mltgui-mltmodel");
@@ -124,13 +125,23 @@ bool MLTModel::insertRows(int row, int count, const QModelIndex& parent) {
 	return false;
 }
 
-bool MLTModel::moveRows(const QModelIndex& srcParent, int srcRow, int count, const QModelIndex& destParent, int destChild) {
+bool MLTModel::moveRows(const QModelIndex& srcParent, int srcRow, int count, const QModelIndex& destParent, int destRow) {
 	Q_UNUSED(srcParent);
 	Q_UNUSED(destParent);
 
-	auto begin = mlt->units.begin() + srcRow;
-	beginMoveRows({}, srcRow, srcRow + count - 1, {}, destChild);
-	std::rotate(begin, begin + count, mlt->units.begin() + destChild);
+	if (srcRow < 0 || destRow < 0 || count <= 0 || srcRow + count - 1 >= rowCount() || destRow > rowCount())
+		return false;
+
+	auto begin = mlt->units.begin();
+	if (!beginMoveRows({}, srcRow, srcRow + count - 1, {}, destRow))
+		return false;
+
+	if (destRow > srcRow) {
+		std::rotate(begin + srcRow, begin + srcRow + count, begin + destRow);
+	} else {
+		std::rotate(begin + destRow, begin + srcRow, begin + srcRow + count);
+	}
+
 	endMoveRows();
 	return true;
 }
@@ -159,49 +170,53 @@ Qt::ItemFlags MLTModel::flags(const QModelIndex& index) const {
 	return f | Qt::ItemIsDropEnabled;
 }
 
-// rather broken at the moment
 bool MLTModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) {
 	Q_UNUSED(column);
 
 	if (action != Qt::MoveAction)
 		return action == Qt::IgnoreAction;
-
+	
 	if (!data || !data->hasFormat(MIMEType))
 		return false;
 
-	if (row == -1 && parent.isValid())
-		row = parent.row();
-
-	QList<int> rows;
+	int beginRow;
+	int rowFrom;
 	QByteArray encodedData = data->data(MIMEType);
 	QDataStream stream(&encodedData, QIODevice::ReadOnly);
 
-	while (!stream.atEnd()) {
-		int row;
-		stream >> row;
-		rows << row;
-	}
+	if (row != -1)
+		beginRow = row;
+	else if (parent.isValid())
+		beginRow = parent.row();
+	else
+		beginRow = rowCount();
 
-	for (const int r : rows) {
-		moveRow({}, r, {}, parent.row());
-	}
+	if (stream.atEnd())
+		return false;
+
+	stream >> rowFrom;
+	moveRow({}, rowFrom, {}, beginRow);
 
 	return true;
 }
 
 QMimeData* MLTModel::mimeData(const QModelIndexList& indexes) const {
-	if (indexes.isEmpty())
+	std::optional<int> row;
+	for (const auto& index : indexes) {
+		if (index.isValid()) {
+			row = index.row();
+			break;
+		}
+	}
+
+	if (!row.has_value())
 		return nullptr;
 
 	QMimeData* mimeData = new QMimeData();
 	QByteArray encodedData;
 	QDataStream stream(&encodedData, QIODevice::WriteOnly);
 
-	for (const auto& index : indexes) {
-		if (index.isValid()) {
-			stream << index.row();
-		}
-	}
+	stream << *row;
 
 	// I think QByteArray uses COW, so passing large data shouldn't be a huge issue
 	mimeData->setData(MIMEType, encodedData);
