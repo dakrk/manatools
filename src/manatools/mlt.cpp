@@ -22,7 +22,7 @@ MLT MLT::load(const fs::path& path) {
 		throw std::runtime_error("Invalid MLT file");
 	}
 
-	io.forward(4);
+	io.readU32LE(&mlt.version);
 	io.readU32LE(&numUnits);
 	io.forward(20);
 
@@ -60,7 +60,7 @@ void MLT::save(const fs::path& path) {
 	io::FileIO io(path, "wb");
 
 	io.writeFourCC(MLT_MAGIC);
-	io.writeU32LE(2); // TODO: 2 surely wouldn't always be right (assuming this is version)
+	io.writeU32LE(version);
 
 	if (units.size() >= std::numeric_limits<u32>::max()) {
 		throw std::runtime_error("Too many units in MLT");
@@ -220,7 +220,7 @@ void MLT::move(size_t srcIdx, size_t count, size_t destIdx) {
 	}
 }
 
-uintptr_t MLT::ramUsed() const {
+uintptr_t MLT::aicaUsed() const {
 	uintptr_t lastTotal = 0;
 
 	for (const auto& unit : units) {

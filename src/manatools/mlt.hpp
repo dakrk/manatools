@@ -48,9 +48,10 @@ namespace manatools::mlt {
 		bool adjust();
 		bool pack(bool useAICASizes);
 		void move(size_t srcIdx, size_t count, size_t destIdx);
+		uintptr_t aicaUsed() const;
 
-		uintptr_t ramUsed() const;
-
+		// Version 1 isn't 0x1, instead it's 0x0101???
+		u32 version = 2;
 		std::deque<Unit> units;
 	};
 

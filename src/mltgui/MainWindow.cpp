@@ -406,7 +406,7 @@ void MainWindow::emitRowChanged(QAbstractItemModel* model, int row) {
 }
 
 void MainWindow::updateRAMStatus() {
-	intptr_t avail = manatools::mlt::AICA_MAX - mlt.ramUsed();
+	intptr_t avail = manatools::mlt::AICA_MAX - mlt.aicaUsed();
 	ramStatus->setText(tr("%1 (%2) bytes available").arg(avail).arg(formatHex(avail)));
 
 	if (avail <= 0)
