@@ -61,6 +61,14 @@ namespace osb {
 
     std::assert(sizeof(ProgramFilterPre) == 1, "ProgramFilterPre must be 1 byte");
 
+    /**
+     * Unlike MPB, OSB's pan values are the same between version 1 and 2. A 15 being
+     * in the calculation instead of a 16 like MPB means you don't have two centers.
+     */
+    fn calcPanPot(u8 panIn) {
+        return panIn >= 16 ? 15 - s8(panIn) : s8(panIn);
+    };
+
     struct Header {
         char fourCC[4];
         u32 version;
@@ -88,7 +96,7 @@ namespace osb {
         
         unk[1];
 
-        u8 panPot;      // TODO: Not quite sure yet
+        u8 panPot;      // [0 -> 30] [def. 0 (Center)]    See calcPanPot for more information.
         u8 directLevel; // [0 -> 15] [def. 15]
 
         ProgramFilterPre filterPre;
