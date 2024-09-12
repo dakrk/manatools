@@ -6,7 +6,8 @@ class ProgramsModel : public QAbstractTableModel {
 	Q_OBJECT
 public:
 	typedef manatools::mpb::Bank Bank;
-	
+	static const QString MIMEType;
+
 	ProgramsModel(Bank* bank, QObject* parent = nullptr);
 
 	int rowCount(const QModelIndex& parent = {}) const override;
@@ -16,14 +17,13 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
 	bool insertRows(int row, int count, const QModelIndex& parent = {}) override;
+	bool moveRows(const QModelIndex& srcParent, int srcRow, int count, const QModelIndex& destParent, int destChild) override;
 	bool removeRows(int row, int count, const QModelIndex& parent = {}) override;
-	/**
-	 * TODO: moving rows in Qt is utterly stupid so I'm not doing it for now. Good bye
-	 * Why must the behaviour without making a custom TableView and other stuff be some
-	 * serialisation and mime bullshit that calls insertRows and removeRows INSTEAD OF
-	 * JUST USING THE MOVEROWS METHOD. THAT I HAVE. IN THE CLASS. WHEN I SPECIFY
-	 * "INTERNALMOVE". unless I got something wrong but I really don't think so
-	 */
+
+	bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) override;
+	QMimeData* mimeData(const QModelIndexList& indexes) const override;
+	QStringList mimeTypes() const override;
+	Qt::DropActions supportedDropActions() const override;
 
 	Qt::ItemFlags flags(const QModelIndex& index) const override;
 

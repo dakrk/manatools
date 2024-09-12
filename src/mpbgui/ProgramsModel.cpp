@@ -1,4 +1,9 @@
+#include <QIODevice>
+#include <QMimeData>
+#include <optional>
 #include "ProgramsModel.hpp"
+
+const QString ProgramsModel::MIMEType = QStringLiteral("application/x-manatools-mpbgui-programsmodel");
 
 ProgramsModel::ProgramsModel(Bank* bank, QObject* parent) :
 	QAbstractTableModel(parent),
@@ -75,6 +80,26 @@ bool ProgramsModel::insertRows(int row, int count, const QModelIndex& parent) {
 	return true;
 }
 
+bool ProgramsModel::moveRows(const QModelIndex& srcParent, int srcRow, int count, const QModelIndex& destParent, int destRow) {
+	Q_UNUSED(srcParent);
+	Q_UNUSED(destParent);
+
+	if (srcRow < 0 || destRow < 0 || count <= 0 ||
+	    srcRow + count - 1 >= rowCount() || destRow > rowCount() ||
+	    !beginMoveRows({}, srcRow, srcRow + count - 1, {}, destRow))
+		return false;
+
+	auto begin = bank->programs.begin();
+	if (destRow > srcRow) {
+		std::rotate(begin + srcRow, begin + srcRow + count, begin + destRow);
+	} else {
+		std::rotate(begin + destRow, begin + srcRow, begin + srcRow + count);
+	}
+
+	endMoveRows();
+	return true;
+}
+
 bool ProgramsModel::removeRows(int row, int count, const QModelIndex& parent) {
 	Q_UNUSED(parent);
 
@@ -88,7 +113,71 @@ bool ProgramsModel::removeRows(int row, int count, const QModelIndex& parent) {
 }
 
 Qt::ItemFlags ProgramsModel::flags(const QModelIndex& index) const {
-	return QAbstractTableModel::flags(index);
+	Qt::ItemFlags f = QAbstractTableModel::flags(index);
+	if (index.isValid())
+		f |= Qt::ItemIsDragEnabled;
+	return f | Qt::ItemIsDropEnabled;
+}
+
+bool ProgramsModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) {
+	Q_UNUSED(column);
+
+	if (action != Qt::MoveAction)
+		return action == Qt::IgnoreAction;
+
+	if (!data || !data->hasFormat(MIMEType))
+		return false;
+
+	int beginRow;
+	int rowFrom;
+	QByteArray encodedData = data->data(MIMEType);
+	QDataStream stream(&encodedData, QIODevice::ReadOnly);
+
+	if (row != -1)
+		beginRow = row;
+	else if (parent.isValid())
+		beginRow = parent.row();
+	else
+		beginRow = rowCount();
+
+	if (stream.atEnd())
+		return false;
+
+	stream >> rowFrom;
+	moveRow({}, rowFrom, {}, beginRow);
+
+	return true;
+}
+
+QMimeData* ProgramsModel::mimeData(const QModelIndexList& indexes) const {
+	std::optional<int> row;
+	for (const auto& index : indexes) {
+		if (index.isValid()) {
+			row = index.row();
+			break;
+		}
+	}
+
+	if (!row.has_value())
+		return nullptr;
+
+	QMimeData* mimeData = new QMimeData();
+	QByteArray encodedData;
+	QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+	stream << *row;
+
+	// I think QByteArray uses COW, so passing large data shouldn't be a huge issue
+	mimeData->setData(MIMEType, encodedData);
+	return mimeData;
+}
+
+QStringList ProgramsModel::mimeTypes() const {
+	return { MIMEType };
+}
+
+Qt::DropActions ProgramsModel::supportedDropActions() const {
+	return Qt::MoveAction;
 }
 
 void ProgramsModel::setBank(Bank* newBank) {

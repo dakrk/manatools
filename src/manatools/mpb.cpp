@@ -602,10 +602,8 @@ const Layer* Bank::layer(size_t programIdx, size_t layerIdx) const {
 	if (auto* p = program(programIdx)) {
 		if (layerIdx >= MAX_LAYERS)
 			return nullptr;
-
-		if (auto& l = p->layers[layerIdx]; l.has_value()) {
+		if (auto& l = p->layers[layerIdx]; l.has_value())
 			return &(*l);
-		}
 	}
 
 	return nullptr;
@@ -646,7 +644,6 @@ s8 Split::fromPanPot(u8 in, u32 version) {
 		return in >= 32 ? (s8)in - 32 : 16 - (s8)in;
 	else if (version == 1)
 		return in >= 16 ? 16 - (s8)in : (s8)in;
-
 	return 0;
 }
 
@@ -655,7 +652,6 @@ u8 Split::toPanPot(s8 in, u32 version) {
 		return in >= 0 ? in + 32 : 16 - in;
 	else if (version == 1)
 		return in >= 0 ? in : 16 - in;
-
 	return 0;
 }
 

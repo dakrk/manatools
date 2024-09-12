@@ -8,6 +8,7 @@
 #include <manatools/sf2.hpp>
 #include <manatools/wav.hpp>
 #include <guicommon/CursorOverride.hpp>
+#include <guicommon/HorizontalLineItemDropStyle.hpp>
 #include <guicommon/tone.hpp>
 #include <guicommon/TonePlayer.hpp>
 #include <guicommon/utils.hpp>
@@ -54,6 +55,10 @@ MainWindow::MainWindow(QWidget* parent) :
 	ui.tblPrograms->setModel(programsModel);
 	ui.tblLayers->setModel(layersModel);
 	ui.tblSplits->setModel(splitsModel);
+
+	ui.tblPrograms->setDragEnabled(true);
+	ui.tblPrograms->setDragDropMode(QAbstractItemView::InternalMove);
+	ui.tblPrograms->setStyle(new HorizontalLineItemDropStyle());
 
 	setCommonTableProps(ui.tblPrograms);
 	setCommonTableProps(ui.tblLayers);
