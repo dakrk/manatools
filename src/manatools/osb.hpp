@@ -33,6 +33,9 @@ namespace manatools::osb {
 
 	// Well, I can assume they're called programs. The FourCC ends with 'P'.
 	struct Program {
+		static s8 fromPanPot(u8 panPot);
+		static u8 toPanPot(s8 panPot);
+
 		bool loop          = false;
 
 		// TODO: Loop points???
@@ -43,7 +46,7 @@ namespace manatools::osb {
 		ProgramLFO lfo;
 		ProgramFX fx;
 
-		// s8 panPot          = 0;     // TODO: not quite sure yet
+		s8 panPot          = 0;     // [-15 -> 15]
 		u8 directLevel     = 15;    // [0 -> 15]
 
 		u8 oscillatorLevel = 255;   // [0 -> 255]

@@ -104,7 +104,7 @@ OSB load(const fs::path& path) {
 
 		u8 pan;
 		io.readU8(&pan);
-		//program.panPot = Program::calcPanPot(pan, osb.version);
+		program.panPot = Program::fromPanPot(pan);
 		io.readU8(&program.directLevel);
 
 		u8 filterBitfield;
@@ -174,6 +174,14 @@ OSB load(const fs::path& path) {
 	}
 
 	return osb;
+}
+
+s8 Program::fromPanPot(u8 in) {
+	return in >= 16 ? 15 - (s8)in : (s8)in;
+}
+
+u8 Program::toPanPot(s8 in) {
+	return in >= 0 ? in : 15 - in;
 }
 
 } // namespace manatools::osb
