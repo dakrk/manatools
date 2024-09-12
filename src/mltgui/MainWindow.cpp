@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QInputDialog>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QMimeData>
@@ -36,6 +37,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	fileMenu->addAction(QIcon::fromTheme("application-exit"), tr("&Quit"), QKeySequence::Quit, this, &QApplication::quit);
 
 	QMenu* editMenu = menuBar()->addMenu(tr("&Edit"));
+	editMenu->addAction(QIcon::fromTheme("document-properties"), tr("MLT &Version"), this, &MainWindow::versionDialog);
 	QMenu* packMenu = editMenu->addMenu(tr("&Pack"));
 	packMenu->addAction(tr("By &AICA Size"), std::bind(&MainWindow::packMLT, this, true));
 	packMenu->addAction(tr("By &File Size"), std::bind(&MainWindow::packMLT, this, false));
@@ -222,6 +224,26 @@ void MainWindow::dataModified() {
 	setWindowModified(true);
 	mlt.adjust();
 	updateRAMStatus();
+}
+
+void MainWindow::versionDialog() {
+	bool ok;
+	auto verStr = QInputDialog::getText(
+		this,
+		tr("Set MLT version"),
+		tr("Version (0x0101 for version 1):"),
+		QLineEdit::Normal,
+		formatHex(mlt.version),
+		&ok
+	);
+
+	if (ok && !verStr.isEmpty()) {
+		u32 newVer = verStr.toUInt(&ok, 0);
+		if (ok && newVer != mlt.version) {
+			mlt.version = newVer;
+			dataModified();
+		}
+	}
 }
 
 void MainWindow::packMLT(bool useAICASizes) {
