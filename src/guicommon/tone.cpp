@@ -80,10 +80,7 @@ bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* pare
 	// Otherwise reading floats would result in the output just being zeros
 	sndFile.command(SFC_SET_SCALE_FLOAT_INT_READ, nullptr, true);
 
-	// TODO: Ask for option if you want to convert to ADPCM?
-
 	std::vector<s16> readBuf(READ_SIZE * channels);
-
 	manatools::tone::Tone newTone;
 	newTone.format = manatools::tone::Format::PCM16,
 	newTone.data = manatools::tone::makeDataPtr(sndFile.frames() * sizeof(s16));	

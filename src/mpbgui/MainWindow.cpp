@@ -112,24 +112,33 @@ MainWindow::MainWindow(QWidget* parent) :
 	connect(ui.actionAbout, &QAction::triggered, this, &MainWindow::about);
 	connect(ui.actionAboutQt, &QAction::triggered, this, [this]() { QMessageBox::aboutQt(this); });
 
-	// TODO: if no table current selection after add, then set it to new row
-	#define CONNECT_BTN_ADD(button, table, callback) \
+	// I probably really shouldn't be using the preprocessor for these
+	#define CONNECT_BTN_ADD(button, table) \
 		connect(button, &QPushButton::clicked, this, [&]() { \
 			QModelIndex cur = table->currentIndex(); \
-			table->model()->insertRow(cur.isValid() ? cur.row() : 0); \
-			callback(cur.row() + 1); \
+			int row, col; \
+			if (cur.isValid()) { \
+				row = cur.row() + 1; \
+				col = cur.column(); \
+			} else { \
+				row = 0; \
+				col = 0; \
+			} \
+			table->model()->insertRow(row); \
+			table->setCurrentIndex(table->model()->index(row, col)); \
 		});
 
-	// mmh
-	#define CONNECT_BTN_DEL(button, table, callback) \
+	#define CONNECT_BTN_DEL(button, table) \
 		connect(button, &QPushButton::clicked, this, [&]() { \
 			QModelIndex cur = table->currentIndex(); \
 			if (cur.isValid()) { \
 				table->model()->removeRow(cur.row()); \
+				int curRow; \
 				if (cur.row() < table->model()->rowCount() - 1) \
-					callback(cur.row()); \
+					curRow = cur.row(); \
 				else \
-					callback(cur.row() - 1); \
+					curRow = cur.row() - 1; \
+				table->setCurrentIndex(table->model()->index(curRow, cur.column())); \
 			} \
 		});
 
@@ -141,11 +150,10 @@ MainWindow::MainWindow(QWidget* parent) :
 		        		callback(current.row()); \
 		        });
 
-	// explicitly setProgram because Ugh
-	CONNECT_BTN_ADD(ui.btnProgramAdd, ui.tblPrograms, setProgram);
-	CONNECT_BTN_DEL(ui.btnProgramDel, ui.tblPrograms, setProgram);
-	CONNECT_BTN_ADD(ui.btnSplitAdd, ui.tblSplits, setSplit);
-	CONNECT_BTN_DEL(ui.btnSplitDel, ui.tblSplits, setSplit);
+	CONNECT_BTN_ADD(ui.btnProgramAdd, ui.tblPrograms);
+	CONNECT_BTN_DEL(ui.btnProgramDel, ui.tblPrograms);
+	CONNECT_BTN_ADD(ui.btnSplitAdd, ui.tblSplits);
+	CONNECT_BTN_DEL(ui.btnSplitDel, ui.tblSplits);
 
 	/**
 	 * The layers table has a fixed number of slots and as such using insertRow
@@ -166,6 +174,13 @@ MainWindow::MainWindow(QWidget* parent) :
 	CONNECT_ROW_CHANGED(ui.tblPrograms->selectionModel(), setProgram);
 	CONNECT_ROW_CHANGED(ui.tblLayers->selectionModel(), setLayer);
 	CONNECT_ROW_CHANGED(ui.tblSplits->selectionModel(), setSplit);
+
+	// Moving a row doesn't fire currentRowChanged, despite the current row having actually changed
+	connect(programsModel, &QAbstractItemModel::rowsMoved, this, [this]() {
+		QModelIndex cur = ui.tblPrograms->currentIndex();
+		if (cur.isValid())
+			setProgram(cur.row());
+	});
 
 	#undef CONNECT_BTN_ADD
 	#undef CONNECT_BTN_DEL
@@ -280,25 +295,15 @@ bool MainWindow::exportSF2File(const QString& path) {
 	return true;
 }
 
-/**
- * Kinda really hate how this is done but Qt gives me a headache trying to do
- * anything else so
- * (Like, layer's going to be set twice in this case because setProgram fetches it,
- * and so does the slot that's connected to currentChanged after setCurrentIndex.
- * If you select another layer row before a file is loaded, the selection also won't
- * be synced with layerIdx 0.)
- */
 void MainWindow::setProgram(size_t newProgramIdx) {
 	programIdx = newProgramIdx;
 	layersModel->setProgram(programIdx);
 	splitsModel->setProgram(programIdx);
-	ui.tblLayers->setCurrentIndex(layersModel->index(layerIdx, 0));
 }
 
 void MainWindow::setLayer(size_t newLayerIdx) {
 	layerIdx = newLayerIdx;
 	splitsModel->setLayer(layerIdx);
-	ui.tblSplits->setCurrentIndex(splitsModel->index(splitIdx, 0));
 }
 
 void MainWindow::setSplit(size_t newSplitIdx) {
