@@ -242,7 +242,7 @@ void MainWindow::packMLT(bool useAICASizes) {
 
 bool MainWindow::addUnit(const manatools::FourCC fourCC) {
 	QModelIndex cur = table->currentIndex();
-	return model->insertUnits(cur.isValid() ? cur.row() : 0, 1, fourCC);
+	return model->insertUnits(cur.isValid() ? cur.row() + 1 : 0, 1, fourCC);
 }
 
 void MainWindow::clearUnitData() {

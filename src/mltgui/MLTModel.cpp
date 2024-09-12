@@ -76,7 +76,7 @@ QVariant MLTModel::headerData(int section, Qt::Orientation orientation, int role
 				case 3: return tr("Size [AICA]");
 				case 4: return tr("Offset [File]");
 				case 5: return tr("Size [File]");
-			}			
+			}
 		} else if (orientation == Qt::Vertical) {
 			return section;
 		}
@@ -129,18 +129,12 @@ bool MLTModel::moveRows(const QModelIndex& srcParent, int srcRow, int count, con
 	Q_UNUSED(srcParent);
 	Q_UNUSED(destParent);
 
-	if (srcRow < 0 || destRow < 0 || count <= 0 || srcRow + count - 1 >= rowCount() || destRow > rowCount())
+	if (srcRow < 0 || destRow < 0 || count <= 0 ||
+	    srcRow + count - 1 >= rowCount() || destRow > rowCount() ||
+	    !beginMoveRows({}, srcRow, srcRow + count - 1, {}, destRow))
 		return false;
 
-	auto begin = mlt->units.begin();
-	if (!beginMoveRows({}, srcRow, srcRow + count - 1, {}, destRow))
-		return false;
-
-	if (destRow > srcRow) {
-		std::rotate(begin + srcRow, begin + srcRow + count, begin + destRow);
-	} else {
-		std::rotate(begin + destRow, begin + srcRow, begin + srcRow + count);
-	}
+	mlt->move(srcRow, count, destRow);
 
 	endMoveRows();
 	return true;
@@ -175,7 +169,7 @@ bool MLTModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int ro
 
 	if (action != Qt::MoveAction)
 		return action == Qt::IgnoreAction;
-	
+
 	if (!data || !data->hasFormat(MIMEType))
 		return false;
 

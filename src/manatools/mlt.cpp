@@ -192,6 +192,34 @@ bool MLT::pack(bool useAICASizes) {
 	return dataChanged;
 }
 
+void MLT::move(size_t srcIdx, size_t count, size_t destIdx) {
+	auto begin = units.begin();
+
+	if (destIdx > srcIdx) {
+		std::rotate(begin + srcIdx, begin + srcIdx + count, begin + destIdx);
+	} else {
+		std::rotate(begin + destIdx, begin + srcIdx, begin + srcIdx + count);
+		auto it = begin + destIdx;
+		auto end = it + count;
+
+		// moving down, so we need to move down the offset in AICA RAM too
+		u32 startOffset;
+		auto prevIt = it - 1;
+		if (begin < prevIt) {
+			startOffset = prevIt->aicaDataPtr + prevIt->aicaDataSize;
+		} else {
+			startOffset = AICA_BASE;
+		}
+		
+		// all alignment related stuff can be dealt with with a subsequent `adjust` call
+		while (it < end) {
+			it->aicaDataPtr = startOffset;
+			startOffset = it->aicaDataPtr + it->aicaDataSize;
+			it++;
+		}
+	}
+}
+
 uintptr_t MLT::ramUsed() const {
 	uintptr_t lastTotal = 0;
 

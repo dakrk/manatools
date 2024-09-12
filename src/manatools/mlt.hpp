@@ -47,6 +47,8 @@ namespace manatools::mlt {
 
 		bool adjust();
 		bool pack(bool useAICASizes);
+		void move(size_t srcIdx, size_t count, size_t destIdx);
+
 		uintptr_t ramUsed() const;
 
 		std::deque<Unit> units;
