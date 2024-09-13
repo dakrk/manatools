@@ -32,7 +32,6 @@ namespace msd {
         u32 initialTempo;
     };
     
-    // TODO
     enum Status : u8 {
         Note             = 0x00 ... 0x3F,
         
@@ -40,7 +39,9 @@ namespace msd {
         Loop             = 0x82,
         EndOfTrack       = 0x83,
         TempoChange      = 0x84,
-        
+        GateExtend       = 0x88 ... 0x8B,
+        StepExtend       = 0x8C ... 0x8F,
+
         ControlChange    = 0xB0 ... 0xBF,
         ProgramChange    = 0xC0 ... 0xCF,
         ChannelPressure  = 0xD0 ... 0xDF,
@@ -48,8 +49,8 @@ namespace msd {
     };
     
     /**
-     * The control changes I've seen so far map to what MIDI has, so it's safe to presume that so
-     * does everything else.
+     * For the most part, all the control changes match MIDI spec, however some general use or
+     * lesser used controls are reused for more Dreamcast specific controls.
      */
     enum ControlChange : u8 {
         BankSelect_MSB          = 0,
@@ -88,7 +89,7 @@ namespace msd {
         GeneralPurpose_LSB      = 48 ... 51, // used in Dreamcast?
         Undefined_LSB           = 52 ... 63, // used in Dreamcast?
 
-        // TODO: There's a lot more
+        // mmh, see msd.hpp for more
         
         ResetAllControllers     = 121
     };
@@ -129,10 +130,18 @@ namespace msd {
         Status status;
         StatusBits statusBits @ $ - 1;
         
-        // Messages that associate to a channel (the ones with ranges in the enum)
+        // Messages that associate to a channel
         bool messageHandled = true;
         match (u8(status) & 0xF0) {
-            // TODO: Confirm how note off is handled
+
+            /**
+             * Unlike MIDI, which has delta time, MSD has step time, which is the opposite to
+             * what MIDI delta time is.
+             * MIDI delta time is the time before an event, while MSD step time is the time
+             * after an event.
+             * MSD also doesn't have note off commands, and instead relies on gate time, which
+             * is the time until the note should be turned off.
+             */
             (Status::Note | 0x00 ... 0x3F): {
                 u8 note;
                 u8 velocity;
@@ -221,7 +230,7 @@ namespace msd {
         if (messageHandled)
             return;
             
-        // Messages that don't associate to a channel (the ones that don't have a range in the enum)
+        // Messages that don't associate to a channel
         match (u8(status)) {
             (Status::Reference): {
                 u16 offset;
@@ -249,6 +258,24 @@ namespace msd {
             (Status::TempoChange): {
                 u16 tempo;
                 u8 step;
+            }
+
+            (Status::GateExtend | 0x88 ... 0x8B): {
+                /* match (u8(status) & 0xF) {
+                    (0x8): { extendBy = 0x200;  }
+                    (0x9): { extendBy = 0x800;  }
+                    (0xA): { extendBy = 0x1000; }
+                    (0xB): { extendBy = 0x2000; }
+                } */
+            }
+
+            (Status::StepExtend | 0x8C ... 0x8F): {
+                /* match (u8(status) & 0xF) {
+                    (0xC): { extendBy = 0x100;  }
+                    (0xD): { extendBy = 0x200;  }
+                    (0xE): { extendBy = 0x800;  }
+                    (0xF): { extendBy = 0x1000; }
+                } */
             }
 
             // Cannot reliably continue, message would be of unknown length
