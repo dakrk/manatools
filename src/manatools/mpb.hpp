@@ -40,7 +40,7 @@ namespace manatools::mpb {
 	
 	// Max 128 Splits per Layer
 	struct Split {
-		static s8 fromPanPot(u8 panPot, u32 version);
+		static s8 fromPanPot(u8 panPot);
 		static u8 toPanPot(s8 panPot, u32 version);
 
 		bool loop          = false;

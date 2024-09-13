@@ -152,7 +152,7 @@ Bank load(const fs::path& path) {
 
 					u8 pan;
 					io.readU8(&pan);
-					split.panPot = Split::fromPanPot(pan, bank.version);
+					split.panPot = Split::fromPanPot(pan);
 					io.readU8(&split.directLevel);
 
 					u8 filterBitfield;
@@ -639,12 +639,13 @@ uint Program::usedLayers() const {
 	return used;
 }
 
-s8 Split::fromPanPot(u8 in, u32 version) {
-	if (version == 2)
-		return in >= 32 ? (s8)in - 32 : 16 - (s8)in;
-	else if (version == 1)
-		return in >= 16 ? 16 - (s8)in : (s8)in;
-	return 0;
+/**
+ * Despite being version 2, Segagaga's MPBs use version 1 panning.
+ * I guess the driver doesn't care and the fact panning is usually different
+ * between versions is possibly just a quirk of the widely used SDK tools.
+ */
+s8 Split::fromPanPot(u8 in) {
+	return (in & 0x10) ? -(in & 0xF) : (in & 0xF);
 }
 
 u8 Split::toPanPot(s8 in, u32 version) {

@@ -99,7 +99,7 @@ MSD load(io::DataIO& io) {
 			return true;
 		}
 
-		// Messages that associate to a channel (usually has an annotated range in the enum)
+		// Messages that associate to a channel
 		switch (static_cast<Status>(status)) {
 			case Status::ControlChange: {
 				ControlChange msg(channel);
@@ -161,7 +161,7 @@ MSD load(io::DataIO& io) {
 			}
 		}
 
-		// Messages that do not associate to a channel (usually do not have an annotated range in the enum)
+		// Messages that do not associate to a channel
 		switch (static_cast<Status>(statusByte)) {
 			case Status::Reference: {
 				u16 offset;
@@ -205,7 +205,7 @@ MSD load(io::DataIO& io) {
 
 				/**
 				 * TempoChange step values are a bit weird, as there doesn't seem to be
-				 * any way to specify if it's above 8 bits, and as such in SegaGaGa,
+				 * any way to specify if it's above 8 bits, and as such in Segagaga,
 				 * _BATTLD.MRG had step extend messages preceding a tempo change.
 				 */
 				io.readU16BE(&msg.tempo);

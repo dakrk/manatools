@@ -64,12 +64,8 @@ namespace mpb {
 
     std::assert(sizeof(SplitFilterPre) == 1, "SplitFilterPre must be 1 byte");
 
-    fn calcPanPot(u8 panIn, u32 version) {
-        match (version) {
-            (1): { return panIn >= 16 ? 16 - s8(panIn) : s8(panIn); }
-            (2): { return panIn >= 32 ? s8(panIn) - 32 : 16 - s8(panIn); }
-            (_): { return 0; }
-        }
+    fn calcPanPot(u8 panIn) {
+        return (panIn & 0x10) ? -s8(panIn & 0xF) : (panIn & 0xF);
     };
 
     fn calcChecksum(u32 start, u32 end) {
