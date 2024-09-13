@@ -95,7 +95,7 @@ void msbDumpMSDs(const fs::path& msbPath) {
 				},
 
 				[](const msd::TempoChange& msg) {
-					printf("        Tempo Change     : tempo=%u msecs/pqn (%.3f BPM)\n", msg.tempo, 60 * 1000.0 / msg.tempo);
+					printf("        Tempo Change     : tempo=%u msecs/pqn (%.3f BPM) step=%u\n", msg.tempo, 60 * 1000.0 / msg.tempo, msg.step);
 				},
 
 				[](const auto& msg) {
@@ -129,6 +129,7 @@ void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
 		std::multiset<NoteQueueItem> noteQueue;
 		u32 curTime = 0;
 		u32 lastTime = 0;
+		u32 delta = 0;
 		bool startLoop = true;
 
 		/**
@@ -154,7 +155,7 @@ void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
 		for (const msd::Message& m : seq.messages) {
 			processNoteQueue();
 
-			u32 delta = curTime - lastTime;
+			delta = curTime - lastTime;
 			lastTime = curTime;
 
 			std::visit(overloaded {
@@ -194,7 +195,8 @@ void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
 				},
 
 				[&](const msd::TempoChange& msg) {
-					midiFile.events.push_back(midi::MetaEvent { midi::SetTempo { 0, static_cast<u32>(msg.tempo * 1000) } });
+					midiFile.events.push_back(midi::MetaEvent { midi::SetTempo { delta, static_cast<u32>(msg.tempo * 1000) } });
+					curTime += msg.step;
 				},
 
 				[](const auto& msg) {
@@ -206,8 +208,7 @@ void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
 
 		// flush remaining note offs
 		processNoteQueue(true);
-
-		midiFile.events.push_back(midi::EndOfTrack{});
+		midiFile.events.push_back(midi::EndOfTrack { delta });
 
 		fs::path midiName = msbPath.stem().concat('_' + std::to_string(s) += ".mid");
 		midiFile.save(midiOutPath / midiName);
