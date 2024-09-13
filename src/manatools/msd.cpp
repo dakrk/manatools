@@ -28,6 +28,9 @@ MSD load(io::DataIO& io) {
 	// we could be reading from anywhere in a file, store the beginning of *our* data
 	auto startPos = io.tell();
 
+	u32 gateExt = 0;
+	u32 stepExt = 0;
+
 	FourCC magic;
 	io.readFourCC(&magic);
 	if (magic != MSD_MAGIC) {
@@ -49,32 +52,40 @@ MSD load(io::DataIO& io) {
 			io.readU8(&msg.note);
 			io.readU8(&msg.velocity);
 
+			/**
+			 * No sort of protection to prevent gate/step time overflows, but realistically
+			 * nothing would/can be above 32 bits in size anyway
+			 */
 			switch (status) {
 				case 0x00: {
 					u8 gate; io.readU8(&gate);
 					u8 step; io.readU8(&step);
-					msg.gate = gate;
-					msg.step = step;
+					msg.gate = gate + gateExt;
+					msg.step = step + stepExt;
 					break;
 				}
 
 				case 0x10: {
 					u8 gate; io.readU8(&gate);
-					msg.gate = gate;
-					io.readU16BE(&msg.step);
+					u16 step; io.readU16BE(&step);
+					msg.gate = gate + gateExt;
+					msg.step = step + stepExt;
 					break;
 				}
 
 				case 0x20: {
-					io.readU16BE(&msg.gate);
+					u16 gate; io.readU16BE(&gate);
 					u8 step; io.readU8(&step);
-					msg.step = step;
+					msg.gate = gate + gateExt;
+					msg.step = step + stepExt;
 					break;
 				}
 
 				case 0x30: {
-					io.readU16BE(&msg.gate);
-					io.readU16BE(&msg.step);
+					u16 gate; io.readU16BE(&gate);
+					u16 step; io.readU16BE(&step);
+					msg.gate = gate + gateExt;
+					msg.step = step + stepExt;
 					break;
 				}
 
@@ -83,23 +94,24 @@ MSD load(io::DataIO& io) {
 				}
 			}
 
+			gateExt = stepExt = 0;
 			msd.messages.push_back(msg);
 			return true;
 		}
 
-		// Messages that associate to a channel (has an annotated range in the enum)
+		// Messages that associate to a channel (usually has an annotated range in the enum)
 		switch (static_cast<Status>(status)) {
 			case Status::ControlChange: {
 				ControlChange msg(channel);
 
 				u8 type;
 				io.readU8(&type);
-
 				// remove leftmost bit as that's used to indicate step data size
 				msg.controller = type & 0x7F;
 				io.readU8(&msg.value);
-				msg.step = readVar(io, type);
+				msg.step = readVar(io, type) + stepExt;
 
+				stepExt = 0;
 				msd.messages.push_back(msg);
 				return true;
 			}
@@ -109,10 +121,10 @@ MSD load(io::DataIO& io) {
 
 				u8 data;
 				io.readU8(&data);
-
 				msg.program = data & 0x7F;
-				msg.step = readVar(io, data);
+				msg.step = readVar(io, data) + stepExt;
 
+				stepExt = 0;
 				msd.messages.push_back(msg);
 				return true;
 			}
@@ -122,10 +134,10 @@ MSD load(io::DataIO& io) {
 
 				u8 data;
 				io.readU8(&data);
-
 				msg.pressure = data & 0x7F;
-				msg.step = readVar(io, data);
+				msg.step = readVar(io, data) + stepExt;
 
+				stepExt = 0;
 				msd.messages.push_back(msg);
 				return true;
 			}
@@ -135,11 +147,11 @@ MSD load(io::DataIO& io) {
 
 				u8 data;
 				io.readU8(&data);
-
 				// Convert pitch from to range of -64 to 63 (from 0 to 127)
 				msg.pitch = (data & 0x7F) - 64;
-				msg.step = readVar(io, data);
+				msg.step = readVar(io, data) + stepExt;
 
+				stepExt = 0;
 				msd.messages.push_back(msg);
 				return true;
 			}
@@ -149,7 +161,7 @@ MSD load(io::DataIO& io) {
 			}
 		}
 
-		// Messages that do not associate to a channel (doesn't have an annotated range in the enum)
+		// Messages that do not associate to a channel (usually do not have an annotated range in the enum)
 		switch (static_cast<Status>(statusByte)) {
 			case Status::Reference: {
 				u16 offset;
@@ -162,8 +174,8 @@ MSD load(io::DataIO& io) {
 				for (u8 i = 0; i < length; i++) {
 					/**
 					 * call ourself recursively. magic
-					 * TODO: pass count of how much references we're currently reading as to
-					 * prevent an infinite loop from a bad file?
+					 * TODO: pass count of how much references we're currently reading as
+					 * to prevent an infinite loop from a bad file?
 					 */
 					self(self);
 				}
@@ -176,10 +188,10 @@ MSD load(io::DataIO& io) {
 
 				u8 data;
 				io.readU8(&data);
-
 				msg.unk1 = data & 0x7F;
-				msg.step = readVar(io, data);
+				msg.step = readVar(io, data) + stepExt;
 
+				stepExt = 0;
 				msd.messages.push_back(msg);
 				return true;
 			}
@@ -190,24 +202,55 @@ MSD load(io::DataIO& io) {
 
 			case Status::TempoChange: {
 				TempoChange msg;
+
+				/**
+				 * TempoChange step values are a bit weird, as there doesn't seem to be
+				 * any way to specify if it's above 8 bits, and as such in SegaGaGa,
+				 * _BATTLD.MRG had step extend messages preceding a tempo change.
+				 */
 				io.readU16BE(&msg.tempo);
-				io.readU8(&msg.unk1);
+				u8 step; io.readU8(&step);
+				msg.step = step + stepExt;
+
+				stepExt = 0;
 				msd.messages.push_back(msg);
 				return true;
 			}
 
 			default: {
-				char err[64];
-				snprintf(err, std::size(err), "Unknown MSD message encountered at 0x%lx: %x", io.tell(), status);
-				throw std::runtime_error(err);
+				// shush
 			}
 		}
+
+		/**
+		 * Extend messages are not included in a reference's length, so the handlers for
+		 * extend messages process a new message themselves, which should keep them in a
+		 * loop until the next actual message is encountered.
+		 */
+
+		// Gate time extend
+		if (IN_RANGE(statusByte, 0x88, 0x8B)) {
+			gateExt += GATE_EXT_TABLE[statusByte & 3];
+			self(self);
+			return true;
+		}
+
+		// Step time extend
+		if (IN_RANGE(statusByte, 0x8C, 0x8F)) {
+			stepExt += STEP_EXT_TABLE[statusByte & 3];
+			self(self);
+			return true;
+		}
+
+		char err[64];
+		snprintf(err, std::size(err), "Unknown MSD message encountered at 0x%lx: %x", io.tell(), statusByte);
+		throw std::runtime_error(err);
 	};
 
 	/**
-	 * My GCC version doesn't support C++23 "deducing this" and my Clang version
-	 * crashes when trying to do it, so go back to the method of using two lambdas
-	 * to be able to call them recursively
+	 * My GCC version doesn't support C++23 "deducing this" and my Clang version crashes
+	 * when trying to do it, so go back to the method of using two lambdas to be able to
+	 * call them recursively
 	 */
 	auto readMessage = [&]() {
 		return readMessageImpl(readMessageImpl);

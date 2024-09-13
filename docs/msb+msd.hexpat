@@ -236,10 +236,10 @@ namespace msd {
                  * The way this works is like MIDI variable-length quantity, but mode and step are unrelated
                  * so we can't just use that
                  */
-                if (mode & 0x80)
-                    u8 step;
-                else
+                if (data & 0x80)
                     u16 step;
+                else
+                    u8 step;
             }
             
             (Status::EndOfTrack): {
@@ -248,13 +248,13 @@ namespace msd {
             
             (Status::TempoChange): {
                 u16 tempo;
-                unk[1];
+                u8 step;
             }
 
             // Cannot reliably continue, message would be of unknown length
             (_): {
                 // _gMoreMessages = false;
-                std::error(std::format("Unknown/unhandled MSD message: 0x{0:x} ({0})", u8(status)));
+                std::error(std::format("Unknown/unhandled MSD message at 0x{0:x}: 0x{1:x} ({1})", $, u8(status)));
             }
         }
     };
