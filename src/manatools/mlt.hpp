@@ -48,6 +48,7 @@ namespace manatools::mlt {
 		bool adjust();
 		bool pack(bool useAICASizes);
 		void move(size_t srcIdx, size_t count, size_t destIdx);
+		u32 aicaNextOffset(u32 offset) const;
 		uintptr_t aicaUsed() const;
 
 		// Version 1 isn't 0x1, instead it's 0x0101???

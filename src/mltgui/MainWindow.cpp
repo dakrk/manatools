@@ -398,9 +398,34 @@ bool MainWindow::importUnit(manatools::mlt::Unit& unit, const QString& path) {
 	}
 
 	try {
+		long fileSize = 0;
 		manatools::io::FileIO file(path.toStdWString(), "rb");
+		u32 nextOffset = mlt.aicaNextOffset(unit.aicaDataPtr);
+
 		file.end();
-		unit.data.resize(file.tell());
+		fileSize = file.tell();
+
+		if (fileSize > (nextOffset - unit.aicaDataPtr)) {
+			const auto btn = QMessageBox::warning(
+				this,
+				tr("Import unit"),
+				tr(
+					"The size of the imported file exceeds the space available in this memory location.\n"
+					"Importing would require relocating units that come after, thus impacting things that "
+					"may require a specific mapping in memory. Would you like to continue?"
+				),
+				QMessageBox::Yes | QMessageBox::No
+			);
+
+			if (btn != QMessageBox::Yes) {
+				return false;
+			}
+		}
+
+		// Should be padded 'n' all by a subsequent adjust call
+		unit.aicaDataSize = fileSize;
+
+		unit.data.resize(fileSize);
 		file.jump(0);
 		file.readVec(unit.data);
 	} catch (const std::runtime_error& err) {

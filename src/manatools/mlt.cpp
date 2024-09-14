@@ -214,6 +214,16 @@ void MLT::move(size_t srcIdx, size_t count, size_t destIdx) {
 	}
 }
 
+u32 MLT::aicaNextOffset(u32 offset) const {
+	u32 nextOffset = AICA_MAX;
+	for (const auto& unit : units) {
+		if (unit.aicaDataPtr > offset && unit.aicaDataPtr < nextOffset) {
+			nextOffset = unit.aicaDataPtr;
+		}
+	}
+	return nextOffset;
+}
+
 uintptr_t MLT::aicaUsed() const {
 	uintptr_t lastTotal = 0;
 
