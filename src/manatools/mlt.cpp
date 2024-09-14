@@ -118,12 +118,6 @@ void MLT::save(const fs::path& path) {
 			io.writeU32LE(UNUSED);
 			io.jump(pos);
 		}
-
-		if ((unit.aicaDataPtr + unit.aicaDataSize) >= AICA_MAX) {
-			char err[64];
-			snprintf(err, std::size(err), "MLT unit %zu exceeds available AICA RAM (>0x%x)", i, AICA_MAX);
-			throw std::runtime_error(err);
-		}
 	}
 
 	/**

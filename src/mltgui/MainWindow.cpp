@@ -145,6 +145,19 @@ bool MainWindow::loadFile(const QString& path) {
 bool MainWindow::saveFile(const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
 
+	if (mlt.aicaUsed() > manatools::mlt::AICA_MAX) {
+		const auto btn = QMessageBox::warning(
+			this,
+			tr("Save Multi-Unit file"),
+			tr("The current file exceeds the maximum amount of AICA RAM, continue saving?"),
+			QMessageBox::Yes | QMessageBox::No
+		);
+
+		if (btn != QMessageBox::Yes) {
+			return false;
+		}	
+	}
+
 	try {
 		mlt.save(path.toStdWString());
 	} catch (const std::runtime_error& err) {
