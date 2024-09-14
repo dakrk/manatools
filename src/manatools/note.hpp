@@ -2,7 +2,7 @@
 #include "types.hpp"
 
 namespace manatools {
-	static inline constexpr const char* noteMap[12] = {
+	inline constexpr const char* NOTE_MAP[12] = {
 		"C", "C#",
 		"D", "D#",
 		"E",
@@ -13,7 +13,7 @@ namespace manatools {
 	};
 
 	constexpr const char* noteName(u8 note) {
-		return noteMap[note % 12];
+		return NOTE_MAP[note % 12];
 	}
 
 	constexpr int noteOctave(u8 note) {

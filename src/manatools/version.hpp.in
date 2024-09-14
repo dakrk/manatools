@@ -1,8 +1,8 @@
 #pragma once
 
 namespace manatools {
-	static constexpr unsigned int versionMajor = @manatools_VERSION_MAJOR@;
-	static constexpr unsigned int versionMinor = @manatools_VERSION_MINOR@;
-	static constexpr unsigned int versionPatch = @manatools_VERSION_PATCH@;
-	static constexpr const char* versionString = "@manatools_VERSION_MAJOR@.@manatools_VERSION_MINOR@.@manatools_VERSION_PATCH@";
+	inline constexpr unsigned int versionMajor = @manatools_VERSION_MAJOR@;
+	inline constexpr unsigned int versionMinor = @manatools_VERSION_MINOR@;
+	inline constexpr unsigned int versionPatch = @manatools_VERSION_PATCH@;
+	inline constexpr const char* versionString = "@manatools_VERSION_MAJOR@.@manatools_VERSION_MINOR@.@manatools_VERSION_PATCH@";
 } // namespace manatools

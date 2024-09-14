@@ -118,7 +118,7 @@ Bank load(const fs::path& path) {
 
 					u16 ptrToneData;
 					io.readU16LE(&ptrToneData);
-					split.ptrToneData_ = ptrToneData + ((jumpAndBitDepth & 0xF) * 0x10000);
+					split.ptrToneData_ = ptrToneData + (jumpAndBitDepth * 0x10000);
 
 					io.readU16LE(&split.loopStart);
 					io.readU16LE(&split.loopEnd);
@@ -557,9 +557,9 @@ void Bank::save(const fs::path& path) {
 				auto tonePos = tonePtrs[toneData];
 				auto pos = io.tell();
 				io.jump(splitPtrs[p][l]);
-				io.forward(48 * s); // Jump to current split, where each split is 48 bytes, ugh
-				io.writeU8(tonePos / 0x10000); // jump
-				io.forward(1); // don't need to rewrite flags
+				io.forward(48 * s);              // Jump to current split, where each split is 48 bytes, ugh
+				io.writeU8(tonePos / 0x10000);   // jump
+				io.forward(1);                   // don't need to rewrite flags
 				io.writeU16LE(tonePos & 0xFFFF); // ptrToneData;
 				io.jump(pos);
 			}

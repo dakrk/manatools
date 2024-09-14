@@ -10,6 +10,10 @@ LayerEditor::LayerEditor(Layer* layer, QWidget* parent) :
 
 	connect(this, &QDialog::accepted, this, &LayerEditor::setData);
 
+	connect(ui.spinDelay, &QSpinBox::valueChanged, this, [this](int value) {
+		ui.lblDelayVal->setNum(value * 4);
+	});
+
 	connectSpinnerHexLabel(ui.spinUnk1, ui.lblUnk1Hex);
 	connectSpinnerHexLabel(ui.spinUnk2, ui.lblUnk2Hex);
 

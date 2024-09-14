@@ -152,7 +152,7 @@ namespace mpb {
         unk[1];
 
         // I don't think I can do the length calculations in just an ImHex pattern, gah
-        // u8 toneData[12] @ ptrToneData + 0x10000 * (jump & 0xF);
+        // u8 toneData[12] @ ptrToneData + (jump * 0x10000);
     };
     
     // Max 4 Layers per Program
@@ -160,7 +160,7 @@ namespace mpb {
         u32 numSplit;
         u32 ptrSplit;
         
-        u16 layerDelay; // [0 -> 4096] [def. 0]
+        u16 layerDelay; // [0 -> 4096] [def. 0]    Except it's quartered to make 0 -> 1024 in the file, why?
 
         unk[2];
         

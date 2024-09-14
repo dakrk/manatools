@@ -16,86 +16,7 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="lblDelay">
-       <property name="text">
-        <string>Delay</string>
-       </property>
-       <property name="buddy">
-        <cstring>spinDelay</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QSlider" name="sliderDelay">
-       <property name="maximum">
-        <number>4096</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QSpinBox" name="spinDelay">
-       <property name="maximum">
-        <number>4096</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="lblUnk1">
-       <property name="text">
-        <string>Unknown 1</string>
-       </property>
-       <property name="buddy">
-        <cstring>spinUnk1</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QSpinBox" name="spinUnk1">
-       <property name="maximum">
-        <number>65535</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QLabel" name="lblUnk1Hex">
-       <property name="font">
-        <font>
-         <family>Monospace</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>0x0</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="lblBendLow">
-       <property name="text">
-        <string>Bend Range [-]</string>
-       </property>
-       <property name="buddy">
-        <cstring>spinBendLow</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QSlider" name="sliderBendLow">
-       <property name="maximum">
-        <number>24</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-       <property name="invertedAppearance">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
+     <item row="2" column="3">
       <widget class="QSpinBox" name="spinBendLow">
        <property name="maximum">
         <number>24</number>
@@ -112,23 +33,6 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QSlider" name="sliderBendHigh">
-       <property name="maximum">
-        <number>24</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QSpinBox" name="spinBendHigh">
-       <property name="maximum">
-        <number>24</number>
-       </property>
-      </widget>
-     </item>
      <item row="4" column="0">
       <widget class="QLabel" name="lblUnk2">
        <property name="text">
@@ -139,14 +43,66 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
-      <widget class="QSpinBox" name="spinUnk2">
-       <property name="maximum">
-        <number>65535</number>
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblDelay">
+       <property name="text">
+        <string>Delay</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinDelay</cstring>
        </property>
       </widget>
      </item>
-     <item row="4" column="2">
+     <item row="2" column="0">
+      <widget class="QLabel" name="lblBendLow">
+       <property name="text">
+        <string>Bend Range [-]</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinBendLow</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="lblUnk1">
+       <property name="text">
+        <string>Unknown 1</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinUnk1</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="3">
+      <widget class="QSpinBox" name="spinBendHigh">
+       <property name="maximum">
+        <number>24</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSlider" name="sliderDelay">
+       <property name="maximum">
+        <number>1024</number>
+       </property>
+       <property name="singleStep">
+        <number>4</number>
+       </property>
+       <property name="pageStep">
+        <number>32</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TickPosition::TicksBelow</enum>
+       </property>
+       <property name="tickInterval">
+        <number>256</number>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="3">
       <widget class="QLabel" name="lblUnk2Hex">
        <property name="font">
         <font>
@@ -155,6 +111,72 @@
        </property>
        <property name="text">
         <string>0x0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QLabel" name="lblUnk1Hex">
+       <property name="font">
+        <font>
+         <family>Monospace</family>
+        </font>
+       </property>
+       <property name="text">
+        <string>0x0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QSpinBox" name="spinDelay">
+       <property name="maximum">
+        <number>1024</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" colspan="2">
+      <widget class="QSpinBox" name="spinUnk1">
+       <property name="maximum">
+        <number>65535</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" colspan="2">
+      <widget class="QSlider" name="sliderBendLow">
+       <property name="maximum">
+        <number>24</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="invertedAppearance">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" colspan="2">
+      <widget class="QSlider" name="sliderBendHigh">
+       <property name="maximum">
+        <number>24</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1" colspan="2">
+      <widget class="QSpinBox" name="spinUnk2">
+       <property name="maximum">
+        <number>65535</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLabel" name="lblDelayVal">
+       <property name="text">
+        <string>0</string>
        </property>
       </widget>
      </item>
@@ -220,50 +242,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>sliderDelay</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinDelay</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>147</x>
-     <y>19</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>302</x>
-     <y>19</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinDelay</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>sliderDelay</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>332</x>
-     <y>15</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>226</x>
-     <y>17</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>sliderBendHigh</sender>
    <signal>valueChanged(int)</signal>
    <receiver>spinBendHigh</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>210</x>
-     <y>82</y>
+     <x>279</x>
+     <y>111</y>
     </hint>
     <hint type="destinationlabel">
-     <x>321</x>
-     <y>77</y>
+     <x>339</x>
+     <y>115</y>
     </hint>
    </hints>
   </connection>
@@ -274,12 +264,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>312</x>
-     <y>75</y>
+     <x>339</x>
+     <y>115</y>
     </hint>
     <hint type="destinationlabel">
-     <x>220</x>
-     <y>81</y>
+     <x>279</x>
+     <y>111</y>
     </hint>
    </hints>
   </connection>
@@ -290,12 +280,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>227</x>
-     <y>103</y>
+     <x>279</x>
+     <y>83</y>
     </hint>
     <hint type="destinationlabel">
-     <x>286</x>
-     <y>103</y>
+     <x>339</x>
+     <y>87</y>
     </hint>
    </hints>
   </connection>
@@ -306,12 +296,44 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>321</x>
-     <y>113</y>
+     <x>339</x>
+     <y>87</y>
     </hint>
     <hint type="destinationlabel">
-     <x>215</x>
-     <y>105</y>
+     <x>279</x>
+     <y>83</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderDelay</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinDelay</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>196</x>
+     <y>15</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>270</x>
+     <y>17</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinDelay</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderDelay</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>262</x>
+     <y>24</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>206</x>
+     <y>25</y>
     </hint>
    </hints>
   </connection>

@@ -1,3 +1,4 @@
+#include <manatools/utils.hpp>
 #include "LayersModel.hpp"
 
 LayersModel::LayersModel(Bank* bank, size_t programIdx, QObject* parent) :
@@ -28,7 +29,7 @@ QVariant LayersModel::data(const QModelIndex& index, int role) const {
 		switch (index.column()) {
 			case 0: return index.row() + 1;
 			case 1: return static_cast<uint>(layer->splits.size());
-			case 2: return layer->delay;
+			case 2: return layer->delay * 4;
 			case 3: return layer->bendRangeLow;
 			case 4: return layer->bendRangeHigh;
 		}
@@ -69,9 +70,9 @@ bool LayersModel::setData(const QModelIndex& index, const QVariant& value, int r
 
 	if (role == Qt::EditRole) {
 		switch (index.column()) {
-			case 2: return changeData(index, layer->delay,         std::clamp(value.toInt(), 0, 4096));
-			case 3: return changeData(index, layer->bendRangeLow,  std::clamp(value.toInt(), 0,   24));
-			case 4: return changeData(index, layer->bendRangeHigh, std::clamp(value.toInt(), 0,   24));
+			case 2: return changeData(index, layer->delay,         std::clamp(manatools::utils::roundUp(value.toInt(), 4) / 4, 0, 1024));
+			case 3: return changeData(index, layer->bendRangeLow,  std::clamp(value.toInt(), 0, 24));
+			case 4: return changeData(index, layer->bendRangeHigh, std::clamp(value.toInt(), 0, 24));
 		}
 	}
 

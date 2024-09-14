@@ -117,7 +117,7 @@ namespace osb {
         // 16 bytes on version 1, 24 bytes on version 2. (Including ENDP footer.)
         unk[24];
 
-        // u8 toneData[12] @ ptrToneData + 0x10000 * (jump & 0xF);
+        // u8 toneData[12] @ ptrToneData + (jump * 0x10000);
     };
 
     struct ProgramPtr {

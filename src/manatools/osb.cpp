@@ -71,7 +71,7 @@ OSB load(const fs::path& path) {
 
 		u16 ptrToneData;
 		io.readU16LE(&ptrToneData);
-		program.ptrToneData_ = ptrToneData + ((jumpAndBitDepth & 0xF) * 0x10000);
+		program.ptrToneData_ = ptrToneData + (jumpAndBitDepth * 0x10000);
 
 		io.forward(4);
 

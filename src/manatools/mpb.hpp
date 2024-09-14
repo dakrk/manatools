@@ -87,7 +87,7 @@ namespace manatools::mpb {
 
 	// Max 4 Layers per Program
 	struct Layer {
-		u16 delay        = 0; // [0 -> 4096]
+		u16 delay        = 0; // [0 -> 1024]
 		u16 unk1         = 0; // Unknown
 		u8 bendRangeHigh = 2; // [0 -> 24]
 		u8 bendRangeLow  = 2; // [24 <- 0]
