@@ -41,6 +41,7 @@ private:
 
 	void emitRowChanged(QAbstractItemModel* model, int row);
 	void updateRAMStatus();
+	void updateUnitStatus(const QModelIndex& cur = {});
 
 	void resetTableLayout();
 	void reloadTable();
@@ -58,6 +59,7 @@ private:
 	QTableView* table;
 	MLTModel* model;
 	QLabel* ramStatus;
+	QLabel* curUnitStatus;
 
 	manatools::mlt::MLT mlt;
 };

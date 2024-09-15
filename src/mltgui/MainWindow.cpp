@@ -9,6 +9,7 @@
 #include <QMimeData>
 #include <QPushButton>
 #include <QScreen>
+#include <QStatusBar>
 #include <QToolButton>
 #include <QVBoxLayout>
 #include <manatools/io.hpp>
@@ -61,6 +62,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	table = new QTableView(this);
 	model = new MLTModel(&mlt, this);
 	ramStatus = new QLabel(this);
+	curUnitStatus = new QLabel(this);
+
 	table->setDragEnabled(true);
 	table->setDragDropMode(QAbstractItemView::InternalMove);
 	table->setItemDelegateForColumn(0, new FourCCDelegate(true, table));
@@ -72,6 +75,12 @@ MainWindow::MainWindow(QWidget* parent) :
 	setCurrentFile();
 	resetTableLayout();
 	updateRAMStatus();
+
+	connect(table->selectionModel(), &QItemSelectionModel::currentRowChanged, this,
+	        [this](const QModelIndex &current, const QModelIndex &previous) {
+		Q_UNUSED(previous);
+		updateUnitStatus(current);
+	});
 
 	connect(model, &QAbstractTableModel::dataChanged, this,
 	        [this](const QModelIndex& tl, const QModelIndex& br, const QList<int>& roles) {
@@ -123,6 +132,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	QWidget* mainLayoutWidget = new QWidget();
 	mainLayoutWidget->setLayout(mainLayout);
 	setCentralWidget(mainLayoutWidget);
+
+	statusBar()->insertWidget(0, curUnitStatus);
 }
 
 bool MainWindow::loadFile(const QString& path) {
@@ -139,6 +150,7 @@ bool MainWindow::loadFile(const QString& path) {
 	setCurrentFile(path);
 	reloadTable();
 	updateRAMStatus();
+	updateUnitStatus(table->currentIndex());
 	return true;
 }
 
@@ -176,6 +188,7 @@ void MainWindow::newFile() {
 		setCurrentFile();
 		reloadTable();
 		updateRAMStatus();
+		updateUnitStatus();
 	}
 }
 
@@ -237,6 +250,7 @@ void MainWindow::dataModified() {
 	setWindowModified(true);
 	mlt.adjust();
 	updateRAMStatus();
+	updateUnitStatus(table->currentIndex());
 }
 
 void MainWindow::versionDialog() {
@@ -467,7 +481,7 @@ void MainWindow::emitRowChanged(QAbstractItemModel* model, int row) {
 
 void MainWindow::updateRAMStatus() {
 	intptr_t avail = manatools::mlt::AICA_MAX - mlt.aicaUsed();
-	ramStatus->setText(tr("%1 (%2) bytes available").arg(avail).arg(formatHex(avail)));
+	ramStatus->setText(tr("%1 (0x%2) bytes available").arg(avail).arg(avail, 0, 16));
 
 	if (avail <= 0)
 		ramStatus->setStyleSheet("QLabel { color: red; }");
@@ -475,6 +489,20 @@ void MainWindow::updateRAMStatus() {
 		ramStatus->setStyleSheet("QLabel { color: orange; }");
 	else
 		ramStatus->setStyleSheet("");
+}
+
+void MainWindow::updateUnitStatus(const QModelIndex& cur) {
+	if (cur.isValid()) {
+		auto& unit = mlt.units[cur.row()];
+		curUnitStatus->setText(
+			tr("Unit %1: %2 bytes, minimum end 0x%3")
+				.arg(cur.row())
+				.arg(unit.aicaDataSize)
+				.arg(unit.aicaDataPtr + unit.aicaDataSize, 0, 16)
+		);
+	} else {
+		curUnitStatus->clear();
+	}
 }
 
 void MainWindow::resetTableLayout() {
