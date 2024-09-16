@@ -42,6 +42,7 @@ public:
 	}
 
 protected:
+	void mouseReleaseEvent(QMouseEvent* event) override;
 	void paintEvent(QPaintEvent* event) override;
 
 private:

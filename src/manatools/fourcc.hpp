@@ -44,7 +44,7 @@ namespace manatools {
 		}
 
 		constexpr std::string_view str() const {
-			return {data_, 4};
+			return { data_, 4 };
 		}
 
 	private:
