@@ -12,6 +12,7 @@ add_library(guicommon
 	FourCCDelegate.cpp
 	HorizontalLineItemDropStyle.cpp
 	InstDataDialog.cpp
+	PianoKeyboardWidget.cpp
 	tone.cpp
 	TonePlayer.cpp
 	UIntValidator.cpp
