@@ -104,7 +104,12 @@ namespace mpb {
 
         u16 ptrToneData;
 
-        u16 loopStart; // [0 -> 65535] [def. 0]    Minimum seems to be bumped to 4 after exporting when looping is enabled.
+        /**
+         * loopEnd is treated as the tone data length, even with loop disabled.
+         * Setting it to 0 or FFFF seems like it tries to guess the size, but 
+         * there can be noise at the end of the sample.
+         */
+        u16 loopStart; // [0 -> 65535] [def. 0]             Minimum seems to be bumped to 4 after exporting when looping is enabled.
         u16 loopEnd;   // [0 -> 65535] [def. (tone end)]
 
         SplitAmpEnvelope ampEnvelope;
@@ -116,7 +121,12 @@ namespace mpb {
         
         unk[1];
         
-        u8 panPot;      // [16 -> 47] [def. 32 (Center)] (as of MPB Version 2)    Calculated differently between MPB versions.
+        /**
+         * Pan pot ranges are usually different between versions, presumably
+         * due to a quirk in the SDK tools. Both versions' variations are
+         * compatible with each other though. See calcPanPot.
+         */
+        u8 panPot;      // [16 -> 47] [def. 32 (Center)] (typical version 2 range)
         u8 directLevel; // [0 -> 15] [def. 15]
         
         SplitFilterPre filterPre;
@@ -138,8 +148,13 @@ namespace mpb {
         u8 endNote;   // [0 -> 127] [def. 127 (G8)]
         u8 baseNote;  // [0 -> 127] [def. 60 (C3)]
         
-        u8 fineTune; // [-64 -> 63] [def. 0]    !! revisit this !! (what does each unit correspond to?)
-        
+        /**
+         * Fine tune is represented in the editor as -64 -> 63, half that of 
+         * the file representation.
+         * This seems to map to approximately -48 -> 48 cents.
+         * TODO: Check what's in AICA RAM, as the calculation there is known.
+         */
+        s8 fineTune; // [-128 -> 127] [def. 0]
         unk[2];
         
         u8 velocityCurveID;
@@ -160,7 +175,11 @@ namespace mpb {
         u32 numSplit;
         u32 ptrSplit;
         
-        u16 layerDelay; // [0 -> 4096] [def. 0]    Except it's quartered to make 0 -> 1024 in the file, why?
+        /**
+         * Layer delay is represented as 0 -> 4096, which means you have to 
+         * quarter it to fit in the file's 0 -> 1024 range. Strange.
+         */ 
+        u16 layerDelay; // [0 -> 1024] [def. 0]
 
         unk[2];
         
