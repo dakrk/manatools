@@ -942,10 +942,10 @@
     <item row="1" column="3">
      <widget class="QSpinBox" name="spinFineTune">
       <property name="minimum">
-       <number>-64</number>
+       <number>-128</number>
       </property>
       <property name="maximum">
-       <number>63</number>
+       <number>127</number>
       </property>
      </widget>
     </item>
@@ -1076,10 +1076,13 @@
     <item row="1" column="2">
      <widget class="QSlider" name="sliderFineTune">
       <property name="minimum">
-       <number>-64</number>
+       <number>-128</number>
       </property>
       <property name="maximum">
-       <number>63</number>
+       <number>127</number>
+      </property>
+      <property name="pageStep">
+       <number>32</number>
       </property>
       <property name="orientation">
        <enum>Qt::Orientation::Horizontal</enum>

@@ -176,7 +176,7 @@ Bank load(const fs::path& path) {
 					io.readU8(&split.startNote);
 					io.readU8(&split.endNote);
 					io.readU8(&split.baseNote);
-					io.readU8(&split.fineTune); // TODO
+					io.readS8(&split.fineTune);
 
 					io.readU16LE(&split.unk3);
 
@@ -503,7 +503,7 @@ void Bank::save(const fs::path& path) {
 				io.writeU8(split.startNote);
 				io.writeU8(split.endNote);
 				io.writeU8(split.baseNote);
-				io.writeU8(split.fineTune); // TODO
+				io.writeS8(split.fineTune);
 
 				io.writeU16LE(split.unk3);
 

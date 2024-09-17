@@ -68,7 +68,7 @@ namespace manatools::mpb {
 		u8 startNote       = 0;     // [0 -> 127]
 		u8 endNote         = 127;   // [0 -> 127]
 		u8 baseNote        = 60;    // [0 -> 127]
-		u8 fineTune        = 0;     // [-64 -> 63]
+		s8 fineTune        = 0;     // [-128 -> 127]
 
 		u16 unk3           = 0;     // Unknown (seemingly fine tune related on version 1?)
 
