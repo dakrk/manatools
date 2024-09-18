@@ -7,6 +7,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 add_library(guicommon
 	AmpEnvelopeWidget.cpp
 	AudioSystem.cpp
+	ChannelSelectDialog.cpp
 	CursorOverride.hpp
 	FilterEnvelopeWidget.cpp
 	FourCCDelegate.cpp

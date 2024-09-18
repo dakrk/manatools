@@ -1,5 +1,6 @@
 #include <QFileDialog>
 #include <QMessageBox>
+#include <guicommon/ChannelSelectDialog.hpp>
 #include <guicommon/CursorOverride.hpp>
 #include <manatools/tone.hpp>
 #include <manatools/tonedecoder.hpp>
@@ -67,14 +68,16 @@ bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* pare
 		return false;
 	}
 
-	// TODO: Channel select dialog, as well as option to downmix multiple
+	// TODO: Allow downmixing channels?
 	auto channels = sndFile.channels();
+	uint channel = 0;
 	if (channels > 1) {
-		QMessageBox::warning(
-			parent,
-			tr("Import tone"),
-			tr("More than 1 channel was found in the imported file. Only channel 1 will be read.")
-		);
+		ChannelSelectDialog dialog(channels, parent);
+		if (dialog.exec() == QDialog::Accepted) {
+			channel = dialog.channel;
+		} else {
+			return false;
+		}
 	}
 
 	// Otherwise reading floats would result in the output just being zeros
@@ -90,7 +93,7 @@ bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* pare
 	while ((framesRead = sndFile.readf(readBuf.data(), READ_SIZE)) > 0) {
 		for (sf_count_t i = 0; i < framesRead; i++) {
 			s16* data = reinterpret_cast<s16*>(newTone.data->data());
-			data[totalFramesRead + i] = readBuf[i * channels + 0]; // 0 meaning channel 1
+			data[totalFramesRead + i] = readBuf[i * channels + channel];
 		}
 		totalFramesRead += framesRead;
 	}
@@ -100,6 +103,14 @@ bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* pare
 		QMessageBox::warning(parent, tr("Import tone"), tr("Could not fully read audio data from imported sound file."));
 		return false;
 	}
+
+	/**
+	 * Loop end is also used as tone data length.
+	 * It can be 0 or 65535, but the Dreamcast can misbehave and put noise at the end of tones.
+	 */
+	split.loop = false;
+	split.loopStart = 0;
+	split.loopEnd = sndFile.frames();
 
 	SF_INSTRUMENT instrument;
 	if (sndFile.command(SFC_GET_INSTRUMENT, &instrument, sizeof(instrument))) {

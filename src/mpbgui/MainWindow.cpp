@@ -296,12 +296,18 @@ bool MainWindow::exportSF2File(const QString& path) {
 }
 
 void MainWindow::setProgram(size_t newProgramIdx) {
+	if (programIdx == newProgramIdx)
+		return;
+
 	programIdx = newProgramIdx;
 	layersModel->setProgram(programIdx);
 	splitsModel->setProgram(programIdx);
 }
 
 void MainWindow::setLayer(size_t newLayerIdx) {
+	if (layerIdx == newLayerIdx)
+		return;
+
 	layerIdx = newLayerIdx;
 	splitsModel->setLayer(layerIdx);
 }
@@ -382,8 +388,7 @@ bool MainWindow::exportSF2() {
 		tr(
 			"<p>SF2 conversion is currently incomplete and inaccurate, and may never be accurate due to "
 			"fundamental incompatibilities between the formats.</p>"
-			"<p>Envelope, LFO, fine tune, velocity, drum mode, layer delay and bend range data will not be "
-			"preserved.</p>"
+			"<p>Envelope, LFO, velocity, drum mode, layer delay and bend range data will not be preserved.</p>"
 		)
 	);
 

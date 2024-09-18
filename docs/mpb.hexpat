@@ -151,7 +151,7 @@ namespace mpb {
         /**
          * Fine tune is represented in the editor as -64 -> 63, half that of 
          * the file representation.
-         * This seems to map to approximately -48 -> 48 cents.
+         * This seems to map to approximately -48 -> 47 cents.
          * TODO: Check what's in AICA RAM, as the calculation there is known.
          */
         s8 fineTune; // [-128 -> 127] [def. 0]
