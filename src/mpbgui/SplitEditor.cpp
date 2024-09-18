@@ -2,6 +2,7 @@
 #include <QFileInfo>
 #include <QMenu>
 #include <QMessageBox>
+#include <QMimeData>
 #include <QScreen>
 #include <QThread>
 #include <utility>
@@ -46,6 +47,7 @@ SplitEditor::SplitEditor(const Split& split, Bank* bank, QWidget* parent) :
 void SplitEditor::init() {
 	ui.setupUi(this);
 	setFixedSize(size());
+	setAcceptDrops(true);
 
 	restoreSettings();
 
@@ -329,6 +331,34 @@ void SplitEditor::editUnknownProps() {
 void SplitEditor::closeEvent(QCloseEvent* event) {
 	saveSettings();
 	event->accept();
+}
+
+void SplitEditor::dragEnterEvent(QDragEnterEvent* event) {
+	maybeDropEvent(event);
+}
+
+void SplitEditor::dropEvent(QDropEvent* event) {
+	const QString path = maybeDropEvent(event);
+	if (!path.isEmpty() && tone::importFile(split, path, this)) {
+		loadSplitData();
+	}	
+}
+
+QString SplitEditor::maybeDropEvent(QDropEvent* event) {
+	const QMimeData* mimeData = event->mimeData();
+	if (!mimeData->hasUrls())
+		return {};
+
+	const QList<QUrl> urls = mimeData->urls();
+	if (urls.size() != 1)
+		return {};
+
+	const QString path = urls[0].toLocalFile();
+	if (path.isEmpty() || !QFileInfo(path).isFile())
+		return {};
+
+	event->acceptProposedAction();
+	return path;
 }
 
 void SplitEditor::restoreSettings() {

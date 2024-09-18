@@ -32,6 +32,8 @@ public slots:
 
 protected:
 	void closeEvent(QCloseEvent* event) override;
+	void dragEnterEvent(QDragEnterEvent* event) override;
+	void dropEvent(QDropEvent* event) override;
 
 private:
 	void init();
@@ -42,6 +44,7 @@ private:
 	static void addLFOWaveItems(QComboBox* box);
 	bool setLFOWaveType(QComboBox* box, LFOWaveType type);
 
+	QString maybeDropEvent(QDropEvent* event);
 	void loadToneData();
 	void loadSplitData();
 	void setSplitData();
