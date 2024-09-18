@@ -41,6 +41,7 @@ SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
 					decoder.decode(sampleData);
 				}
 
+				// not 100% sure about the exact accuracy of the fine tune
 				auto sample = sf2.NewSample(
 					instrument->name() + ":" += std::to_string(s + 1),
 					sampleData,
@@ -48,10 +49,9 @@ SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
 					split.loopEnd,
 					tone::SAMPLE_RATE,
 					split.baseNote - 12, // 1 octave down
-					0 // TODO: correction/fine tune
+					static_cast<s8>(roundf(utils::remap(split.fineTune, -128, 127, -48, 47)))
 				);
 
-				// TODO: sf2cute outputs velRange as 127-1 instead of 1-127 on big endian, report a bug
 				std::vector<SFGeneratorItem> generatorItems = {
 					{ SFGenerator::kKeyRange, RangesType(split.startNote, split.endNote) },
 					{ SFGenerator::kVelRange, RangesType(split.velocityLow, split.velocityHigh) },
