@@ -296,6 +296,17 @@ namespace msd {
 }
 
 namespace msb {
+    fn calcChecksum(u32 start, u32 end) {
+        u32 newChecksum;
+        
+        for (u32 i = start, i < end, i += sizeof(u8)) {
+            u8 d @ i;
+            newChecksum += d;
+        }
+        
+        return newChecksum;
+    };
+
     struct Header {
         char fourCC[4];
         le u32 version;
@@ -310,6 +321,11 @@ namespace msb {
     struct MSB {
         Header header;
         MSDPtr sequences[header.numSequences];
+        
+        if (header.version >= 2) {
+            // std::print("{0:x} ({0})", msb::calcChecksum(4, header.fileSize - 8));
+            le u32 checksum @ header.fileSize - 8;
+        }
     };
 }
 

@@ -8,9 +8,9 @@
 namespace mlt {
     struct Header {
         char fourCC[4];
-        unk[4]; // I'd *think* this to be a version number, but Sonic Adventure's MLTs begin with 0x0101 and not just 0x1 or 0x2???
+        u32 version; // Weirdly, version 1 is 0x0101, not 0x1
         u32 numUnits;
-        unk[20];
+        unk[20]; // Usually filled with FFs, but SGGG doesn't?
     };
     
     // Each unit header, including that of the MLT file, should be 32 bytes each.
@@ -23,9 +23,14 @@ namespace mlt {
         u32 fileDataSize; // size of unit in MLT file
         unk[8];
         
-        // usually on FourCC "SFPW" (DSP work RAM)
-        if (fileDataPtr != 0xFFFFFFFF && fileDataSize != 0xFFFFFFFF)
+        /**
+         * Some units are there only as a mapping to where stuff shall be in AICA RAM,
+         * and as such have no data in the file.
+         * SFPW units (DSP work RAM) are expected to have no file data. 
+         */
+        if (fileDataPtr != 0xFFFFFFFF && fileDataSize != 0xFFFFFFFF) {
             u8 data[fileDataSize] @ fileDataPtr [[no_unique_address]];
+        }
     };
 
     struct MLT {
