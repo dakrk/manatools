@@ -189,7 +189,7 @@ void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
 				[&](const msd::Loop& msg) {
 					// Insert a CC31 for Dreamcast compatibility, and loopStart/loopEnd for other software
 					midiFile.events.push_back(midi::ControlChange { delta, 0, 31, msg.unk1 });
-					midiFile.events.push_back(midi::MetaEvent { midi::Marker { delta, startLoop ? "loopStart" : "loopEnd" } });
+					midiFile.events.push_back(midi::MetaEvent { midi::Marker { 0, startLoop ? "loopStart" : "loopEnd" } });
 					startLoop = !startLoop;
 					curTime += msg.step;
 				},
