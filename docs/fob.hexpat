@@ -11,6 +11,7 @@ import std.io;
 namespace fob {
     const u32 CHANNELS = 16;
 
+    // Panning seemingly same between versions
     fn calcPanPot(u8 panIn) {
         return (panIn & 0x10) ? -s8(panIn & 0xF) : (panIn & 0xF);
     };
