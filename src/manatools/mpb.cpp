@@ -218,12 +218,14 @@ Bank load(const fs::path& path) {
 	// TODO: Confirm checksum
 
 	/**
-	 * MPB files seemingly don't store the size of each tone, so we have to use the fact that
+	 * MPB files do not store the full size of each tone, so we have to use the fact that
 	 * each tone is written consecutively to determine their length by taking the position
 	 * of the tone that succeeds the current one, and subtract it to get the length.
 	 * 
 	 * Before we do this however, we need to sort a vector containing each tone pointer, and
 	 * also strip it of any duplicates.
+	 * 
+	 * TODO: Oops, seems like they're not always written consecutively. See issue #20.
 	 */
 	std::sort(ptrsToneData.begin(), ptrsToneData.end());
 	ptrsToneData.erase(std::unique(ptrsToneData.begin(), ptrsToneData.end()), ptrsToneData.end());
@@ -249,7 +251,7 @@ Bank load(const fs::path& path) {
 		if (i < ptrsToneData.size() - 1)
 			end = ptrsToneData[i + 1];
 		else
-			end = fileSize - 8;
+			end = bank.version >= 2 ? fileSize - 8 : fileSize - 4;
 
 		io.jump(start);
 
@@ -568,15 +570,19 @@ void Bank::save(const fs::path& path) {
 
 	auto endPos = io.tell();
 	io.jump(fileSizePos);
-	io.writeU32LE(endPos + 8);
+	io.writeU32LE(version >= 2 ? endPos + 8 : endPos + 4);
 	io.jump(endPos);
 
-	u32 checksum = 0;
-	for (long i = 4; i < endPos; i++) {
-		checksum += io.vec()[i];
+	// Version 1 does not store a checksum
+	if (version >= 2) {
+		u32 checksum = 0;
+		for (long i = 4; i < endPos; i++) {
+			checksum += io.vec()[i];
+		}
+
+		io.writeU32LE(checksum);
 	}
 
-	io.writeU32LE(checksum);
 	io.writeFourCC(MPB_END);
 
 	// Almost same situation as MLT, I hope this is right though

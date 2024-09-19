@@ -20,6 +20,9 @@ namespace mpb {
     bitfield SplitFlags {
         ADPCM : 1;
         Loop : 1;
+        unk : 4;
+        unknown1 : 1; // Found in some version 1 files
+        unknown2 : 1; // ^^
     };
 
     // Ugh, I wish I could put the bitfields directly inside the Split struct declaration
@@ -224,7 +227,9 @@ namespace mpb {
 
         // std::print("{0:x} ({0})", mpb::calcChecksum(4, header.fileSize - 8));
         
-        u32 checksum @ header.fileSize - 8;
+        if (header.version >= 2) {
+            u32 checksum @ header.fileSize - 8;
+        }
     };
 }
 
