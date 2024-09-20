@@ -1,4 +1,5 @@
 add_library(manatools
+	fob.cpp
 	io.cpp
 	midi.cpp
 	mlt.cpp
