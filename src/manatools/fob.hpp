@@ -7,15 +7,18 @@
 
 namespace manatools::fob {
 	constexpr FourCC FOB_MAGIC("SFOB");
+	constexpr FourCC FOB_END("ENDB");
 	constexpr u32 CHANNELS = 16;
 
 	struct Mixer {
 		static s8 fromPanPot(u8 panPot);
+		static u8 toPanPot(s8 panPot);
 		u8 level[CHANNELS];
 		s8 pan[CHANNELS];
 	};
 
 	struct FOB {
+		void save(const fs::path& path);
 		u32 version = 2;
 		std::vector<Mixer> mixers;
 	};
