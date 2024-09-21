@@ -20,6 +20,8 @@ constexpr u8 MPB_FOURCC[4] = {'S', 'M', 'P', 'B'};
 constexpr u8 MDB_FOURCC[4] = {'S', 'M', 'D', 'B'};
 constexpr u8 MSB_FOURCC[4] = {'S', 'M', 'S', 'B'};
 constexpr u8 OSB_FOURCC[4] = {'S', 'O', 'S', 'B'};
+constexpr u8 FPB_FOURCC[4] = {'S', 'F', 'P', 'B'};
+constexpr u8 FOB_FOURCC[4] = {'S', 'F', 'O', 'B'};
 constexpr u8 ENDB_FOURCC[4] = {'E', 'N', 'D', 'B'};
 
 template <typename It1, typename It2, typename Callback>
@@ -157,6 +159,14 @@ void findFiles(const fs::path& inPath, const fs::path& outPath = fs::path()) {
 
 	searchAll(BEGIN_END(inSink), BEGIN_END(OSB_FOURCC), [&](auto it) {
 		checkCommon(it, "OSB");
+	});
+
+	searchAll(BEGIN_END(inSink), BEGIN_END(FPB_FOURCC), [&](auto it) {
+		checkCommon(it, "FPB");
+	});
+
+	searchAll(BEGIN_END(inSink), BEGIN_END(FOB_FOURCC), [&](auto it) {
+		checkCommon(it, "FOB");
 	});
 }
 
