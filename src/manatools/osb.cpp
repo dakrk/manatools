@@ -57,21 +57,25 @@ OSB load(const fs::path& path) {
 			throw std::runtime_error("Encountered invalid OSB data");
 		}
 
-		u8 jumpAndBitDepth;
-		io.readU8(&jumpAndBitDepth);
+		u8 jump;
+		io.readU8(&jump);
 
 		u8 flags;
 		io.readU8(&flags);
+		program.unkFlags = flags & 0b11111100;
 
-		if (flags & ProgramFlags::pfADPCM)    program.tone.format = tone::Format::ADPCM;
-		else if ((jumpAndBitDepth >> 4) == 8) program.tone.format = tone::Format::PCM8;
-		else                                  program.tone.format = tone::Format::PCM16;
+		if (flags & pfADPCM)
+			program.tone.format = tone::Format::ADPCM;
+		else if (jump & 0x80)
+			program.tone.format = tone::Format::PCM8;
+		else
+			program.tone.format = tone::Format::PCM16;
 
-		if (flags & ProgramFlags::pfLoop)     program.loop = true;
+		program.loop = flags & pfLoop;
 
 		u16 ptrToneData;
 		io.readU16LE(&ptrToneData);
-		program.ptrToneData_ = ptrToneData + (jumpAndBitDepth * 0x10000);
+		program.ptrToneData_ = ptrToneData + ((jump & 0x7F) << 16);
 
 		io.forward(4);
 

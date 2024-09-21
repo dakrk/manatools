@@ -441,6 +441,7 @@ void Bank::save(const fs::path& path) {
 			for (size_t s = 0; s < layer->splits.size(); s++) {
 				const auto& split = layer->splits[s];
 
+				// The only unknown flags I've seen in the wild are the 2 MSBs
 				u8 flags = split.unkFlags & 0b11111100;
 
 				if (split.loop)

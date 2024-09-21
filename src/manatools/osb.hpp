@@ -36,6 +36,8 @@ namespace manatools::osb {
 		static s8 fromPanPot(u8 panPot);
 		static u8 toPanPot(s8 panPot);
 
+		u8 unkFlags        = 0;
+
 		bool loop          = false;
 
 		// TODO: Loop points???
