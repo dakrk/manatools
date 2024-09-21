@@ -43,6 +43,8 @@ namespace manatools::mpb {
 		static s8 fromPanPot(u8 panPot);
 		static u8 toPanPot(s8 panPot, u32 version);
 
+		u8 unkFlags        = 0;
+		
 		bool loop          = false;
 		u16 loopStart      = 0;     // [0 -> 65535]
 		u16 loopEnd        = 0;     // [0 -> 65535]

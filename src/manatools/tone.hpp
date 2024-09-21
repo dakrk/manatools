@@ -7,10 +7,15 @@
 #include "types.hpp"
 
 namespace manatools::tone {
+	/**
+	 * TODO: Cannot be 65535, as formats use that to indicate "unused", or similar.
+	 * However, because of the whole MPB trailing bytes thing, 65534 sample tones
+	 * can read to above that.
+	 */
 	constexpr size_t MAX_SAMPLES = 65535;
 
 	// TODO: Determine tone sample rate from MPB start/end/base note
-	constexpr uint   SAMPLE_RATE = 22050; // seemingly usually.
+	constexpr uint SAMPLE_RATE = 22050; // seemingly usually.
 
 	enum class Format {
 		ADPCM,

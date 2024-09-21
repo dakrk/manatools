@@ -102,7 +102,7 @@ namespace mpb {
     
     // Max 128 Splits per Layer
     struct Split {
-        u8 jump; // `(jump >> 4) == 8` if the data is 8-bit PCM. Otherwise 16-bit if not ADPCM or 8-bit PCM.
+        u8 jump; // `(jump & 0x80)` if the data is 8-bit PCM. Otherwise 16-bit if not ADPCM or 8-bit PCM.
         SplitFlags flags; // [def. ADPCM]
 
         u16 ptrToneData;
@@ -170,7 +170,7 @@ namespace mpb {
         unk[1];
 
         // I don't think I can do the length calculations in just an ImHex pattern, gah
-        // u8 toneData[12] @ ptrToneData + (jump * 0x10000);
+        // u8 toneData[12] @ ptrToneData + ((jump & 0x7F) << 16);
     };
     
     // Max 4 Layers per Program
