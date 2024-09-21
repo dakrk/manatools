@@ -302,6 +302,10 @@ void MainWindow::setProgram(size_t newProgramIdx) {
 	programIdx = newProgramIdx;
 	layersModel->setProgram(programIdx);
 	splitsModel->setProgram(programIdx);
+
+	ui.tblPrograms->setCurrentIndex(programsModel->index(programIdx, 0));
+	ui.tblLayers->setCurrentIndex(layersModel->index(0, 0));
+	ui.tblSplits->setCurrentIndex(splitsModel->index(0, 0));
 }
 
 void MainWindow::setLayer(size_t newLayerIdx) {
@@ -310,6 +314,8 @@ void MainWindow::setLayer(size_t newLayerIdx) {
 
 	layerIdx = newLayerIdx;
 	splitsModel->setLayer(layerIdx);
+
+	ui.tblSplits->setCurrentIndex(splitsModel->index(0, 0));
 }
 
 void MainWindow::setSplit(size_t newSplitIdx) {
@@ -547,9 +553,9 @@ void MainWindow::reloadTables() {
 	programsModel->setBank(&bank);
 	layersModel->setBank(&bank);
 	splitsModel->setBank(&bank);
-	setProgram(0);
-	setLayer(0);
-	setSplit(0);
+	ui.tblPrograms->setCurrentIndex(programsModel->index(0, 0));
+	ui.tblLayers->setCurrentIndex(layersModel->index(0, 0));
+	ui.tblSplits->setCurrentIndex(splitsModel->index(0, 0));
 }
 
 QString MainWindow::maybeDropEvent(QDropEvent* event) {
