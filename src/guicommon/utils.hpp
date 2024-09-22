@@ -1,12 +1,16 @@
 #pragma once
-#include <concepts>
+#include <QAbstractItemModel>
+#include <QAbstractItemView>
 #include <QPointF>
 #include <QString>
+#include <concepts>
 #include <manatools/types.hpp>
 #include "common.hpp"
 
 GUICOMMON_EXPORT QString noteToString(u8 note);
 GUICOMMON_EXPORT QString getOutPath(const QString& curFile, bool dirOnly = false, const QString& newExtension = "");
+GUICOMMON_EXPORT bool insertItemRowHere(QAbstractItemView* view);
+GUICOMMON_EXPORT bool removeItemRowHere(QAbstractItemView* view);
 
 inline QString formatHex(std::unsigned_integral auto num, int width = 0) {
 	return QString("0x%1").arg(num, width, 16, QChar('0'));

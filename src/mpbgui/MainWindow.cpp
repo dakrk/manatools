@@ -112,42 +112,21 @@ MainWindow::MainWindow(QWidget* parent) :
 	connect(ui.actionAbout, &QAction::triggered, this, &MainWindow::about);
 	connect(ui.actionAboutQt, &QAction::triggered, this, [this]() { QMessageBox::aboutQt(this); });
 
-	// I probably really shouldn't be using the preprocessor for these
 	#define CONNECT_BTN_ADD(button, table) \
 		connect(button, &QPushButton::clicked, this, [&]() { \
-			QModelIndex cur = table->currentIndex(); \
-			int row, col; \
-			if (cur.isValid()) { \
-				row = cur.row() + 1; \
-				col = cur.column(); \
-			} else { \
-				row = 0; \
-				col = 0; \
-			} \
-			table->model()->insertRow(row); \
-			table->setCurrentIndex(table->model()->index(row, col)); \
+			insertItemRowHere(table); \
 		});
 
 	#define CONNECT_BTN_DEL(button, table) \
 		connect(button, &QPushButton::clicked, this, [&]() { \
-			QModelIndex cur = table->currentIndex(); \
-			if (cur.isValid()) { \
-				table->model()->removeRow(cur.row()); \
-				int curRow; \
-				if (cur.row() < table->model()->rowCount() - 1) \
-					curRow = cur.row(); \
-				else \
-					curRow = cur.row() - 1; \
-				table->setCurrentIndex(table->model()->index(curRow, cur.column())); \
-			} \
+			removeItemRowHere(table); \
 		});
 
 	#define CONNECT_ROW_CHANGED(selectionModel, callback) \
 		connect(selectionModel, &QItemSelectionModel::currentRowChanged, this, \
 		        [&](const QModelIndex &current, const QModelIndex &previous) { \
 		        	Q_UNUSED(previous); \
-		        	if (current.isValid()) \
-		        		callback(current.row()); \
+		        	callback(current.isValid() ? current.row() : 0); \
 		        });
 
 	CONNECT_BTN_ADD(ui.btnProgramAdd, ui.tblPrograms);
@@ -295,31 +274,27 @@ bool MainWindow::exportSF2File(const QString& path) {
 	return true;
 }
 
-void MainWindow::setProgram(size_t newProgramIdx) {
-	if (programIdx == newProgramIdx)
-		return;
+void MainWindow::setProgram(size_t idx) {
+	size_t oldIdx = programIdx;
+	programIdx = idx;
 
-	programIdx = newProgramIdx;
 	layersModel->setProgram(programIdx);
 	splitsModel->setProgram(programIdx);
 
-	ui.tblPrograms->setCurrentIndex(programsModel->index(programIdx, 0));
-	ui.tblLayers->setCurrentIndex(layersModel->index(0, 0));
-	ui.tblSplits->setCurrentIndex(splitsModel->index(0, 0));
+	if (idx != oldIdx) {
+		ui.tblLayers->setCurrentIndex(layersModel->index(0, 0));
+		ui.tblSplits->setCurrentIndex(splitsModel->index(0, 0));
+	}
 }
 
-void MainWindow::setLayer(size_t newLayerIdx) {
-	if (layerIdx == newLayerIdx)
-		return;
-
-	layerIdx = newLayerIdx;
+void MainWindow::setLayer(size_t idx) {
+	layerIdx = idx;
 	splitsModel->setLayer(layerIdx);
-
 	ui.tblSplits->setCurrentIndex(splitsModel->index(0, 0));
 }
 
-void MainWindow::setSplit(size_t newSplitIdx) {
-	splitIdx = newSplitIdx;
+void MainWindow::setSplit(size_t idx) {
+	splitIdx = idx;
 	tonePlayer.stop();
 
 	const auto* split = bank.split(programIdx, layerIdx, splitIdx);

@@ -18,9 +18,9 @@ public:
 	bool saveFile(const QString& path);
 	bool exportSF2File(const QString& path);
 
-	void setProgram(size_t newProgramIdx);
-	void setLayer(size_t newLayerIdx);
-	void setSplit(size_t newSplitIdx);
+	void setProgram(size_t idx);
+	void setLayer(size_t idx);
+	void setSplit(size_t idx);
 
 public slots:
 	void newFile();
