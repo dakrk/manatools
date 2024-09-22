@@ -10,8 +10,18 @@ public:
 	explicit VelCurveWidget(QWidget* parent = nullptr);
 	VelCurveWidget(const Velocity& velocity, QWidget* parent = nullptr);
 
-	Velocity vel;
+	void setVelocity(const Velocity& curve) {
+		vel = curve;
+		repaint();
+	}
+
+	Velocity& velocity() {
+		return vel;
+	}
 
 protected:
 	void paintEvent(QPaintEvent* event) override;
+
+private:
+	Velocity vel;
 };

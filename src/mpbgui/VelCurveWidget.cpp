@@ -4,14 +4,16 @@
 #include "VelCurveWidget.hpp"
 
 VelCurveWidget::VelCurveWidget(QWidget* parent) :
-	QFrame(parent) {}
+	QFrame(parent),
+	vel(Velocity::defaultCurve()) {}
 
 VelCurveWidget::VelCurveWidget(const Velocity& velocity, QWidget* parent) :
 	QFrame(parent),
 	vel(velocity) {}
 
 void VelCurveWidget::paintEvent(QPaintEvent* event) {
-	Q_UNUSED(event);
+	QFrame::paintEvent(event);
+
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing);
 

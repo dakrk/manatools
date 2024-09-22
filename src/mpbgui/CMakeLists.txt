@@ -19,6 +19,9 @@ add_executable(mpbgui
 	SplitEditor.cpp
 	SplitUnkEditor.ui
 	SplitUnkEditor.cpp
+	VelCurveEditor.ui
+	VelCurveEditor.cpp
+	VelCurvesModel.cpp
 	VelCurveWidget.cpp
 )
 

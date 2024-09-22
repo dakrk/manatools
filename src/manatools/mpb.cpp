@@ -669,4 +669,12 @@ u8 Split::toPanPot(s8 in, u32 version) {
 	return 0;
 }
 
+Velocity Velocity::defaultCurve() {
+	Velocity vel;
+	for (uint i = 0; i < std::size(vel.data); i++) {
+		vel.data[i] = i;
+	}
+	return vel;
+}
+
 } // namespace manatools::mpb

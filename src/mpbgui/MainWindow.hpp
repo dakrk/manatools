@@ -42,7 +42,6 @@ protected:
 
 private:
 	static void setCommonTableProps(QTableView* table);
-	static manatools::mpb::Velocity genDefVelCurve();
 
 	void emitRowChanged(QAbstractItemModel* table, int row);
 	void connectTableMutations(QAbstractTableModel* model);

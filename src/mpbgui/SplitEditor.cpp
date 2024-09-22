@@ -11,6 +11,7 @@
 
 #include "SplitEditor.hpp"
 #include "SplitUnkEditor.hpp"
+#include "VelCurveEditor.hpp"
 
 SplitEditor::SplitEditor(QWidget* parent) :
 	QDialog(parent),
@@ -294,7 +295,11 @@ void SplitEditor::setPath(size_t programIdx, size_t layerIdx, size_t splitIdx) {
 }
 
 void SplitEditor::editVelCurve() {
-	// TODO
+	VelCurveEditor editor(bank->velocities, this);
+
+	if (editor.exec() == QDialog::Accepted) {
+		
+	}
 }
 
 bool SplitEditor::importTone() {

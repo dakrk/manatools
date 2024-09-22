@@ -98,7 +98,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	ui.btnSplitPlay->setCheckable(true);
 
-	bank.velocities.push_back(genDefVelCurve());
+	bank.velocities.push_back(manatools::mpb::Velocity::defaultCurve());
 
 	connect(ui.actionNew, &QAction::triggered, this, &MainWindow::newFile);
 	connect(ui.actionOpen, &QAction::triggered, this, &MainWindow::open);
@@ -329,7 +329,7 @@ void MainWindow::setSplit(size_t newSplitIdx) {
 void MainWindow::newFile() {
 	if (maybeSave()) {
 		bank = {};
-		bank.velocities.push_back(genDefVelCurve());
+		bank.velocities.push_back(manatools::mpb::Velocity::defaultCurve());
 		setCurrentFile();
 		reloadTables();
 	}
@@ -606,16 +606,6 @@ void MainWindow::setCurrentFile(const QString& path) {
 	}
 
 	setWindowModified(false);
-}
-
-manatools::mpb::Velocity MainWindow::genDefVelCurve() {
-	manatools::mpb::Velocity vel;
-
-	for (uint i = 0; i < std::size(vel.data); i++) {
-		vel.data[i] = i;
-	}
-
-	return vel;
 }
 
 void MainWindow::restoreSettings() {

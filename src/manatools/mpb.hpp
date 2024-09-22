@@ -106,6 +106,7 @@ namespace manatools::mpb {
 
 	// Seemingly max 31 Velocities per Bank
 	struct Velocity {
+		static Velocity defaultCurve();
 		u8 data[128]{};
 	};
 

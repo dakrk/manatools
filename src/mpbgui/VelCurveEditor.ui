@@ -28,7 +28,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QListWidget" name="listCurves"/>
+        <widget class="QListView" name="listCurves"/>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -70,7 +70,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="verticalLayoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
        <item>
         <widget class="VelCurveWidget" name="velCurve">
          <property name="frameShape">
@@ -82,14 +82,25 @@
         </widget>
        </item>
        <item>
-        <widget class="QDialogButtonBox" name="buttonBox">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-         <property name="standardButtons">
-          <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="btnReset">
+           <property name="text">
+            <string>Reset</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDialogButtonBox" name="buttonBox">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="standardButtons">
+            <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
