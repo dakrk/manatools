@@ -77,7 +77,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	updateRAMStatus();
 
 	connect(table->selectionModel(), &QItemSelectionModel::currentRowChanged, this,
-	        [this](const QModelIndex &current, const QModelIndex &previous) {
+	        [this](const QModelIndex& current, const QModelIndex& previous) {
 		Q_UNUSED(previous);
 		updateUnitStatus(current);
 	});

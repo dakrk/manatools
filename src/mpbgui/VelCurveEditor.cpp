@@ -37,7 +37,7 @@ void VelCurveEditor::init() {
 	 * that it sorta makes sense for it to own one. Urgh.
 	 */
 	connect(ui.listCurves->selectionModel(), &QItemSelectionModel::currentChanged, this,
-	        [&](const QModelIndex &current, const QModelIndex &previous)
+	        [&](const QModelIndex& current, const QModelIndex& previous)
 	{
 		if (previous.isValid()) {
 			velocities[previous.row()] = ui.velCurve->velocity();

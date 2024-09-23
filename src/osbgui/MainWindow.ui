@@ -101,14 +101,14 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <widget class="QMenu" name="menuOpenRecent">
+    <widget class="QMenu" name="menuRecentFiles">
      <property name="title">
       <string>Open &amp;Recent</string>
      </property>
     </widget>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
-    <addaction name="menuOpenRecent"/>
+    <addaction name="menuRecentFiles"/>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>

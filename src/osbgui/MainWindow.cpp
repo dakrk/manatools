@@ -14,10 +14,34 @@ MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow(parent),
 	settings()
 {
+	ui.setupUi(this);
 	restoreSettings();
+
+	ui.statusbar->hide();
 
 	setCurrentFile();
 	resetTableLayout();
+
+	ui.actionNew->setShortcut(QKeySequence::New);
+	ui.actionOpen->setShortcut(QKeySequence::Open);
+	ui.actionSave->setShortcut(QKeySequence::Save);
+	ui.actionSaveAs->setShortcut(QKeySequence::SaveAs);
+	ui.actionQuit->setShortcut(QKeySequence::Quit);
+
+	ui.menuRecentFiles->menuAction()->setVisible(false);
+
+	ui.btnPlayProgram->setCheckable(true);
+
+	connect(ui.actionNew, &QAction::triggered, this, &MainWindow::newFile);
+	connect(ui.actionOpen, &QAction::triggered, this, &MainWindow::open);
+	connect(ui.actionSave, &QAction::triggered, this, &MainWindow::save);
+	connect(ui.actionSaveAs, &QAction::triggered, this, &MainWindow::saveAs);
+	connect(ui.actionQuit, &QAction::triggered, this, &QApplication::quit);
+
+	connect(ui.actionAbout, &QAction::triggered, this, &MainWindow::about);
+	connect(ui.actionAboutQt, &QAction::triggered, this, [this]() { QMessageBox::aboutQt(this); });
+
+
 }
 
 bool MainWindow::loadFile(const QString& path) {

@@ -4,6 +4,8 @@
 #include <QTableView>
 #include <manatools/osb.hpp>
 
+#include "ui_MainWindow.h"
+
 class MainWindow : public QMainWindow {
 	Q_OBJECT
 public:
@@ -38,6 +40,8 @@ private:
 
 	QSettings settings;
 	QString curFile;
+
+	Ui::MainWindow ui;
 
 	manatools::osb::OSB osb;
 };

@@ -52,8 +52,8 @@ bool removeItemRowHere(QAbstractItemView* view) {
 
 	/**
 	 * JANK MODE: ACTIVATE
-	 * fuck you Qt. why can't you fire the right damn index in currentChanged that isn't
-	 * off by one when I remove from in the middle of a table without me having to move back,
+	 * fuck you Qt. why can't you fire the right damn index in currentChanged that isn't off
+	 * by one when I remove from in the middle of a table without me having to move back,
 	 * remove, then move back forward again just to account for this shit.
 	 */
 	bool wasBlocked = view->signalsBlocked();

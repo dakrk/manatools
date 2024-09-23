@@ -31,7 +31,6 @@ MainWindow::MainWindow(QWidget* parent) :
 	tonePlayer(22050, this)
 {
 	ui.setupUi(this);
-
 	restoreSettings();
 
 	ui.statusbar->hide();
