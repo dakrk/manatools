@@ -155,14 +155,9 @@ void SplitsModel::setBank(Bank* newBank) {
 	endResetModel();
 }
 
-void SplitsModel::setProgram(size_t idx) {
+void SplitsModel::setPath(size_t newProgramIdx, size_t newLayerIdx) {
 	beginResetModel();
-	programIdx = idx;
-	endResetModel();
-}
-
-void SplitsModel::setLayer(size_t idx) {
-	beginResetModel();
-	layerIdx = idx;
+	programIdx = newProgramIdx;
+	layerIdx = newLayerIdx;
 	endResetModel();
 }

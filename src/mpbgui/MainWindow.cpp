@@ -275,29 +275,21 @@ bool MainWindow::exportSF2File(const QString& path) {
 }
 
 void MainWindow::setProgram(size_t idx) {
-	size_t oldIdx = programIdx;
 	programIdx = idx;
-
-	layersModel->setProgram(programIdx);
-	splitsModel->setProgram(programIdx);
-
-	if (idx != oldIdx) {
-		ui.tblLayers->setCurrentIndex(layersModel->index(0, 0));
-		ui.tblSplits->setCurrentIndex(splitsModel->index(0, 0));
-	}
+	layersModel->setPath(programIdx);
+	ui.tblLayers->setCurrentIndex(layersModel->index(0, 0));
 }
 
 void MainWindow::setLayer(size_t idx) {
 	layerIdx = idx;
-	splitsModel->setLayer(layerIdx);
+	splitsModel->setPath(programIdx, layerIdx);
 	ui.tblSplits->setCurrentIndex(splitsModel->index(0, 0));
 }
 
 void MainWindow::setSplit(size_t idx) {
 	splitIdx = idx;
-	tonePlayer.stop();
-
 	const auto* split = bank.split(programIdx, layerIdx, splitIdx);
+	tonePlayer.stop();
 	tonePlayer.setTone(split ? split->tone : manatools::tone::Tone());
 }
 

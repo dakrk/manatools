@@ -125,8 +125,8 @@ void LayersModel::setBank(Bank* newBank) {
 	endResetModel();
 }
 
-void LayersModel::setProgram(size_t idx) {
+void LayersModel::setPath(size_t newProgramIdx) {
 	beginResetModel();
-	programIdx = idx;
+	programIdx = newProgramIdx;
 	endResetModel();
 }

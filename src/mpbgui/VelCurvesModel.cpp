@@ -25,29 +25,40 @@ QVariant VelCurvesModel::data(const QModelIndex& index, int role) const {
 }
 
 bool VelCurvesModel::insertRows(int row, int count, const QModelIndex& parent) {
-	Q_UNUSED(row);
-	Q_UNUSED(count);
 	Q_UNUSED(parent);
-
-	return false;
+	beginInsertRows({}, row, row + count - 1);
+	velocities->insert(velocities->begin() + row, count, Velocity::defaultCurve());
+	endInsertRows();
+	return true;
 }
 
 bool VelCurvesModel::moveRows(const QModelIndex& srcParent, int srcRow, int count, const QModelIndex& destParent, int destRow) {
 	Q_UNUSED(srcParent);
-	Q_UNUSED(srcRow);
-	Q_UNUSED(count);
 	Q_UNUSED(destParent);
-	Q_UNUSED(destRow);
 
-	return false;
+	if (srcRow < 0 || destRow < 0 || count <= 0 ||
+	    srcRow + count - 1 >= rowCount() || destRow > rowCount() ||
+	    !beginMoveRows({}, srcRow, srcRow + count - 1, {}, destRow))
+		return false;
+
+	auto begin = velocities->begin();
+	if (destRow > srcRow) {
+		std::rotate(begin + srcRow, begin + srcRow + count, begin + destRow);
+	} else {
+		std::rotate(begin + destRow, begin + srcRow, begin + srcRow + count);
+	}
+
+	endMoveRows();
+	return true;
 }
 
 bool VelCurvesModel::removeRows(int row, int count, const QModelIndex& parent) {
-	Q_UNUSED(row);
-	Q_UNUSED(count);
 	Q_UNUSED(parent);
-
-	return false;
+	auto begin = velocities->begin() + row;
+	beginRemoveRows({}, row, row + count - 1);
+	velocities->erase(begin, begin + count);
+	endRemoveRows();
+	return true;
 }
 
 Qt::ItemFlags VelCurvesModel::flags(const QModelIndex& index) const {

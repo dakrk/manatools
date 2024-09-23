@@ -102,8 +102,6 @@ void SplitEditor::init() {
 	ui.btnTonePlay->setCheckable(true);
 
 	addVelCurveItems(ui.comboVelCurve);
-	ui.btnVelCurveEdit->setEnabled(false); // TODO: Velocity curve editor
-
 	addLFOWaveItems(ui.comboLFOPitchWave);
 	addLFOWaveItems(ui.comboLFOAmpWave);
 

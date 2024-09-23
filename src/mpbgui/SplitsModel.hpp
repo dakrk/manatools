@@ -23,8 +23,7 @@ public:
 	Qt::ItemFlags flags(const QModelIndex& index) const override;
 
 	void setBank(Bank* newBank);
-	void setProgram(size_t idx);
-	void setLayer(size_t idx);
+	void setPath(size_t newProgramIdx, size_t newLayerIdx);
 
 private:
 	template <typename T, typename T2>

@@ -56,12 +56,12 @@ bool removeItemRowHere(QAbstractItemView* view) {
 	 * off by one when I remove from in the middle of a table without me having to move back,
 	 * remove, then move back forward again just to account for this shit.
 	 */
+	bool wasBlocked = view->signalsBlocked();
 	view->blockSignals(true);
 	view->setCurrentIndex(model->index(curRow - 1, cur.column()));
-	view->blockSignals(false);
+	view->blockSignals(wasBlocked);
 
 	if (model->removeRow(curRow)) {
-		qDebug() << curRow << model->rowCount();
 		if (curRow >= model->rowCount())
 			curRow--;
 
