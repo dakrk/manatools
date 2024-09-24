@@ -46,7 +46,7 @@ MSB load(const fs::path& path) {
 		if (i < ptrsSeqData.size() - 1)
 			end = ptrsSeqData[i + 1];
 		else
-			end = fileSize - 8; // account for ENDB and checksum(?)
+			end = msb.version >= 2 ? fileSize - 8 : fileSize - 4;
 
 		io.jump(start);
 		msb.sequences[i].data.resize(end - start);
