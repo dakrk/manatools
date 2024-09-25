@@ -41,7 +41,7 @@ private:
 
 	void emitRowChanged(QAbstractItemModel* model, int row);
 	void updateRAMStatus();
-	void updateUnitStatus(const QModelIndex& cur = {});
+	void updateUnitStatus();
 
 	void resetTableLayout();
 	void reloadTable();

@@ -10,6 +10,7 @@
 #include <QPushButton>
 #include <QScreen>
 #include <QStatusBar>
+#include <QTimer>
 #include <QToolButton>
 #include <QVBoxLayout>
 #include <manatools/io.hpp>
@@ -69,7 +70,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	table->setItemDelegateForColumn(0, new FourCCDelegate(true, table));
 	table->setModel(model);
 	table->setSelectionBehavior(QAbstractItemView::SelectRows);
-	table->setSelectionMode(QAbstractItemView::SingleSelection);
+	table->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	table->setStyle(new HorizontalLineItemDropStyle());
 
 	setCurrentFile();
@@ -78,8 +79,15 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	connect(table->selectionModel(), &QItemSelectionModel::currentRowChanged, this,
 	        [this](const QModelIndex& current, const QModelIndex& previous) {
+		Q_UNUSED(current);
 		Q_UNUSED(previous);
-		updateUnitStatus(current);
+		/**
+		 * dumb hacky QTimer solution to defer updating unit status as Qt loves to
+		 * emit signals in the middle of processing stuff, giving wrong data, yay!
+		 */
+		QTimer::singleShot(0, [this]() {
+			updateUnitStatus();
+		});
 	});
 
 	connect(model, &QAbstractTableModel::dataChanged, this,
@@ -91,6 +99,10 @@ MainWindow::MainWindow(QWidget* parent) :
 		}
 	});
 
+	/**
+	 * perhaps remove these...? these are operations that in mltgui also change currentRow,
+	 * therefore causing updateUnitStatus to be called twice
+	 */
 	connect(model, &QAbstractTableModel::rowsInserted, this, &MainWindow::dataModified);
 	connect(model, &QAbstractTableModel::rowsMoved, this, &MainWindow::dataModified);
 	connect(model, &QAbstractTableModel::rowsRemoved, this, &MainWindow::dataModified);
@@ -107,8 +119,18 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	connect(btnDelUnit, &QPushButton::clicked, this, [&]() {
 		QModelIndex cur = table->currentIndex();
-		if (cur.isValid())
-			model->removeRow(cur.row());
+
+		/**
+		 * With ExtendedSelection, Qt doesn't keep a selection after a removal, grr.
+		 * Now we have to do this ourselves...
+		 */
+		if (cur.isValid() && model->removeRow(cur.row())) {
+			auto row = cur.row();
+			if (row >= model->rowCount())
+				row--;
+
+			table->setCurrentIndex(model->index(row, cur.column()));
+		}
 	});
 
 	connect(btnClearUnitData, &QPushButton::clicked, this, &MainWindow::clearUnitData);
@@ -150,7 +172,7 @@ bool MainWindow::loadFile(const QString& path) {
 	setCurrentFile(path);
 	reloadTable();
 	updateRAMStatus();
-	updateUnitStatus(table->currentIndex());
+	updateUnitStatus();
 	return true;
 }
 
@@ -250,7 +272,7 @@ void MainWindow::dataModified() {
 	setWindowModified(true);
 	mlt.adjust();
 	updateRAMStatus();
-	updateUnitStatus(table->currentIndex());
+	updateUnitStatus();
 }
 
 void MainWindow::versionDialog() {
@@ -513,18 +535,32 @@ void MainWindow::updateRAMStatus() {
 		ramStatus->setStyleSheet("");
 }
 
-void MainWindow::updateUnitStatus(const QModelIndex& cur) {
-	if (cur.isValid()) {
-		auto& unit = mlt.units[cur.row()];
-		curUnitStatus->setText(
-			tr("Unit %1: %2 bytes, minimum end 0x%3")
-				.arg(cur.row())
+void MainWindow::updateUnitStatus() {
+	const auto* selModel = table->selectionModel();
+	const auto selRows = selModel->selectedRows();
+	const auto curIdx = selModel->currentIndex();
+	QString str;
+
+	if (selRows.size() > 1) {
+		size_t totalSize = 0;
+
+		// these indexes should not be invalid I hope...
+		for (const auto& idx : selRows) {
+			totalSize += mlt.units[idx.row()].aicaDataSize;
+		}
+
+		str = tr("%1 units selected, total size %2 bytes")
+				.arg(selRows.size())
+				.arg(totalSize);
+	} else if (curIdx.isValid()) {
+		const auto& unit = mlt.units[curIdx.row()];
+		str = tr("Unit %1: %2 bytes, minimum end 0x%3")
+				.arg(curIdx.row())
 				.arg(unit.aicaDataSize)
-				.arg(unit.aicaDataPtr + unit.aicaDataSize, 0, 16)
-		);
-	} else {
-		curUnitStatus->clear();
+				.arg(unit.aicaDataPtr + unit.aicaDataSize, 0, 16);
 	}
+
+	curUnitStatus->setText(str);
 }
 
 void MainWindow::resetTableLayout() {
