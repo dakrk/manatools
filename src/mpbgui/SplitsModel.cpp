@@ -89,17 +89,17 @@ bool SplitsModel::setData(const QModelIndex& index, const QVariant& value, int r
 			/**
 			 * Qt's automatic spinboxes when returning uint values doesn't have any way
 			 * to set min/max and oddly goes below 0, so we just read as int so negative
-			 * values don't wrap (and therefore we use std::clamp instead of std::min).
+			 * values don't wrap (and therefore we use std::clamp instead of qMin).
 			 */
-			case 1: return changeData(index, split->startNote,    std::clamp(value.toInt(),   0, 127));
-			case 2: return changeData(index, split->endNote,      std::clamp(value.toInt(),   0, 127));
-			case 3: return changeData(index, split->baseNote,     std::clamp(value.toInt(),   0, 127));
-			case 4: return changeData(index, split->velocityLow,  std::clamp(value.toInt(),   0, 127));
-			case 5: return changeData(index, split->velocityHigh, std::clamp(value.toInt(),   0, 127));
-			case 6: return changeData(index, split->directLevel,  std::clamp(value.toInt(),   0,  15));
-			case 7: return changeData(index, split->panPot,       std::clamp(value.toInt(), -15,  15));
-			case 8: return changeData(index, split->fx.level,     std::clamp(value.toInt(),   0,  15));
-			case 9: return changeData(index, split->fx.inputCh,   std::clamp(value.toInt(),   0,  15));
+			case 1: return changeData(index, split->startNote,    qBound(value.toInt(),   0, 127));
+			case 2: return changeData(index, split->endNote,      qBound(value.toInt(),   0, 127));
+			case 3: return changeData(index, split->baseNote,     qBound(value.toInt(),   0, 127));
+			case 4: return changeData(index, split->velocityLow,  qBound(value.toInt(),   0, 127));
+			case 5: return changeData(index, split->velocityHigh, qBound(value.toInt(),   0, 127));
+			case 6: return changeData(index, split->directLevel,  qBound(value.toInt(),   0,  15));
+			case 7: return changeData(index, split->panPot,       qBound(value.toInt(), -15,  15));
+			case 8: return changeData(index, split->fx.level,     qBound(value.toInt(),   0,  15));
+			case 9: return changeData(index, split->fx.inputCh,   qBound(value.toInt(),   0,  15));
 		}
 	}
 

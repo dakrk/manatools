@@ -5,6 +5,7 @@
 #include <manatools/osb.hpp>
 
 #include "ui_MainWindow.h"
+#include "OSBModel.hpp"
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -42,6 +43,7 @@ private:
 	QString curFile;
 
 	Ui::MainWindow ui;
+	OSBModel* model;
 
-	manatools::osb::OSB osb;
+	manatools::osb::Bank bank;
 };

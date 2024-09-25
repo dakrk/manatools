@@ -18,9 +18,9 @@ enum ProgramFlags {
 };
 
 // Pretty much just copied from mpb.cpp
-OSB load(const fs::path& path) {
+Bank load(const fs::path& path) {
 	io::FileIO io(path, "rb");
-	OSB osb;
+	Bank bank;
 	std::vector<u32> ptrsToneData;
 
 	FourCC magic;
@@ -32,15 +32,15 @@ OSB load(const fs::path& path) {
 		throw std::runtime_error("Invalid OSB file");
 	}
 
-	io.readU32LE(&osb.version);
-	if (osb.version != 1 && osb.version != 2) {
+	io.readU32LE(&bank.version);
+	if (bank.version != 1 && bank.version != 2) {
 		throw std::runtime_error("Invalid OSB version");
 	}
 
 	io.readU32LE(&fileSize);
 	io.readU32LE(&numPrograms);
 
-	osb.programs.reserve(numPrograms);
+	bank.programs.reserve(numPrograms);
 	ptrsToneData.reserve(numPrograms);
 
 	for (u32 p = 0; p < numPrograms; p++) {
@@ -132,12 +132,12 @@ OSB load(const fs::path& path) {
 		// TODO: More data
 
 		ptrsToneData.push_back(program.ptrToneData_);
-		osb.programs.push_back(std::move(program));
+		bank.programs.push_back(std::move(program));
 
 		io.jump(pos);
 	}
 
-	assert(osb.programs.size() == numPrograms);
+	assert(bank.programs.size() == numPrograms);
 
 	// Same slop from mpb.cpp
 	std::sort(ptrsToneData.begin(), ptrsToneData.end());
@@ -166,7 +166,7 @@ OSB load(const fs::path& path) {
 		toneDataMap[start] = toneData;
 	}
 
-	for (auto& program : osb.programs) {
+	for (auto& program : bank.programs) {
 		if (!program.ptrToneData_)
 			continue;
 
@@ -177,7 +177,7 @@ OSB load(const fs::path& path) {
 		}
 	}
 
-	return osb;
+	return bank;
 }
 
 s8 Program::fromPanPot(u8 in) {

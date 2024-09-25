@@ -19,6 +19,9 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	ui.statusbar->hide();
 
+	model = new OSBModel(&bank);
+	ui.tblPrograms->setModel(model);
+
 	setCurrentFile();
 	resetTableLayout();
 
@@ -48,7 +51,7 @@ bool MainWindow::loadFile(const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
 
 	try {
-		osb = manatools::osb::load(path.toStdWString());
+		bank = manatools::osb::load(path.toStdWString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
 		QMessageBox::warning(this, tr("Open One Shot bank"), tr("Failed to load bank file: %1").arg(err.what()));
@@ -78,7 +81,7 @@ bool MainWindow::saveFile(const QString& path) {
 
 void MainWindow::newFile() {
 	if (maybeSave()) {
-		osb = {};
+		bank = {};
 		setCurrentFile();
 		reloadTable();
 	}
@@ -159,11 +162,17 @@ void MainWindow::dropEvent(QDropEvent* event) {
 }
 
 void MainWindow::resetTableLayout() {
+	ui.tblPrograms->horizontalHeader()->resizeSection(0, QHeaderView::ResizeToContents);
+	ui.tblPrograms->horizontalHeader()->resizeSection(1, QHeaderView::ResizeToContents);
 
+	if (ui.tblPrograms->columnWidth(0) < 64)
+		ui.tblPrograms->setColumnWidth(0, 64);
+	if (ui.tblPrograms->columnWidth(1) < 64)
+		ui.tblPrograms->setColumnWidth(1, 64);
 }
 
 void MainWindow::reloadTable() {
-	
+	model->setBank(&bank);
 }
 
 QString MainWindow::maybeDropEvent(QDropEvent* event) {

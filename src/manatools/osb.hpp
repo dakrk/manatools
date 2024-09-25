@@ -62,10 +62,10 @@ namespace manatools::osb {
 		tone::Tone tone;
 	};
 
-	struct OSB {
+	struct Bank {
 		u32 version = 2;
 		std::vector<Program> programs;
 	};
 
-	OSB load(const fs::path& path);
+	Bank load(const fs::path& path);
 } // namespace manatools::osb

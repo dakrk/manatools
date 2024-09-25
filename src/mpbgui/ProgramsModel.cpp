@@ -36,7 +36,7 @@ QVariant ProgramsModel::data(const QModelIndex& index, int role) const {
 			}
 
 			case 2: {
-				int splits = 0;
+				uint splits = 0;
 				for (const auto& layer : bank->programs[index.row()].layers) {
 					if (!layer)
 						continue;

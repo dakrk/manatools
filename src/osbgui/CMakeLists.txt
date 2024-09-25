@@ -8,6 +8,8 @@ add_executable(osbgui
 	main.cpp
 	MainWindow.ui
 	MainWindow.cpp
+	OSBModel.cpp
+	ProgramEditor.ui
 )
 
 target_link_libraries(osbgui PRIVATE
