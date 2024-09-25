@@ -35,11 +35,11 @@ void osbExtractTones(const fs::path& osbPath, const fs::path& outPath, ToneExpor
 			continue;
 		}
 
-		std::string filename = outPath.stem().string() += '_' + std::to_string(p);
+		std::string filename = osbPath.stem().string() += '_' + std::to_string(p);
 
 		// oh so messy
 		if (exportType == ToneExportType::WAV) {
-			manatools::wav::WAV<s16> wavFile(1, manatools::tone::SAMPLE_RATE);
+			manatools::wav::WAV<s16> wavFile(1, 44100);
 
 			manatools::tone::Decoder decoder(&program.tone);
 			wavFile.data.resize(program.tone.samples());
