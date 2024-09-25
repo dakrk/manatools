@@ -20,7 +20,8 @@ namespace mpb {
     bitfield SplitFlags {
         ADPCM : 1;
         Loop : 1;
-        unk : 4;
+        Noise : 1;
+        unk : 3;
         unknown2 : 1; // Found in some version 1 files
         unknown1 : 1; // ^^
     };

@@ -236,7 +236,7 @@
       <item>
        <widget class="QCheckBox" name="checkUnkFlag3">
         <property name="text">
-         <string>3</string>
+         <string>3 (Noise?)</string>
         </property>
        </widget>
       </item>
