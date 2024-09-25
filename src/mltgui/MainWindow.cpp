@@ -347,32 +347,54 @@ bool MainWindow::importUnitDialog() {
 }
 
 bool MainWindow::exportUnitDialog() {
-	auto curIdx = table->selectionModel()->currentIndex();
-	if (!curIdx.isValid())
-		return false;
+	const auto* selModel = table->selectionModel();
+	const auto selRows = selModel->selectedRows();
+	const auto curIdx = selModel->currentIndex();
 
-	const auto& unit = mlt.units[curIdx.row()];
-	QString unitExt = unit.fourCC.data() + 1;
+	const QString defDir = getOutPath(curFile, true);
+	const QString fileName = QFileInfo(curFile).baseName();
+	QDir outDir(defDir);
+	bool failed = false;
 
-	auto defPath = QDir(getOutPath(curFile, true)).filePath(
-		QString("%1_%2-%3.%4")
-			.arg(QFileInfo(curFile).baseName())
-			.arg(curIdx.row())
-			.arg(unit.bank)
-			.arg(unitExt.toLower())
-	);
+	auto genOutPath = [&fileName, &outDir](const manatools::mlt::Unit& unit, const QString& ext, int row) {
+		return outDir.filePath(
+			QString("%1_%2-%3.%4")
+				.arg(fileName)
+				.arg(row)
+				.arg(unit.bank)
+				.arg(ext.toLower())
+		);
+	};
 
-	const QString path = QFileDialog::getSaveFileName(
-		this,
-		tr("Export unit"),
-		defPath,
-		tr("%1 file (*.%2);;All files (*.*)").arg(unitExt).arg(unitExt.toLower())
-	);
+	if (selRows.size() > 1) {
+		outDir = QFileDialog::getExistingDirectory(this, tr("Export units to directory"), defDir);
+		if (outDir.isEmpty())
+			return false;
 
-	if (path.isEmpty())
-		return false;
+		for (const auto& idx : selRows) {
+			const auto& unit = mlt.units[idx.row()];
+			const QString path = genOutPath(unit, unit.fourCC.data() + 1, idx.row());
+			failed |= !exportUnit(unit, path);
+		}
+	} else if (curIdx.isValid()) {
+		const auto& unit = mlt.units[curIdx.row()];
+		const QString ext = unit.fourCC.data() + 1;
+		const QString path = QFileDialog::getSaveFileName(
+			this,
+			tr("Export unit"),
+			genOutPath(unit, ext, curIdx.row()),
+			tr("%1 file (*.%2);;All files (*.*)").arg(ext).arg(ext.toLower())
+		);
 
-	return exportUnit(unit, path);
+		if (path.isEmpty())
+			return false;
+
+		failed |= !exportUnit(unit, path);
+	} else {
+		failed = true;
+	}
+
+	return !failed;
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {
