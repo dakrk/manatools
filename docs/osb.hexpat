@@ -18,6 +18,7 @@ namespace osb {
     bitfield ProgramFlags {
         ADPCM : 1;
         Loop : 1;
+        Noise : 1;
     };
 
     bitfield ProgramAmpEnvelope {
@@ -84,6 +85,9 @@ namespace osb {
         ProgramFlags flags;
         
         u16 ptrToneData; // Pointer starts after SOSD FourCC
+
+        u16 loopStart; // [0 -> 65535]
+        u16 loopEnd;   // [0 -> 65535]
 
         unk[4];
 
