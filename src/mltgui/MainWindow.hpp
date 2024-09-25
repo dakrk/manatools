@@ -23,6 +23,7 @@ public slots:
 	bool saveAs();
 	void about();
 	void dataModified();
+	void selectAll();
 	void versionDialog();
 	void packMLT(bool useAICASizes);
 	bool addUnit(const manatools::FourCC fourCC);

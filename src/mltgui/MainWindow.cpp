@@ -39,7 +39,11 @@ MainWindow::MainWindow(QWidget* parent) :
 	fileMenu->addAction(QIcon::fromTheme("application-exit"), tr("&Quit"), QKeySequence::Quit, this, &QApplication::quit);
 
 	QMenu* editMenu = menuBar()->addMenu(tr("&Edit"));
+	editMenu->addAction(QIcon::fromTheme("edit-delete"), tr("&Delete"), QKeySequence::Delete, this, &MainWindow::delUnit);
+	editMenu->addAction(QIcon::fromTheme("edit-select-all"), tr("Select &All"), QKeySequence::SelectAll, this, &MainWindow::selectAll);
+	editMenu->addSeparator();
 	editMenu->addAction(QIcon::fromTheme("document-properties"), tr("MLT &Version"), this, &MainWindow::versionDialog);
+
 	QMenu* packMenu = editMenu->addMenu(tr("&Pack"));
 	packMenu->addAction(tr("By &AICA Size"), std::bind(&MainWindow::packMLT, this, true));
 	packMenu->addAction(tr("By &File Size"), std::bind(&MainWindow::packMLT, this, false));
@@ -252,6 +256,10 @@ void MainWindow::dataModified() {
 	mlt.adjust();
 	updateRAMStatus();
 	updateUnitStatus();
+}
+
+void MainWindow::selectAll() {
+	table->selectAll();
 }
 
 void MainWindow::versionDialog() {
