@@ -26,6 +26,7 @@ public slots:
 	void versionDialog();
 	void packMLT(bool useAICASizes);
 	bool addUnit(const manatools::FourCC fourCC);
+	void delUnit();
 	void clearUnitData();
 	bool importUnitDialog();
 	bool exportUnitDialog();

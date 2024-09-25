@@ -77,17 +77,11 @@ MainWindow::MainWindow(QWidget* parent) :
 	resetTableLayout();
 	updateRAMStatus();
 
-	connect(table->selectionModel(), &QItemSelectionModel::currentRowChanged, this,
-	        [this](const QModelIndex& current, const QModelIndex& previous) {
-		Q_UNUSED(current);
-		Q_UNUSED(previous);
-		/**
-		 * dumb hacky QTimer solution to defer updating unit status as Qt loves to
-		 * emit signals in the middle of processing stuff, giving wrong data, yay!
-		 */
-		QTimer::singleShot(0, [this]() {
-			updateUnitStatus();
-		});
+	connect(table->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+	        [this](const QItemSelection& selected, const QItemSelection& deselected) {
+		Q_UNUSED(selected);
+		Q_UNUSED(deselected);
+		updateUnitStatus();
 	});
 
 	connect(model, &QAbstractTableModel::dataChanged, this,
@@ -117,22 +111,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	QPushButton* btnImportUnitData = new QPushButton(QIcon::fromTheme("document-open"), "");
 	QPushButton* btnExportUnitData = new QPushButton(QIcon::fromTheme("document-save-as"), "");
 
-	connect(btnDelUnit, &QPushButton::clicked, this, [&]() {
-		QModelIndex cur = table->currentIndex();
-
-		/**
-		 * With ExtendedSelection, Qt doesn't keep a selection after a removal, grr.
-		 * Now we have to do this ourselves...
-		 */
-		if (cur.isValid() && model->removeRow(cur.row())) {
-			auto row = cur.row();
-			if (row >= model->rowCount())
-				row--;
-
-			table->setCurrentIndex(model->index(row, cur.column()));
-		}
-	});
-
+	connect(btnDelUnit, &QPushButton::clicked, this, &MainWindow::delUnit);
 	connect(btnClearUnitData, &QPushButton::clicked, this, &MainWindow::clearUnitData);
 	connect(btnImportUnitData, &QPushButton::clicked, this, &MainWindow::importUnitDialog);
 	connect(btnExportUnitData, &QPushButton::clicked, this, &MainWindow::exportUnitDialog);
@@ -331,15 +310,61 @@ bool MainWindow::addUnit(const manatools::FourCC fourCC) {
 	return false;
 }
 
-void MainWindow::clearUnitData() {
-	auto curIdx = table->selectionModel()->currentIndex();
-	if (!curIdx.isValid())
-		return;
+void MainWindow::delUnit() {
+	const auto selRows = table->selectionModel()->selectedRows();
+	if (selRows.size() > 1) {
+		/**
+		 * Need to store persistent indexes instead, as removing rows will make row
+		 * numbers of the normal indexes invalid
+		 */
+		QList<QPersistentModelIndex> indexes;
 
-	auto& unit = mlt.units[curIdx.row()];
-	if (!unit.data.empty()) {
-		unit.data.clear();
-		emitRowChanged(model, curIdx.row());
+		for (const auto& idx : selRows) {
+			indexes.append(idx);
+		}
+
+		for (const auto& idx : indexes) {
+			model->removeRow(idx.row());
+		}
+	} else if (selRows.size() > 0) {
+		/**
+		 * With ExtendedSelection, Qt doesn't keep a selection after a removal, grr.
+		 * Now we have to do this ourselves...
+		 */
+		const auto& idx = selRows[0];
+		if (model->removeRow(idx.row())) {
+			auto row = idx.row();
+			if (row >= model->rowCount())
+				row--;
+
+			table->setCurrentIndex(model->index(row, idx.column()));
+		}
+	}
+}
+
+void MainWindow::clearUnitData() {
+	auto selRows = table->selectionModel()->selectedRows();
+	int tl = -1;
+	int br = -1;
+
+	for (auto& idx : selRows) {
+		auto& unit = mlt.units[idx.row()];
+		if (!unit.data.empty()) {
+			if (idx.row() < tl)
+				tl = idx.row();
+			else if (idx.row() > br)
+				br = idx.row();
+
+			unit.data.clear();
+		}
+	}
+
+	if (tl != -1 || br != -1) {
+		emit model->dataChanged(
+			model->index(tl, 0),
+			model->index(br, model->columnCount()),
+			{ Qt::DisplayRole, Qt::EditRole }
+		);
 	}
 }
 
@@ -369,9 +394,7 @@ bool MainWindow::importUnitDialog() {
 }
 
 bool MainWindow::exportUnitDialog() {
-	const auto* selModel = table->selectionModel();
-	const auto selRows = selModel->selectedRows();
-	const auto curIdx = selModel->currentIndex();
+	const auto selRows = table->selectionModel()->selectedRows();
 
 	const QString defDir = getOutPath(curFile, true);
 	const QString fileName = QFileInfo(curFile).baseName();
@@ -398,13 +421,14 @@ bool MainWindow::exportUnitDialog() {
 			const QString path = genOutPath(unit, unit.fourCC.data() + 1, idx.row());
 			failed |= !exportUnit(unit, path);
 		}
-	} else if (curIdx.isValid()) {
-		const auto& unit = mlt.units[curIdx.row()];
+	} else if (selRows.size() > 0) {
+		const int row = selRows[0].row();
+		const auto& unit = mlt.units[row];
 		const QString ext = unit.fourCC.data() + 1;
 		const QString path = QFileDialog::getSaveFileName(
 			this,
 			tr("Export unit"),
-			genOutPath(unit, ext, curIdx.row()),
+			genOutPath(unit, ext, row),
 			tr("%1 file (*.%2);;All files (*.*)").arg(ext).arg(ext.toLower())
 		);
 
@@ -536,9 +560,7 @@ void MainWindow::updateRAMStatus() {
 }
 
 void MainWindow::updateUnitStatus() {
-	const auto* selModel = table->selectionModel();
-	const auto selRows = selModel->selectedRows();
-	const auto curIdx = selModel->currentIndex();
+	const auto selRows = table->selectionModel()->selectedRows();
 	QString str;
 
 	if (selRows.size() > 1) {
@@ -552,10 +574,11 @@ void MainWindow::updateUnitStatus() {
 		str = tr("%1 units selected, total size %2 bytes")
 				.arg(selRows.size())
 				.arg(totalSize);
-	} else if (curIdx.isValid()) {
-		const auto& unit = mlt.units[curIdx.row()];
+	} else if (selRows.size() > 0) {
+		const int row = selRows[0].row();
+		const auto& unit = mlt.units[row];
 		str = tr("Unit %1: %2 bytes, minimum end 0x%3")
-				.arg(curIdx.row())
+				.arg(row)
 				.arg(unit.aicaDataSize)
 				.arg(unit.aicaDataPtr + unit.aicaDataSize, 0, 16);
 	}
