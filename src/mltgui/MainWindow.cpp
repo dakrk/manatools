@@ -319,35 +319,7 @@ bool MainWindow::addUnit(const manatools::FourCC fourCC) {
 }
 
 void MainWindow::delUnit() {
-	const auto selRows = table->selectionModel()->selectedRows();
-	if (selRows.size() > 1) {
-		/**
-		 * Need to store persistent indexes instead, as removing rows will make row
-		 * numbers of the normal indexes invalid
-		 */
-		QList<QPersistentModelIndex> indexes;
-
-		for (const auto& idx : selRows) {
-			indexes.append(idx);
-		}
-
-		for (const auto& idx : indexes) {
-			model->removeRow(idx.row());
-		}
-	} else if (selRows.size() > 0) {
-		/**
-		 * With ExtendedSelection, Qt doesn't keep a selection after a removal, grr.
-		 * Now we have to do this ourselves...
-		 */
-		const auto& idx = selRows[0];
-		if (model->removeRow(idx.row())) {
-			auto row = idx.row();
-			if (row >= model->rowCount())
-				row--;
-
-			table->setCurrentIndex(model->index(row, idx.column()));
-		}
-	}
+	return removeSelectedViewItems(table);
 }
 
 void MainWindow::clearUnitData() {

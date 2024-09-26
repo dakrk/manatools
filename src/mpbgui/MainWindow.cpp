@@ -4,6 +4,7 @@
 #include <QMimeData>
 #include <QScreen>
 #include <QStyle>
+#include <QTimer>
 #include <stdexcept>
 #include <manatools/sf2.hpp>
 #include <manatools/wav.hpp>
@@ -118,14 +119,21 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	#define CONNECT_BTN_DEL(button, table) \
 		connect(button, &QPushButton::clicked, this, [&]() { \
-			removeItemRowHere(table); \
+			removeSelectedViewItems(table); \
 		});
 
-	#define CONNECT_ROW_CHANGED(selectionModel, callback) \
-		connect(selectionModel, &QItemSelectionModel::currentRowChanged, this, \
+	/**
+	 * Have to use a QTimer and persistent index here, as currentChanged is emitted during the
+	 * operation, meaning the index provided immediately after removal is unsuitable for use
+	 */
+	#define CONNECT_ROW_CHANGED(view, callback) \
+		connect(view->selectionModel(), &QItemSelectionModel::currentRowChanged, this, \
 		        [&](const QModelIndex &current, const QModelIndex &previous) { \
 		        	Q_UNUSED(previous); \
-		        	callback(current.isValid() ? current.row() : 0); \
+		        	QPersistentModelIndex idx(current); \
+		        	QTimer::singleShot(0, this, [this, idx]() { \
+		        		callback(idx.isValid() ? idx.row() : 0); \
+		        	}); \
 		        });
 
 	CONNECT_BTN_ADD(ui.btnProgramAdd, ui.tblPrograms);
@@ -134,8 +142,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	CONNECT_BTN_DEL(ui.btnSplitDel, ui.tblSplits);
 
 	/**
-	 * The layers table has a fixed number of slots and as such using insertRow
-	 * and removeRow doesn't properly fit our needs
+	 * The layers table has a fixed number of slots and as such using insertRow and removeRow
+	 * doesn't properly fit our needs
 	 */
 	connect(ui.btnLayerAdd, &QPushButton::clicked, this, [this]() {
 		QModelIndex cur = ui.tblLayers->currentIndex();
@@ -149,9 +157,9 @@ MainWindow::MainWindow(QWidget* parent) :
 			layersModel->removeLayer(cur.row());
 	});
 
-	CONNECT_ROW_CHANGED(ui.tblPrograms->selectionModel(), setProgram);
-	CONNECT_ROW_CHANGED(ui.tblLayers->selectionModel(), setLayer);
-	CONNECT_ROW_CHANGED(ui.tblSplits->selectionModel(), setSplit);
+	CONNECT_ROW_CHANGED(ui.tblPrograms, setProgram);
+	CONNECT_ROW_CHANGED(ui.tblLayers, setLayer);
+	CONNECT_ROW_CHANGED(ui.tblSplits, setSplit);
 
 	// Moving a row doesn't fire currentRowChanged, despite the current row having actually changed
 	connect(programsModel, &QAbstractItemModel::rowsMoved, this, [this]() {

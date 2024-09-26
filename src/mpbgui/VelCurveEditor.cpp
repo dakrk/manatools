@@ -29,12 +29,12 @@ void VelCurveEditor::init() {
 	});
 
 	connect(ui.btnCurveDel, &QPushButton::clicked, this, [&]() {
-		removeItemRowHere(ui.listCurves);
+		removeSelectedViewItems(ui.listCurves);
 	});
 
 	/**
-	 * It would be much easier to make VelCurveWidget take a pointer, but for a widget like
-	 * that it sorta makes sense for it to own one. Urgh.
+	 * It would be much easier to make VelCurveWidget take a pointer, but for a widget like that
+	 * it sorta makes sense for it to own one. Urgh.
 	 */
 	connect(ui.listCurves->selectionModel(), &QItemSelectionModel::currentChanged, this,
 	        [&](const QModelIndex& current, const QModelIndex& previous)

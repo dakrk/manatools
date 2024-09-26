@@ -41,33 +41,36 @@ bool insertItemRowHere(QAbstractItemView* view) {
 	return false;
 }
 
-bool removeItemRowHere(QAbstractItemView* view) {
-	QModelIndex cur = view->currentIndex();
+void removeSelectedViewItems(QAbstractItemView* view) {
+	const auto selRows = view->selectionModel()->selectedRows();
 	auto* model = view->model();
 
-	if (!cur.isValid())
-		return false;
+	if (selRows.size() > 1) {
+		/**
+		 * Need to store persistent indexes instead, as removing rows will make row
+		 * numbers of the normal indexes invalid
+		 */
+		QList<QPersistentModelIndex> indexes;
 
-	int curRow = cur.row();
+		for (const auto& idx : selRows) {
+			indexes.append(idx);
+		}
 
-	/**
-	 * JANK MODE: ACTIVATE
-	 * fuck you Qt. why can't you fire the right damn index in currentChanged that isn't off
-	 * by one when I remove from in the middle of a table without me having to move back,
-	 * remove, then move back forward again just to account for this shit.
-	 */
-	bool wasBlocked = view->signalsBlocked();
-	view->blockSignals(true);
-	view->setCurrentIndex(model->index(curRow - 1, cur.column()));
-	view->blockSignals(wasBlocked);
+		for (const auto& idx : indexes) {
+			model->removeRow(idx.row());
+		}
+	} else if (selRows.size() > 0) {
+		/**
+		 * With ExtendedSelection, Qt doesn't keep a selection after a removal, grr.
+		 * Now we have to do this ourselves...
+		 */
+		const auto& idx = selRows[0];
+		if (model->removeRow(idx.row())) {
+			auto row = idx.row();
+			if (row >= model->rowCount())
+				row--;
 
-	if (model->removeRow(curRow)) {
-		if (curRow >= model->rowCount())
-			curRow--;
-
-		view->setCurrentIndex(model->index(curRow, cur.column()));
-		return true;
+			view->setCurrentIndex(model->index(row, idx.column()));
+		}
 	}
-
-	return false;
 }
