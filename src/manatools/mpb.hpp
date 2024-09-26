@@ -1,4 +1,5 @@
 #pragma once
+#include <any>
 #include <array>
 #include <optional>
 #include <vector>
@@ -101,6 +102,7 @@ namespace manatools::mpb {
 	// Max 128 Programs per Bank
 	struct Program {
 		uint usedLayers() const;
+		std::any userData;
 		std::array<std::optional<Layer>, MAX_LAYERS> layers;
 	};
 

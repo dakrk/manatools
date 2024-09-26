@@ -1,7 +1,7 @@
 #include <QStringList>
 #include <QTextStream>
 
-class CSV {
+struct CSV {
 	void read(QTextStream& stream);
 	void write(QTextStream& stream);
 

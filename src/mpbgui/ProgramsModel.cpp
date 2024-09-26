@@ -28,7 +28,12 @@ QVariant ProgramsModel::data(const QModelIndex& index, int role) const {
 	if (role == Qt::DisplayRole) {
 		switch (index.column()) {
 			case 0: {
-				return tr("Program %1").arg(index.row() + 1);
+				const QString* name = std::any_cast<QString>(&bank->programs[index.row()].userData);
+				if (name && !name->isEmpty()) {
+					return *name;
+				} else {
+					return tr("Program %1").arg(index.row() + 1);
+				}
 			}
 
 			case 1: {

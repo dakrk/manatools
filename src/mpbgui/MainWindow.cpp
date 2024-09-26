@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <manatools/sf2.hpp>
 #include <manatools/wav.hpp>
+#include <guicommon/CSV.hpp>
 #include <guicommon/CursorOverride.hpp>
 #include <guicommon/HorizontalLineItemDropStyle.hpp>
 #include <guicommon/tone.hpp>
@@ -225,6 +226,7 @@ bool MainWindow::loadFile(const QString& path) {
 
 	cursor.restore();
 
+	loadMapFile(path % ".csv");
 	setCurrentFile(path);
 	reloadTables();
 
@@ -261,6 +263,41 @@ bool MainWindow::saveFile(const QString& path) {
 	}
 
 	setCurrentFile(path);
+
+	return true;
+}
+
+bool MainWindow::loadMapFile(const QString& path) {
+	CursorOverride cursor(Qt::WaitCursor);
+
+	QFile file(path);
+	if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		CSV csv;
+		QTextStream stream(&file);
+		csv.read(stream);
+
+		// skip the first row, typically column names
+		for (qsizetype i = 1; i < csv.rows.size(); i++) {
+			const auto& cols = csv.rows[i];
+			if (cols.size() < 2)
+				return false;
+
+			bool ok;
+			ulong index = cols[0].toULong(&ok);
+			manatools::mpb::Program* program;
+
+			if (!ok || !(program = bank.program(index))) {
+				QMessageBox::warning(
+					this,
+					tr("Load map file"),
+					tr("MPB map file contains invalid/out of bounds index: %1").arg(cols[0])
+				);				
+				continue;
+			}
+
+			program->userData = std::move(cols[1]);
+		}
+	}
 
 	return true;
 }
