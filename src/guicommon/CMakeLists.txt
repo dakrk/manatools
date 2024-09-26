@@ -8,6 +8,7 @@ add_library(guicommon
 	AmpEnvelopeWidget.cpp
 	AudioSystem.cpp
 	ChannelSelectDialog.cpp
+	CSV.cpp
 	CursorOverride.hpp
 	FilterEnvelopeWidget.cpp
 	FourCCDelegate.cpp
