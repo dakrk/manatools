@@ -60,6 +60,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	ui.tblPrograms->setDragEnabled(true);
 	ui.tblPrograms->setDragDropMode(QAbstractItemView::InternalMove);
 	ui.tblPrograms->setStyle(new HorizontalLineItemDropStyle());
+	ui.tblPrograms->horizontalHeader()->hideSection(1);
+	ui.tblPrograms->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
 
 	setCommonTableProps(ui.tblPrograms);
 	setCommonTableProps(ui.tblLayers);
@@ -162,16 +164,18 @@ MainWindow::MainWindow(QWidget* parent) :
 	CONNECT_ROW_CHANGED(ui.tblLayers, setLayer);
 	CONNECT_ROW_CHANGED(ui.tblSplits, setSplit);
 
+	#undef CONNECT_BTN_ADD
+	#undef CONNECT_BTN_DEL
+	#undef CONNECT_ROW_CHANGED
+
+	connect(ui.tblPrograms->horizontalHeader(), &QWidget::customContextMenuRequested, this, &MainWindow::programHeaderMenu);
+
 	// Moving a row doesn't fire currentRowChanged, despite the current row having actually changed
 	connect(programsModel, &QAbstractItemModel::rowsMoved, this, [this]() {
 		QModelIndex cur = ui.tblPrograms->currentIndex();
 		if (cur.isValid())
 			setProgram(cur.row());
 	});
-
-	#undef CONNECT_BTN_ADD
-	#undef CONNECT_BTN_DEL
-	#undef CONNECT_ROW_CHANGED
 
 	connect(splitsModel, &QAbstractTableModel::dataChanged, this,
 	        [this](const QModelIndex& tl, const QModelIndex& br, const QList<int>& roles)
@@ -263,7 +267,6 @@ bool MainWindow::saveFile(const QString& path) {
 	}
 
 	setCurrentFile(path);
-
 	return true;
 }
 
@@ -271,34 +274,62 @@ bool MainWindow::loadMapFile(const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
 
 	QFile file(path);
-	if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		CSV csv;
-		QTextStream stream(&file);
-		csv.read(stream);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+		return false;
 
-		// skip the first row, typically column names
-		for (qsizetype i = 1; i < csv.rows.size(); i++) {
-			const auto& cols = csv.rows[i];
-			if (cols.size() < 2)
-				return false;
+	CSV csv;
+	QTextStream stream(&file);
+	csv.read(stream);
 
-			bool ok;
-			ulong index = cols[0].toULong(&ok);
-			manatools::mpb::Program* program;
+	// skip the first row, typically column names
+	for (qsizetype i = 1; i < csv.rows.size(); i++) {
+		const auto& cols = csv.rows[i];
+		if (cols.size() < 2) {
+			QMessageBox::warning(
+				this,
+				tr("Load map file"),
+				tr("MPB map file is invalid, has less than 2 columns").arg(cols[0])
+			);
+			return false;
+		}
 
-			if (!ok || !(program = bank.program(index))) {
-				QMessageBox::warning(
-					this,
-					tr("Load map file"),
-					tr("MPB map file contains invalid/out of bounds index: %1").arg(cols[0])
-				);				
-				continue;
-			}
+		bool ok;
+		ulong index = cols[0].toULong(&ok);
+		manatools::mpb::Program* program;
 
-			program->userData = std::move(cols[1]);
+		if (!ok || !(program = bank.program(index))) {
+			QMessageBox::warning(
+				this,
+				tr("Load map file"),
+				tr("MPB map file contains invalid/out of bounds index: %1").arg(cols[0])
+			);
+			continue;
+		}
+
+		program->userData = std::move(cols[1]);
+	}
+
+	return true;
+}
+
+bool MainWindow::saveMapFile(const QString& path) {
+	CursorOverride cursor(Qt::WaitCursor);
+
+	QFile file(path);
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+		return false;
+
+	CSV csv;
+	QTextStream stream(&file);
+
+	for (size_t i = 0; i < bank.programs.size(); i++) {
+		const QString* name = std::any_cast<QString>(&bank.programs[i].userData);
+		if (name && !name->isEmpty()) {
+			csv.rows.append({ QString::number(i), *name });	
 		}
 	}
 
+	csv.write(stream);
 	return true;
 }
 
@@ -440,7 +471,7 @@ bool MainWindow::exportTone() {
 	if (!split)
 		return false;
 
-	auto tonePath = QString("%1-%2-%3").arg(programIdx + 1).arg(layerIdx + 1).arg(splitIdx + 1);
+	auto tonePath = QString("%1-%2-%3").arg(programIdx).arg(layerIdx).arg(splitIdx);
 	return tone::exportDialog(*split, getOutPath(curFile, true), QFileInfo(curFile).baseName(), tonePath, this);
 }
 
@@ -499,6 +530,10 @@ void MainWindow::about() {
 		.arg(tr(APP_DESCRIPTION))
 		.arg("https://github.com/dakrk/manatools")
 	);
+}
+
+void MainWindow::programHeaderMenu(const QPoint& pos) {
+
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {

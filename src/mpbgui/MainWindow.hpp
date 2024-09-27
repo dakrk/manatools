@@ -17,6 +17,7 @@ public:
 	bool loadFile(const QString& path);
 	bool saveFile(const QString& path);
 	bool loadMapFile(const QString& path);
+	bool saveMapFile(const QString& path);
 	bool exportSF2File(const QString& path);
 
 	void setProgram(size_t idx);
@@ -35,6 +36,7 @@ public slots:
 	void editLayer();
 	void editSplit();
 	void about();
+	void programHeaderMenu(const QPoint& pos);
 
 protected:
 	void closeEvent(QCloseEvent* event) override;
