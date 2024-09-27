@@ -1,3 +1,4 @@
+#include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
 
@@ -5,11 +6,20 @@
 
 VelCurveWidget::VelCurveWidget(QWidget* parent) :
 	QFrame(parent),
-	vel(Velocity::defaultCurve()) {}
+	vel() {}
 
 VelCurveWidget::VelCurveWidget(const Velocity& velocity, QWidget* parent) :
 	QFrame(parent),
 	vel(velocity) {}
+
+void VelCurveWidget::mouseMoveEvent(QMouseEvent* event) {
+	QFrame::mouseMoveEvent(event);
+	auto pos = event->pos();
+	int x = qBound(0, (pos.x() * 127) / width(), 127);
+	int y = qBound(0, 127 - ((pos.y() * 127) / height()), 127);
+	vel.data[x] = y;
+	repaint();
+}
 
 void VelCurveWidget::paintEvent(QPaintEvent* event) {
 	QFrame::paintEvent(event);
@@ -22,8 +32,8 @@ void VelCurveWidget::paintEvent(QPaintEvent* event) {
 	painter.scale(1, -1);
 
 	size_t numPoints = std::size(vel.data);
-	double stepX = width() / (double)numPoints;
-	double stepY = height() / 128.;
+	double stepX = width() / (double)(numPoints - 1);
+	double stepY = height() / 127.0;
 
 	QPainterPath path;
 	path.moveTo(0, vel.data[0] * stepY);

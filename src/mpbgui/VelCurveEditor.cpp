@@ -19,10 +19,7 @@ void VelCurveEditor::init() {
 	setFixedSize(size());
 
 	ui.listCurves->setModel(new VelCurvesModel(velocities, this));
-
-	if (velocities.empty()) {
-		ui.velCurve->hide();
-	}
+	ui.velCurve->hide();
 
 	connect(ui.btnCurveAdd, &QPushButton::clicked, this, [&]() {
 		insertItemRowHere(ui.listCurves);
@@ -30,6 +27,10 @@ void VelCurveEditor::init() {
 
 	connect(ui.btnCurveDel, &QPushButton::clicked, this, [&]() {
 		removeSelectedViewItems(ui.listCurves);
+	});
+
+	connect(ui.btnReset, &QPushButton::clicked, this, [&]() {
+		ui.velCurve->setVelocity(Velocity::defaultCurve());
 	});
 
 	/**
