@@ -46,7 +46,7 @@ void CSV::read(QTextStream& stream) {
 	}
 }
 
-void CSV::write(QTextStream& stream) {
+void CSV::write(QTextStream& stream) const {
 	for (const QStringList& cols : rows) {
 		for (qsizetype i = 0; i < cols.size(); i++) {
 			const QString& col = cols[i];
@@ -54,7 +54,7 @@ void CSV::write(QTextStream& stream) {
 			if (col.contains(',') || col.contains('"')) {
 				QString colEscaped;
 				colEscaped.replace("\"", "\"\"");
-				stream << '"' % colEscaped % '"';
+				stream << '"' << colEscaped << '"';
 			} else {
 				stream << col;
 			}
@@ -63,5 +63,6 @@ void CSV::write(QTextStream& stream) {
 				stream << ',';
 			}
 		}
+		stream << '\n';
 	}
 }

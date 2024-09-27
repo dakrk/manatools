@@ -1,6 +1,7 @@
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QKeySequence>
+#include <QMessageBox>
 #include <QMimeData>
 #include <QScreen>
 #include <QStyle>
@@ -229,6 +230,7 @@ bool MainWindow::loadFile(const QString& path) {
 	cursor.restore();
 
 	loadMapFile(path % ".csv");
+	saveMappings.reset();
 	setCurrentFile(path);
 	reloadTables();
 
@@ -254,6 +256,8 @@ bool MainWindow::saveFile(const QString& path) {
 		);
 	}
 
+	bool doSaveMappings = saveMappingsDialog();
+
 	CursorOverride cursor(Qt::WaitCursor);
 
 	try {
@@ -262,6 +266,10 @@ bool MainWindow::saveFile(const QString& path) {
 		cursor.restore();
 		QMessageBox::warning(this, tr("Save MIDI program/drum bank"), tr("Failed to save bank file: %1").arg(err.what()));
 		return false;
+	}
+
+	if (doSaveMappings && !saveMapFile(path % ".csv")) {
+		QMessageBox::warning(this, tr("Save map file"), tr("Failed to save map file."));
 	}
 
 	setCurrentFile(path);
@@ -286,7 +294,7 @@ bool MainWindow::loadMapFile(const QString& path) {
 			QMessageBox::warning(
 				this,
 				tr("Load map file"),
-				tr("MPB map file is invalid, has less than 2 columns").arg(cols[0])
+				tr("Map file is invalid, has less than 2 columns.").arg(cols[0])
 			);
 			return false;
 		}
@@ -299,7 +307,7 @@ bool MainWindow::loadMapFile(const QString& path) {
 			QMessageBox::warning(
 				this,
 				tr("Load map file"),
-				tr("MPB map file contains invalid/out of bounds index: %1").arg(cols[0])
+				tr("Map file contains invalid/out of bounds index: %1").arg(cols[0])
 			);
 			continue;
 		}
@@ -320,10 +328,12 @@ bool MainWindow::saveMapFile(const QString& path) {
 	CSV csv;
 	QTextStream stream(&file);
 
+	csv.rows.emplaceBack(QStringList{ "path", "name" });
+
 	for (size_t i = 0; i < bank.programs.size(); i++) {
 		const QString* name = std::any_cast<QString>(&bank.programs[i].userData);
 		if (name && !name->isEmpty()) {
-			csv.rows.append({ QString::number(i), *name });	
+			csv.rows.emplaceBack(QStringList{ QString::number(i), *name });	
 		}
 	}
 
@@ -370,6 +380,7 @@ void MainWindow::newFile() {
 	if (maybeSave()) {
 		bank = {};
 		bank.velocities.push_back(manatools::mpb::Velocity::defaultCurve());
+		saveMappings.reset();
 		setCurrentFile();
 		reloadTables();
 	}
@@ -606,6 +617,43 @@ void MainWindow::reloadTables() {
 	ui.tblPrograms->setCurrentIndex(programsModel->index(0, 0));
 	ui.tblLayers->setCurrentIndex(layersModel->index(0, 0));
 	ui.tblSplits->setCurrentIndex(splitsModel->index(0, 0));
+}
+
+bool MainWindow::programNameSet() const {
+	for (const auto& program : bank.programs) {
+		const QString* name = std::any_cast<QString>(&program.userData);
+		if (name && !name->isEmpty()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool MainWindow::saveMappingsDialog() {
+	if (saveMappings.has_value()) {
+		return *saveMappings;
+	} else if (programNameSet()) {
+		QMessageBox mb(
+			QMessageBox::Question,
+			tr("Save map file"),
+			tr("Program names were set in this bank. Would you like to save the mapping file with the bank?"),
+			QMessageBox::Yes | QMessageBox::No,
+			this
+		);
+
+		QCheckBox cb(tr("Don't ask me again this session"), &mb);
+		mb.setCheckBox(&cb);
+
+		bool ret = mb.exec() == QMessageBox::Yes;
+
+		if (cb.isChecked()) {
+			saveMappings = ret;
+		}
+
+		return ret;
+	}
+
+	return false;
 }
 
 QString MainWindow::maybeDropEvent(QDropEvent* event) {

@@ -3,7 +3,7 @@
 
 struct CSV {
 	void read(QTextStream& stream);
-	void write(QTextStream& stream);
+	void write(QTextStream& stream) const;
 
 	QList<QStringList> rows;
 };

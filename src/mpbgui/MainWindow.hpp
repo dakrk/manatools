@@ -52,6 +52,9 @@ private:
 	void resetTableLayout();
 	void reloadTables();
 
+	bool programNameSet() const;
+	bool saveMappingsDialog();
+
 	QString maybeDropEvent(QDropEvent* event);
 	bool maybeSave();
 	void setCurrentFile(const QString& path = "");
@@ -74,4 +77,6 @@ private:
 	size_t splitIdx;
 
 	TonePlayer tonePlayer;
+
+	std::optional<bool> saveMappings;
 };
