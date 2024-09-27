@@ -44,7 +44,7 @@ void mpbExtractTones(const fs::path& mpbPath, const fs::path& outPath, ToneExpor
 				const auto& split = layer->splits[s];
 
 				if (!split.tone.data) {
-					fprintf(stderr, "%zu:%zu:%zu has no tone data\n", p + 1, l + 1, s + 1);
+					fprintf(stderr, "%zu:%zu:%zu has no tone data\n", p, l, s);
 					continue;
 				}
 
@@ -53,9 +53,9 @@ void mpbExtractTones(const fs::path& mpbPath, const fs::path& outPath, ToneExpor
 				 * rather than 100KB+ (and noticibly ever incrementing) code bloat (ahem, std::format)
 				 */
 				std::string filename = mpbPath.stem().string() += '_';
-				filename += std::to_string(p + 1) += '-';
-				filename += std::to_string(l + 1) += '-';
-				filename += std::to_string(s + 1);
+				filename += std::to_string(p) += '-';
+				filename += std::to_string(l) += '-';
+				filename += std::to_string(s);
 
 				if (exportType == ToneExportType::WAV) {
 					manatools::wav::WAV<s16> wavFile(1, manatools::tone::SAMPLE_RATE);
@@ -133,14 +133,14 @@ void mpbListInfo(const fs::path& mpbPath) {
 	for (size_t p = 0; p < mpb.programs.size(); p++) {
 		const auto& program = mpb.programs[p];
 
-		printf(HEADING "Program %zu:\n" HEADING_END, p + 1);
+		printf(HEADING "Program %zu:\n" HEADING_END, p);
 
 		for (size_t l = 0; l < program.layers.size(); l++) {
 			const auto& layer = program.layers[l];
 			if (!layer)
 				continue;
 
-			printfDepth(1, HEADING "Layer %zu:\n" HEADING_END, l + 1);
+			printfDepth(1, HEADING "Layer %zu:\n" HEADING_END, l);
 			printfDepth(2, "Delay = %u\n", layer->delay);
 			printfDepth(2, "Bend range [+] = %u\n", layer->bendRangeHigh);
 			printfDepth(2, "Bend range [-] = %u\n", layer->bendRangeLow);
@@ -148,7 +148,7 @@ void mpbListInfo(const fs::path& mpbPath) {
 			for (size_t s = 0; s < layer->splits.size(); s++) {
 				const auto& split = layer->splits[s];
 
-				printfDepth(2, HEADING "Split %zu:\n" HEADING_END, s + 1);
+				printfDepth(2, HEADING "Split %zu:\n" HEADING_END, s);
 
 				printfDepth(3, "Start note          = %u\n", split.startNote);
 				printfDepth(3, "End note            = %u\n", split.endNote);
