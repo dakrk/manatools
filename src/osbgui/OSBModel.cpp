@@ -29,7 +29,7 @@ QVariant OSBModel::data(const QModelIndex& index, int role) const {
 
 	if (role == Qt::DisplayRole || role == Qt::EditRole) {
 		switch (index.column()) {
-			case 0: return index.row() + 1;
+			case 0: return index.row();
 			case 1: return static_cast<uint>(program.tone.samples());
 			case 2: return program.directLevel;
 			case 3: return program.panPot;
@@ -50,14 +50,18 @@ QVariant OSBModel::data(const QModelIndex& index, int role) const {
 }
 
 QVariant OSBModel::headerData(int section, Qt::Orientation orientation, int role) const {
-	if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
-		switch (section) {
-			case 0: return tr("Program");
-			case 1: return tr("Samples");
-			case 2: return tr("Direct Level");
-			case 3: return tr("Pan Pot");
-			case 4: return tr("FX Level");
-			case 5: return tr("FX Ch.");
+	if (role == Qt::DisplayRole) {
+		if (orientation == Qt::Horizontal) {
+			switch (section) {
+				case 0: return tr("Program");
+				case 1: return tr("Samples");
+				case 2: return tr("Direct Level");
+				case 3: return tr("Pan Pot");
+				case 4: return tr("FX Level");
+				case 5: return tr("FX Ch.");
+			}
+		} else if (orientation == Qt::Vertical) {
+			return section;
 		}
 	}
 
