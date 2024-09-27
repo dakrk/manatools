@@ -113,7 +113,7 @@ void SplitEditor::addVelCurveItems(QComboBox* box) {
 		return;
 
 	for (u32 i = 0; i < bank->velocities.size(); i++) {
-		box->addItem(tr("Curve %1").arg(i + 1));
+		box->addItem(tr("Curve %1").arg(i));
 	}
 }
 
@@ -127,7 +127,8 @@ bool SplitEditor::setVelCurve(QComboBox* box, u32 id) {
 			this,
 			tr("Invalid data"),
 			tr("Invalid velocity curve ID encountered in split. (Got %1, max is %2)")
-				.arg(id).arg(bank->velocities.size())
+				.arg(id)
+				.arg(static_cast<intptr_t>(bank->velocities.size()) - 1)
 		);
 		return false;
 	}
@@ -286,9 +287,9 @@ void SplitEditor::setPath(size_t programIdx, size_t layerIdx, size_t splitIdx) {
 	setWindowTitle(
 		QString("%1 [%2:%3:%4]")
 			.arg(tr("Edit split"))
-			.arg(programIdx + 1)
-			.arg(layerIdx + 1)
-			.arg(splitIdx + 1)
+			.arg(programIdx)
+			.arg(layerIdx)
+			.arg(splitIdx)
 	);
 }
 
@@ -302,19 +303,15 @@ void SplitEditor::editVelCurve() {
 
 bool SplitEditor::importTone() {
 	bool success = tone::importDialog(split, getOutPath(curFile, true), this);
-
 	if (success)
 		loadSplitData();
-
 	return success;
 }
 
 bool SplitEditor::exportTone() {
 	QString tonePath;
-	
 	if (pathSet)
-		tonePath = QString("%1-%2-%3").arg(programIdx_ + 1).arg(layerIdx_ + 1).arg(splitIdx_ + 1);
-
+		tonePath = QString("%1-%2-%3").arg(programIdx_).arg(layerIdx_).arg(splitIdx_);
 	return tone::exportDialog(split, getOutPath(curFile, true), QFileInfo(curFile).baseName(), tonePath, this);
 }
 

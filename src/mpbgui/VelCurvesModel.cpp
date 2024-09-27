@@ -18,7 +18,7 @@ QVariant VelCurvesModel::data(const QModelIndex& index, int role) const {
 		return {};
 
 	if (role == Qt::DisplayRole) {
-		return tr("Curve %1").arg(index.row() + 1);
+		return tr("Curve %1").arg(index.row());
 	}
 
 	return {};

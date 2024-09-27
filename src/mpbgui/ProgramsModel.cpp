@@ -32,7 +32,7 @@ QVariant ProgramsModel::data(const QModelIndex& index, int role) const {
 				if (name && !name->isEmpty()) {
 					return *name;
 				} else {
-					return tr("Program %1").arg(index.row() + 1);
+					return tr("Program %1").arg(index.row());
 				}
 			}
 
@@ -57,11 +57,15 @@ QVariant ProgramsModel::data(const QModelIndex& index, int role) const {
 }
 
 QVariant ProgramsModel::headerData(int section, Qt::Orientation orientation, int role) const {
-	if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
-		switch (section) {
-			case 0: return tr("Program");
-			case 1: return tr("Layers");
-			case 2: return tr("Splits");
+	if (role == Qt::DisplayRole) {
+		if (orientation == Qt::Horizontal) {
+			switch (section) {
+				case 0: return tr("Program");
+				case 1: return tr("Layers");
+				case 2: return tr("Splits");
+			}
+		} else if (orientation == Qt::Vertical) {
+			return section;
 		}
 	}
 
@@ -119,8 +123,9 @@ bool ProgramsModel::removeRows(int row, int count, const QModelIndex& parent) {
 
 Qt::ItemFlags ProgramsModel::flags(const QModelIndex& index) const {
 	Qt::ItemFlags f = QAbstractTableModel::flags(index);
-	if (index.isValid())
+	if (index.isValid()) {
 		f |= Qt::ItemIsDragEnabled;
+	}
 	return f | Qt::ItemIsDropEnabled;
 }
 

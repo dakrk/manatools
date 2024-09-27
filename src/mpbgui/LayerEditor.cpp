@@ -24,8 +24,8 @@ void LayerEditor::setPath(size_t programIdx, size_t layerIdx) {
 	setWindowTitle(
 		QString("%1 [%2:%3]")
 			.arg(tr("Edit layer"))
-			.arg(programIdx + 1)
-			.arg(layerIdx + 1)
+			.arg(programIdx)
+			.arg(layerIdx)
 	);
 }
 

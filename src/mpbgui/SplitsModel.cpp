@@ -33,7 +33,7 @@ QVariant SplitsModel::data(const QModelIndex& index, int role) const {
 
 	if (role == Qt::DisplayRole || role == Qt::EditRole) {
 		switch (index.column()) {
-			case 0: return index.row() + 1;
+			case 0: return index.row();
 			case 1: return split->startNote;
 			case 2: return split->endNote;
 			case 3: return split->baseNote;
@@ -141,11 +141,9 @@ bool SplitsModel::removeRows(int row, int count, const QModelIndex& parent) {
 
 Qt::ItemFlags SplitsModel::flags(const QModelIndex& index) const {
 	Qt::ItemFlags f = QAbstractTableModel::flags(index);
-
 	if (index.isValid() && index.column() != 0) {
 		f |= Qt::ItemIsEditable;
 	}
-
 	return f;
 }
 
