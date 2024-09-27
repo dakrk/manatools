@@ -19,6 +19,10 @@ void VelCurveEditor::init() {
 	setFixedSize(size());
 
 	ui.listCurves->setModel(new VelCurvesModel(velocities, this));
+
+	auto sizePolicy = ui.velCurve->sizePolicy();
+	sizePolicy.setRetainSizeWhenHidden(true);
+	ui.velCurve->setSizePolicy(sizePolicy);
 	ui.velCurve->hide();
 
 	connect(ui.btnCurveAdd, &QPushButton::clicked, this, [&]() {
@@ -47,8 +51,15 @@ void VelCurveEditor::init() {
 		if (current.isValid()) {
 			ui.velCurve->setVelocity(velocities[current.row()]);
 			ui.velCurve->show();
+		} else {
+			ui.velCurve->hide();
 		}
 	});
 
-	//connect(this, &QDialog::accepted, this, &VelCurveEditor::something);
+	connect(this, &QDialog::accepted, this, [&]() {
+		auto index = ui.listCurves->currentIndex();
+		if (index.isValid()) {
+			velocities[index.row()] = ui.velCurve->velocity();
+		}
+	});
 }

@@ -12,16 +12,19 @@ class SplitEditor : public QDialog {
 public:
 	typedef manatools::mpb::LFOWaveType LFOWaveType;
 	typedef manatools::mpb::Split Split;
+	typedef manatools::mpb::Velocity Velocity;
 	typedef manatools::mpb::Bank Bank;
 	typedef manatools::tone::Tone Tone;
 
 	explicit SplitEditor(QWidget* parent = nullptr);
-	SplitEditor(const Split& split, Bank* bank, QWidget* parent = nullptr);
+	SplitEditor(const Split& split, QWidget* parent = nullptr);
+	SplitEditor(const Split& split, const std::vector<Velocity>& velocities, QWidget* parent = nullptr);
 
 	void setCurFile(const QString& in);
 	void setPath(size_t programIdx, size_t layerIdx, size_t splitIdx);
 
 	Split split;
+	std::vector<Velocity> velocities;
 
 public slots:
 	void editVelCurve();
@@ -58,8 +61,6 @@ private:
 	Ui::SplitEditor ui;
 
 	QMenu* editToneMenu;
-
-	Bank* bank;
 
 	// Used for window title and export file name
 	bool pathSet = false;

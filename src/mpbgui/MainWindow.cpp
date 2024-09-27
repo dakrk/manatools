@@ -22,6 +22,7 @@
 #include "SplitsModel.hpp"
 #include "LayerEditor.hpp"
 #include "SplitEditor.hpp"
+#include "VelCurveEditor.hpp"
 #include "mpbgui.hpp"
 
 MainWindow::MainWindow(QWidget* parent) :
@@ -109,6 +110,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	connect(ui.actionQuit, &QAction::triggered, this, &QApplication::quit);
 
 	connect(ui.actionProperties, &QAction::triggered, this, &MainWindow::editBankProperties);
+	connect(ui.actionVelocities, &QAction::triggered, this, &MainWindow::editVelocities);
 
 	connect(ui.actionAbout, &QAction::triggered, this, &MainWindow::about);
 	connect(ui.actionAboutQt, &QAction::triggered, this, [this]() { QMessageBox::aboutQt(this); });
@@ -479,6 +481,15 @@ void MainWindow::editBankProperties() {
 	}
 }
 
+void MainWindow::editVelocities() {
+	VelCurveEditor editor(bank.velocities, this);
+
+	if (editor.exec() == QDialog::Accepted) {
+		bank.velocities = std::move(editor.velocities);
+		setWindowModified(true);
+	}
+}
+
 void MainWindow::editLayer() {
 	auto* layer = bank.layer(programIdx, layerIdx);
 	if (!layer)
@@ -497,7 +508,7 @@ void MainWindow::editSplit() {
 	if (!split)
 		return;
 
-	SplitEditor editor(*split, &bank, this);
+	SplitEditor editor(*split, bank.velocities, this);
 	editor.setCurFile(curFile);
 	editor.setPath(programIdx, layerIdx, splitIdx);
 
@@ -507,7 +518,8 @@ void MainWindow::editSplit() {
 		 * pointer should have happened (hopefully)
 		 */
 		*split = std::move(editor.split);
-		// TODO: don't change windowModified if split data hasn't actually changed
+		bank.velocities = std::move(editor.velocities);
+		// TODO: don't change windowModified if split/velocity data hasn't actually changed
 		emitRowChanged(splitsModel, splitIdx);
 	}
 }

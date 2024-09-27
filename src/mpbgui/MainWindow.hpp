@@ -33,6 +33,7 @@ public slots:
 	bool importTone();
 	bool exportTone();
 	void editBankProperties();
+	void editVelocities();
 	void editLayer();
 	void editSplit();
 	void about();

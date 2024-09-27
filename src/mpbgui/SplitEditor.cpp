@@ -16,17 +16,25 @@
 SplitEditor::SplitEditor(QWidget* parent) :
 	QDialog(parent),
 	settings(),
-	bank(nullptr),
 	tonePlayer(22050, this)
 {
 	init();
 }
 
-SplitEditor::SplitEditor(const Split& split, Bank* bank, QWidget* parent) :
+SplitEditor::SplitEditor(const Split& split, QWidget* parent) :
 	QDialog(parent),
 	split(split),
 	settings(),
-	bank(bank),
+	tonePlayer(22050, this)
+{
+	init();
+}
+
+SplitEditor::SplitEditor(const Split& split, const std::vector<Velocity>& velocities, QWidget* parent) :
+	QDialog(parent),
+	split(split),
+	velocities(velocities),
+	settings(),
 	tonePlayer(22050, this)
 {
 	init();
@@ -34,13 +42,13 @@ SplitEditor::SplitEditor(const Split& split, Bank* bank, QWidget* parent) :
 
 // bleh. not so pleased with this and how I force an update
 #define CONNECT_AMP_SPINBOX_VALUE(spinbox, out) \
-	connect(spinbox, &QSpinBox::valueChanged, this, [&](int i) { \
+	connect(spinbox, &QSpinBox::valueChanged, this, [this](int i) { \
 		out = i; \
 		ui.ampEnvelope->update(); \
 	});
 
 #define CONNECT_FILTER_SPINBOX_VALUE(spinbox, out) \
-	connect(spinbox, &QSpinBox::valueChanged, this, [&](int i) { \
+	connect(spinbox, &QSpinBox::valueChanged, this, [this](int i) { \
 		out = i; \
 		ui.filterEnvelope->update(); \
 	});
@@ -109,18 +117,12 @@ void SplitEditor::init() {
 }
 
 void SplitEditor::addVelCurveItems(QComboBox* box) {
-	if (!bank)
-		return;
-
-	for (u32 i = 0; i < bank->velocities.size(); i++) {
+	for (u32 i = 0; i < velocities.size(); i++) {
 		box->addItem(tr("Curve %1").arg(i));
 	}
 }
 
 bool SplitEditor::setVelCurve(QComboBox* box, u32 id) {
-	if (!bank)
-		return false;
-
 	// the combo box contains an incrementing list so index instead of custom data will do
 	if (std::cmp_greater_equal(id, box->count())) {
 		QMessageBox::warning(
@@ -128,7 +130,7 @@ bool SplitEditor::setVelCurve(QComboBox* box, u32 id) {
 			tr("Invalid data"),
 			tr("Invalid velocity curve ID encountered in split. (Got %1, max is %2)")
 				.arg(id)
-				.arg(static_cast<intptr_t>(bank->velocities.size()) - 1)
+				.arg(static_cast<intptr_t>(velocities.size()) - 1)
 		);
 		return false;
 	}
@@ -294,10 +296,10 @@ void SplitEditor::setPath(size_t programIdx, size_t layerIdx, size_t splitIdx) {
 }
 
 void SplitEditor::editVelCurve() {
-	VelCurveEditor editor(bank->velocities, this);
+	VelCurveEditor editor(velocities, this);
 
 	if (editor.exec() == QDialog::Accepted) {
-		
+		velocities = editor.velocities;
 	}
 }
 
