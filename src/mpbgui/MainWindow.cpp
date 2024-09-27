@@ -229,7 +229,10 @@ bool MainWindow::loadFile(const QString& path) {
 
 	cursor.restore();
 
-	loadMapFile(path % ".csv");
+	if (!loadMapFile(path % ".csv")) {
+		loadMapFile(getOutPath(path, true) % "/manatools_mpb_map.csv");
+	}
+
 	saveMappings.reset();
 	setCurrentFile(path);
 	reloadTables();
@@ -328,12 +331,12 @@ bool MainWindow::saveMapFile(const QString& path) {
 	CSV csv;
 	QTextStream stream(&file);
 
-	csv.rows.emplaceBack(QStringList{ "path", "name" });
+	csv.rows.emplaceBack(QStringList { "path", "name" });
 
 	for (size_t i = 0; i < bank.programs.size(); i++) {
 		const QString* name = std::any_cast<QString>(&bank.programs[i].userData);
 		if (name && !name->isEmpty()) {
-			csv.rows.emplaceBack(QStringList{ QString::number(i), *name });	
+			csv.rows.emplaceBack(QStringList { QString::number(i), *name });	
 		}
 	}
 
@@ -645,7 +648,6 @@ bool MainWindow::saveMappingsDialog() {
 		mb.setCheckBox(&cb);
 
 		bool ret = mb.exec() == QMessageBox::Yes;
-
 		if (cb.isChecked()) {
 			saveMappings = ret;
 		}
