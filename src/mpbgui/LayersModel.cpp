@@ -27,7 +27,7 @@ QVariant LayersModel::data(const QModelIndex& index, int role) const {
 
 	if (role == Qt::DisplayRole || role == Qt::EditRole) {
 		switch (index.column()) {
-			case 0: return index.row() + 1;
+			case 0: return index.row();
 			case 1: return static_cast<uint>(layer->splits.size());
 			case 2: return layer->delay * 4;
 			case 3: return layer->bendRangeLow;

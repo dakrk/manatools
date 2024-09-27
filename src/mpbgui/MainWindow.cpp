@@ -60,8 +60,6 @@ MainWindow::MainWindow(QWidget* parent) :
 	ui.tblPrograms->setDragEnabled(true);
 	ui.tblPrograms->setDragDropMode(QAbstractItemView::InternalMove);
 	ui.tblPrograms->setStyle(new HorizontalLineItemDropStyle());
-	ui.tblPrograms->horizontalHeader()->hideSection(1);
-	ui.tblPrograms->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
 
 	setCommonTableProps(ui.tblPrograms);
 	setCommonTableProps(ui.tblLayers);
@@ -167,8 +165,6 @@ MainWindow::MainWindow(QWidget* parent) :
 	#undef CONNECT_BTN_ADD
 	#undef CONNECT_BTN_DEL
 	#undef CONNECT_ROW_CHANGED
-
-	connect(ui.tblPrograms->horizontalHeader(), &QWidget::customContextMenuRequested, this, &MainWindow::programHeaderMenu);
 
 	// Moving a row doesn't fire currentRowChanged, despite the current row having actually changed
 	connect(programsModel, &QAbstractItemModel::rowsMoved, this, [this]() {
@@ -530,10 +526,6 @@ void MainWindow::about() {
 		.arg(tr(APP_DESCRIPTION))
 		.arg("https://github.com/dakrk/manatools")
 	);
-}
-
-void MainWindow::programHeaderMenu(const QPoint& pos) {
-
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {

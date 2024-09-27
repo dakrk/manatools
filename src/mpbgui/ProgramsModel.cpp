@@ -14,7 +14,7 @@ int ProgramsModel::rowCount(const QModelIndex& parent) const {
 }
 
 int ProgramsModel::columnCount(const QModelIndex& parent) const {
-	return parent.isValid() ? 0 : 3;
+	return parent.isValid() ? 0 : 2;
 }
 
 /**
@@ -25,22 +25,18 @@ QVariant ProgramsModel::data(const QModelIndex& index, int role) const {
 	if (!index.isValid())
 		return {};
 
-	if (role == Qt::DisplayRole) {
+	if (role == Qt::DisplayRole || role == Qt::EditRole) {
 		switch (index.column()) {
 			case 0: {
 				const QString* name = std::any_cast<QString>(&bank->programs[index.row()].userData);
 				if (name && !name->isEmpty()) {
 					return *name;
 				} else {
-					return tr("Program %1").arg(index.row());
+					return tr("Program %1").arg(index.row() + 1);
 				}
 			}
 
 			case 1: {
-				return bank->programs[index.row()].usedLayers();
-			}
-
-			case 2: {
 				uint splits = 0;
 				for (const auto& layer : bank->programs[index.row()].layers) {
 					if (!layer)
@@ -60,9 +56,8 @@ QVariant ProgramsModel::headerData(int section, Qt::Orientation orientation, int
 	if (role == Qt::DisplayRole) {
 		if (orientation == Qt::Horizontal) {
 			switch (section) {
-				case 0: return tr("Program");
-				case 1: return tr("Layers");
-				case 2: return tr("Splits");
+				case 0: return tr("Program Name");
+				case 1: return tr("Splits");
 			}
 		} else if (orientation == Qt::Vertical) {
 			return section;
@@ -70,6 +65,17 @@ QVariant ProgramsModel::headerData(int section, Qt::Orientation orientation, int
 	}
 
 	return QAbstractItemModel::headerData(section, orientation, role);
+}
+
+bool ProgramsModel::setData(const QModelIndex& index, const QVariant& value, int role) {
+	if (!index.isValid())
+		return false;
+
+	if (role == Qt::EditRole && index.column() == 0) {
+		bank->programs[index.row()].userData = value.toString();
+	}
+
+	return true;
 }
 
 /**
@@ -122,10 +128,15 @@ bool ProgramsModel::removeRows(int row, int count, const QModelIndex& parent) {
 }
 
 Qt::ItemFlags ProgramsModel::flags(const QModelIndex& index) const {
-	Qt::ItemFlags f = QAbstractTableModel::flags(index);
+	auto f = QAbstractTableModel::flags(index);
+
 	if (index.isValid()) {
 		f |= Qt::ItemIsDragEnabled;
+		if (index.column() == 0) {
+			f |= Qt::ItemIsEditable;
+		}
 	}
+
 	return f | Qt::ItemIsDropEnabled;
 }
 

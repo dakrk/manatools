@@ -36,7 +36,6 @@ public slots:
 	void editLayer();
 	void editSplit();
 	void about();
-	void programHeaderMenu(const QPoint& pos);
 
 protected:
 	void closeEvent(QCloseEvent* event) override;
