@@ -133,5 +133,5 @@ namespace manatools::mpb {
 		std::vector<Velocity> velocities;
 	};
 
-	Bank load(const fs::path& path);
+	Bank load(const fs::path& path, bool guessToneSize = true);
 } // namespace manatools::mpb

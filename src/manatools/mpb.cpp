@@ -21,10 +21,10 @@ enum SplitFlags {
 	sfLoop  = 1 << 1
 };
 
-Bank load(const fs::path& path) {
+Bank load(const fs::path& path, bool guessToneSize) {
 	io::FileIO io(path, "rb");
 	Bank bank;
-	std::vector<u32> ptrsToneData;
+	std::map<u32, u32> tonePtrMap;
 
 	FourCC magic;
 	u32 fileSize;
@@ -57,7 +57,6 @@ Bank load(const fs::path& path) {
 
 	bank.programs.reserve(numPrograms);
 	bank.velocities.reserve(numVelocities);
-	ptrsToneData.reserve(bank.programs.size() * 4);
 
 	// ============ Programs ============
 	io.jump(ptrPrograms);
@@ -192,8 +191,18 @@ Bank load(const fs::path& path) {
 					io.readU8(&split.drumGroupID);
 
 					io.readU8(&split.unk4);
-					
-					ptrsToneData.push_back(split.ptrToneData_);
+
+					u8 bitdepth = tone::bitdepth(split.tone.format);
+					u32 endBytes = std::ceil(split.loopEnd * (bitdepth / 8.0));
+
+					if (auto t = tonePtrMap.find(split.ptrToneData_); t != tonePtrMap.end()) {
+						if (t->second < endBytes) {
+							t->second = endBytes;
+						}
+					} else {
+						tonePtrMap.insert({ split.ptrToneData_, endBytes });
+					}
+
 					layer.splits.push_back(std::move(split));
 				}
 				assert(layer.splits.size() == numSplits);
@@ -226,18 +235,12 @@ Bank load(const fs::path& path) {
 	 * each tone is written consecutively to determine their length by taking the position
 	 * of the tone that succeeds the current one, and subtract it to get the length.
 	 * 
-	 * Before we do this however, we need to sort a vector containing each tone pointer, and
-	 * also strip it of any duplicates.
-	 * 
 	 * TODO: Oops, seems like they're not always written consecutively. See issue #20.
 	 */
-	std::sort(ptrsToneData.begin(), ptrsToneData.end());
-	ptrsToneData.erase(std::unique(ptrsToneData.begin(), ptrsToneData.end()), ptrsToneData.end());
-
 	std::map<u32, tone::DataPtr> toneDataMap;
-	for (size_t i = 0; i < ptrsToneData.size(); i++) {
-		u32 start = ptrsToneData[i];
-		u32 end;
+	for (auto it = tonePtrMap.begin(); it != tonePtrMap.end(); it++) {
+		u32 start = it->first;
+		size_t size;
 
 		if (!start)
 			continue;
@@ -252,17 +255,21 @@ Bank load(const fs::path& path) {
 		 * 
 		 * TODO: Investigate trailing bytes/samples
 		 */
-		if (i < ptrsToneData.size() - 1)
-			end = ptrsToneData[i + 1];
-		else
-			end = bank.version >= 2 ? fileSize - 8 : fileSize - 4;
+		if (guessToneSize) {
+			auto it2 = std::next(it);
+			if (it2 != tonePtrMap.end()) {
+				size = it2->first - start;
+			} else {
+				size = (bank.version >= 2 ? fileSize - 8 : fileSize - 4) - start;
+			}
+		} else {
+			size = it->second;
+		}
 
 		io.jump(start);
-
-		auto toneData = tone::makeDataPtr(end - start);
+		auto toneData = tone::makeDataPtr(size);
 		io.readVec(*toneData);
-
-		toneDataMap[start] = toneData;
+		toneDataMap.insert({ start, toneData });		
 	}
 
 	for (auto& program : bank.programs) {
