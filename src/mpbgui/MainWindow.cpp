@@ -220,7 +220,7 @@ bool MainWindow::loadFile(const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
 
 	try {
-		bank = manatools::mpb::load(path.toStdWString());
+		bank = manatools::mpb::load(path.toStdWString(), ui.actionGuessToneSize->isChecked());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
 		QMessageBox::warning(this, tr("Open MIDI program/drum bank"), tr("Failed to load bank file: %1").arg(err.what()));
@@ -712,8 +712,11 @@ void MainWindow::restoreSettings() {
 	if (!restoreGeometry(settings.value("MainWindow/Geometry").toByteArray())) {
 		move(QApplication::primaryScreen()->availableGeometry().center() - frameGeometry().center());
 	}
+
+	ui.actionGuessToneSize->setChecked(settings.value("MainWindow/GuessToneSize", true).toBool());
 }
 
 void MainWindow::saveSettings() {
 	settings.setValue("MainWindow/Geometry", saveGeometry());
+	settings.setValue("MainWindow/GuessToneSize", ui.actionGuessToneSize->isChecked());
 }

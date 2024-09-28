@@ -377,8 +377,18 @@
     <addaction name="actionProperties"/>
     <addaction name="actionVelocities"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>&amp;Settings</string>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
+    </property>
+    <addaction name="actionGuessToneSize"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -519,6 +529,18 @@
   <action name="actionVelocities">
    <property name="text">
     <string>&amp;Velocities</string>
+   </property>
+  </action>
+  <action name="actionGuessToneSize">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Guess full tone size</string>
+   </property>
+   <property name="toolTip">
+    <string>Disable if you have issues with noise or clicking at the end of tones.
+Requires reloading the file to take effect.</string>
    </property>
   </action>
  </widget>

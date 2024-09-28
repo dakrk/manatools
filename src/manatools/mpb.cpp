@@ -236,6 +236,8 @@ Bank load(const fs::path& path, bool guessToneSize) {
 	 * of the tone that succeeds the current one, and subtract it to get the length.
 	 * 
 	 * TODO: Oops, seems like they're not always written consecutively. See issue #20.
+	 * As a reliable workaround for this, there exists the option to determine the tone
+	 * size from the biggest loopEnd seen set by a split using it.
 	 */
 	std::map<u32, tone::DataPtr> toneDataMap;
 	for (auto it = tonePtrMap.begin(); it != tonePtrMap.end(); it++) {
@@ -246,14 +248,14 @@ Bank load(const fs::path& path, bool guessToneSize) {
 			continue;
 
 		/**
-		 * Oddly, 16 bit PCM audio seems to have 2 extra bytes (1 sample) at the end, being a
-		 * copy the first two?
+		 * Oddly, 16 bit PCM audio seems to have 2 extra bytes (1 sample) at the end, being a copy
+		 * of the first two?
 		 * A similar issue also seems to happen with ADPCM too (with seemingly usually 6 samples),
 		 * and presumably also 8 bit PCM.
 		 * This can cause clicks at the end of the audio.
-		 * You can hear this if you try and play 0_0_2 from Rez S_M05 at its intended pitch.
+		 * You can hear this if you try and play 0:0:2 from Rez S_M05 at its intended pitch.
 		 * 
-		 * TODO: Investigate trailing bytes/samples
+		 * TODO: Investigate trailing bytes/samples (probably just some SDK tool quirk)
 		 */
 		if (guessToneSize) {
 			auto it2 = std::next(it);
@@ -532,11 +534,9 @@ void Bank::save(const fs::path& path) {
 
 	/**
 	 * Finally, we can write each split's tone data as everything else has finished being written,
-	 * as tone data must be written consecutively.
+	 * as tone data should ideally be written consecutively.
 	 */
-
 	std::unordered_map<tone::DataPtr, u32> tonePtrs;
-
 	for (size_t p = 0; p < programs.size(); p++) {
 		const auto& program = programs[p];
 

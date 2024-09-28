@@ -59,7 +59,7 @@ namespace manatools::tone {
 
 		// TODO: With an ADPCM sample being able to take half a byte, should I really be doing this?
 		size_t samples() const {
-			return data ? std::ceil((data->size() * 8.) / bitdepth()) : 0;
+			return data ? std::ceil((data->size() * 8.0) / bitdepth()) : 0;
 		}
 
 		Format format{Format::PCM16};
