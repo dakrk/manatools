@@ -70,6 +70,17 @@ namespace osb {
         return panIn >= 16 ? 15 - s8(panIn) : s8(panIn);
     };
 
+    fn calcChecksum(u32 start, u32 end) {
+        u32 newChecksum;
+        
+        for (u32 i = start, i < end, i += sizeof(u8)) {
+            u8 d @ i;
+            newChecksum += d;
+        }
+        
+        return newChecksum;
+    };
+
     struct Header {
         char fourCC[4];
         u32 version;
@@ -131,6 +142,11 @@ namespace osb {
     struct OSB {
         Header header;
         ProgramPtr programs[header.numPrograms];
+
+        if (header.version >= 2) {
+            //std::print("{0:x} ({0})", osb::calcChecksum(4, header.fileSize - 8));
+            u32 checksum @ header.fileSize - 8;
+        }
     };
 }
 
