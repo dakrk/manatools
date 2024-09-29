@@ -51,15 +51,27 @@ bool MainWindow::loadFile(const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
 
 	try {
-		bank = manatools::osb::load(path.toStdWString());
+		bank = manatools::osb::load(path.toStdWString(), ui.actionGuessToneSize->isChecked());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
 		QMessageBox::warning(this, tr("Open One Shot bank"), tr("Failed to load bank file: %1").arg(err.what()));
 		return false;
 	}
 
+	cursor.restore();
+
 	setCurrentFile(path);
 	reloadTable();
+
+	if (bank.version != 2) {
+		QMessageBox::warning(
+			this,
+			tr("Unsupported file version"),
+			tr("Loaded bank is of an untested version. There may be inaccuracies. (Expected 2, got %1)")
+				.arg(bank.version)
+		);
+	}
+
 	return true;
 }
 
@@ -227,11 +239,13 @@ void MainWindow::setCurrentFile(const QString& path) {
 
 void MainWindow::restoreSettings() {
 	if (!restoreGeometry(settings.value("MainWindow/Geometry").toByteArray())) {
-		resize(600, 600);
 		move(QApplication::primaryScreen()->availableGeometry().center() - frameGeometry().center());
 	}
+
+	ui.actionGuessToneSize->setChecked(settings.value("MainWindow/GuessToneSize", true).toBool());
 }
 
 void MainWindow::saveSettings() {
 	settings.setValue("MainWindow/Geometry", saveGeometry());
+	settings.setValue("MainWindow/GuessToneSize", ui.actionGuessToneSize->isChecked());
 }
