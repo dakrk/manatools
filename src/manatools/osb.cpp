@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <cassert>
 #include <cstring>
 #include <map>
@@ -9,6 +8,8 @@
 #include "tone.hpp"
 #include "types.hpp"
 #include "utils.hpp"
+
+#define WRITEBITS(dest, src, offset, size) (dest = utils::writeBits(dest, src, offset, size))
 
 namespace manatools::osb {
 
@@ -193,6 +194,134 @@ Bank load(const fs::path& path, bool guessToneSize) {
 	}
 
 	return bank;
+}
+
+void Bank::save(const fs::path& path) {
+	io::DynBufIO::VecType outBuf;
+	io::DynBufIO io(outBuf);
+
+	io.writeFourCC(OSB_MAGIC);
+	io.writeU32LE(version);
+
+	auto fileSizePos = io.tell();
+	io.writeU32LE(0);
+
+	io.writeU32LE(programs.size());
+
+	// Write these once they're known
+	auto programPtrsPos = io.tell();
+	for (size_t i = 0; i < programs.size(); i++) {
+		io.writeU32LE(0);
+	}
+
+	for (size_t p = 0; p < programs.size(); p++) {
+		const auto& program = programs[p];
+
+		auto pos = io.tell();
+		io.jump(programPtrsPos + (p * sizeof(u32)));
+		io.writeU32LE(pos);
+		io.jump(pos);
+
+		u8 flags = program.unkFlags & 0b11111100;
+
+		if (program.loop)
+			flags |= pfLoop;
+
+		if (program.tone.format == tone::Format::ADPCM)
+			flags |= pfADPCM;
+
+		io.writeFourCC(OSP_MAGIC);
+		io.writeU8(0); // jump (filled in later)
+		io.writeU8(flags);
+		io.writeU16LE(0); // ptrToneData (filled in later)
+
+		io.writeU16LE(program.loopStart);
+		io.writeU16LE(program.loopEnd);
+
+		u32 ampBits = 0;
+		WRITEBITS(ampBits, program.amp.attackRate,      0, 5);
+		WRITEBITS(ampBits, program.amp.decayRate1,      6, 5);
+		WRITEBITS(ampBits, program.amp.decayRate2,     11, 5);
+		WRITEBITS(ampBits, program.amp.releaseRate,    16, 5);
+		WRITEBITS(ampBits, program.amp.decayLevel,     21, 5);
+		WRITEBITS(ampBits, program.amp.keyRateScaling, 26, 5);
+		io.writeU32LE(ampBits);
+
+		io.writeU16LE(program.unk1);
+
+		u16 lfoBits = 0;
+		WRITEBITS(lfoBits, program.lfo.ampDepth,   0, 3);
+		WRITEBITS(lfoBits, static_cast<u8>(program.lfo.ampWave), 3, 2);
+		WRITEBITS(lfoBits, program.lfo.pitchDepth, 5, 3);
+		WRITEBITS(lfoBits, static_cast<u8>(program.lfo.pitchWave), 8, 2);
+		WRITEBITS(lfoBits, program.lfo.frequency, 10, 5);
+		WRITEBITS(lfoBits, program.lfoOn,         15, 1);
+		io.writeU16LE(lfoBits);
+
+		u8 fxBits = 0;
+		WRITEBITS(fxBits, program.fx.inputCh, 0, 4);
+		WRITEBITS(fxBits, program.fx.level,   4, 4);
+		io.writeU8(fxBits);
+
+		io.writeU8(program.unk2);
+
+		io.writeU8(Program::toPanPot(program.panPot));
+		io.writeU8(program.directLevel);
+
+		u8 filterBits = 0;
+		WRITEBITS(filterBits, program.filter.resonance, 0, 5);
+		WRITEBITS(filterBits, program.filterOn, 5, 1);
+		io.writeU8(filterBits);
+
+		io.writeU8(~program.oscillatorLevel);
+
+		io.writeU16LE(program.filter.startLevel);
+		io.writeU16LE(program.filter.attackLevel);
+		io.writeU16LE(program.filter.decayLevel1);
+		io.writeU16LE(program.filter.decayLevel2);
+		io.writeU16LE(program.filter.releaseLevel);
+		io.writeU8(program.filter.decayRate1);
+		io.writeU8(program.filter.attackRate);
+		io.writeU8(program.filter.releaseRate);
+		io.writeU8(program.filter.decayRate2);
+
+		// write baseNote as a U32LE for the extra 3 bytes
+		io.writeU32LE(program.loopTime);
+		io.writeU32LE(program.baseNote);
+
+		// TODO: Expose editing this range, and look at version 1 files again
+		io.writeU32LE(0);
+		io.writeU32LE(program.loopEnd); // not sure the purpose of this
+		io.writeU32LE(0);
+		io.writeFourCC(OSP_END);
+	}
+
+	// TODO: Write tone data!!!
+
+	auto endPos = io.tell();
+	io.jump(fileSizePos);
+	io.writeU32LE(version >= 2 ? endPos + 8 : endPos + 4);
+	io.jump(endPos);
+
+	if (version >= 2) {
+		u32 checksum = 0;
+		for (long i = 4; i < endPos; i++) {
+			checksum += io.vec()[i];
+		}
+
+		io.writeU32LE(checksum);
+	}
+
+	io.writeFourCC(OSB_END);
+
+	auto pos = io.tell();
+	int padding = utils::roundUp(pos, 32l) - pos;
+	for (int i = 0; i < padding; i++) {
+		io.writeU8(0);
+	}
+
+	io::FileIO file(path, "wb");
+	file.writeVec(io.vec());
 }
 
 s8 Program::fromPanPot(u8 in) {

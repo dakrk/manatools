@@ -31,6 +31,9 @@ MainWindow::MainWindow(QWidget* parent) :
 	ui.actionSaveAs->setShortcut(QKeySequence::SaveAs);
 	ui.actionQuit->setShortcut(QKeySequence::Quit);
 
+	ui.actionDelete->setShortcut(QKeySequence::Delete);
+	ui.actionSelectAll->setShortcut(QKeySequence::SelectAll);
+
 	ui.menuRecentFiles->menuAction()->setVisible(false);
 
 	ui.btnPlayProgram->setCheckable(true);
@@ -40,6 +43,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	connect(ui.actionSave, &QAction::triggered, this, &MainWindow::save);
 	connect(ui.actionSaveAs, &QAction::triggered, this, &MainWindow::saveAs);
 	connect(ui.actionQuit, &QAction::triggered, this, &QApplication::quit);
+
+	connect(ui.actionSelectAll, &QAction::triggered, this, &MainWindow::selectAll);
 
 	connect(ui.actionAbout, &QAction::triggered, this, &MainWindow::about);
 	connect(ui.actionAboutQt, &QAction::triggered, this, [this]() { QMessageBox::aboutQt(this); });
@@ -151,6 +156,10 @@ void MainWindow::about() {
 		.arg(tr(APP_DESCRIPTION))
 		.arg("https://github.com/dakrk/manatools")
 	);
+}
+
+void MainWindow::selectAll() {
+	ui.tblPrograms->selectAll();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {

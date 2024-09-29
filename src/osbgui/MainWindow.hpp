@@ -21,6 +21,7 @@ public slots:
 	bool save();
 	bool saveAs();
 	void about();
+	void selectAll();
 
 protected:
 	void closeEvent(QCloseEvent* event) override;

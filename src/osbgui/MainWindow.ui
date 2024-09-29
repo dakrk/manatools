@@ -119,6 +119,8 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
+    <addaction name="actionDelete"/>
+    <addaction name="actionSelectAll"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -198,6 +200,26 @@
    </property>
    <property name="text">
     <string>&amp;Guess full tone size</string>
+   </property>
+   <property name="toolTip">
+    <string>Disable if you have issues with noise or clicking at the end of tones.
+Requires reloading the file to take effect.</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="icon">
+    <iconset theme="edit-delete"/>
+   </property>
+   <property name="text">
+    <string>&amp;Delete</string>
+   </property>
+  </action>
+  <action name="actionSelectAll">
+   <property name="icon">
+    <iconset theme="edit-select-all"/>
+   </property>
+   <property name="text">
+    <string>Select &amp;All</string>
    </property>
   </action>
  </widget>

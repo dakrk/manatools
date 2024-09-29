@@ -11,6 +11,10 @@
 namespace manatools::osb {
 	constexpr FourCC OSB_MAGIC("SOSB");
 	constexpr FourCC OSP_MAGIC("SOSP");
+	constexpr FourCC OSD_MAGIC("SOSD");
+	constexpr FourCC OSB_END("ENDB");
+	constexpr FourCC OSP_END("ENDP");
+	constexpr FourCC OSD_END("ENDD");
 
 	using common::LFOWaveType;
 	using common::AmpEnvelope;
@@ -70,6 +74,7 @@ namespace manatools::osb {
 	};
 
 	struct Bank {
+		void save(const fs::path& path);
 		u32 version = 2;
 		std::vector<Program> programs;
 	};
