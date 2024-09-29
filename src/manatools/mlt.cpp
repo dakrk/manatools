@@ -198,8 +198,8 @@ void MLT::move(size_t srcIdx, size_t count, size_t destIdx) {
 
 		// moving down, so we need to move down the offset in AICA RAM too
 		u32 startOffset;
-		auto prevIt = it - 1;
-		if (begin < prevIt) {
+		if (it != begin) {
+			auto prevIt = it - 1;
 			startOffset = prevIt->aicaDataPtr + prevIt->aicaDataSize;
 		} else {
 			startOffset = AICA_BASE;
