@@ -73,9 +73,10 @@ bool ProgramsModel::setData(const QModelIndex& index, const QVariant& value, int
 
 	if (role == Qt::EditRole && index.column() == 0) {
 		bank->programs[index.row()].userData = value.toString();
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 /**
