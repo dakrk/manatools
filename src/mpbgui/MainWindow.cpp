@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	ui.tblPrograms->setDragEnabled(true);
 	ui.tblPrograms->setDragDropMode(QAbstractItemView::InternalMove);
-	ui.tblPrograms->setStyle(new HorizontalLineItemDropStyle());
+	ui.tblPrograms->setStyle(new HorizontalLineItemDropStyle(ui.tblPrograms->style()));
 
 	setCommonTableProps(ui.tblPrograms);
 	setCommonTableProps(ui.tblLayers);
