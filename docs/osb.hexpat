@@ -100,8 +100,6 @@ namespace osb {
         u16 loopStart; // [0 -> 65535]
         u16 loopEnd;   // [0 -> 65535]
 
-        unk[4];
-
         ProgramAmpEnvelope ampEnvelope;
 
         unk[2];
@@ -129,8 +127,12 @@ namespace osb {
         u8 filterReleaseRate; // [0 -> 31] [def. 25]
         u8 filterDecayRate2;  // [0 -> 31] [def. 25]
         
-        // 16 bytes on version 1, 24 bytes on version 2. (Including ENDP footer.)
-        unk[24];
+        // To get this time in msecs, multiply by 4.
+        // This is the only option in the editor.
+        u32 loopMsec;
+
+        // 12 bytes on version 1, 20 bytes on version 2. (Including ENDP footer.)
+        unk[20];
 
         // u8 toneData[12] @ ptrToneData + ((jump & 0x7F) << 16);
     };
