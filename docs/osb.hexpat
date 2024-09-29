@@ -97,6 +97,10 @@ namespace osb {
         
         u16 ptrToneData; // Pointer starts after SOSD FourCC
 
+        /**
+         * In OSB, loopEnd should effectively always be full length, 
+         * as seemingly no SDK tools exposed changing these.
+         */
         u16 loopStart; // [0 -> 65535]
         u16 loopEnd;   // [0 -> 65535]
 
@@ -126,10 +130,10 @@ namespace osb {
         u8 filterAttackRate;  // [0 -> 31] [def. 25]
         u8 filterReleaseRate; // [0 -> 31] [def. 25]
         u8 filterDecayRate2;  // [0 -> 31] [def. 25]
-        
-        // To get this time in msecs, multiply by 4.
-        // This is the only option in the editor.
-        u32 loopMsec;
+
+        // Time in (msecs / 4) until a note off is fired.
+        // Amp envelope is effective.
+        u32 loopTime;
 
         // Seems likely, is always 60 and changing affects pitch
         u8 baseNote;

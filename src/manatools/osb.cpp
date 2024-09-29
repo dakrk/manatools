@@ -18,10 +18,10 @@ enum ProgramFlags {
 };
 
 // Pretty much just copied from mpb.cpp
-Bank load(const fs::path& path) {
+Bank load(const fs::path& path, bool guessToneSize) {
 	io::FileIO io(path, "rb");
 	Bank bank;
-	std::vector<u32> ptrsToneData;
+	std::map<u32, u32> tonePtrMap;
 
 	FourCC magic;
 	u32 fileSize;
@@ -41,7 +41,6 @@ Bank load(const fs::path& path) {
 	io.readU32LE(&numPrograms);
 
 	bank.programs.reserve(numPrograms);
-	ptrsToneData.reserve(numPrograms);
 
 	for (u32 p = 0; p < numPrograms; p++) {
 		u32 ptrProgram;
@@ -77,7 +76,8 @@ Bank load(const fs::path& path) {
 		io.readU16LE(&ptrToneData);
 		program.ptrToneData_ = ptrToneData + ((jump & 0x7F) << 16);
 
-		io.forward(4);
+		io.readU16LE(&program.loopStart);
+		io.readU16LE(&program.loopEnd);
 
 		u32 ampBitfield;
 		io.readU32LE(&ampBitfield);
@@ -88,7 +88,7 @@ Bank load(const fs::path& path) {
 		program.amp.decayLevel     = utils::readBits(ampBitfield, 21, 5);
 		program.amp.keyRateScaling = utils::readBits(ampBitfield, 26, 4); // 2 unknown bits after this
 
-		io.forward(2);
+		io.readU16LE(&program.unk1);
 
 		u16 lfoBitfield;
 		io.readU16LE(&lfoBitfield);
@@ -104,7 +104,7 @@ Bank load(const fs::path& path) {
 		program.fx.inputCh = utils::readBits(fxBitfield, 0, 4);
 		program.fx.level   = utils::readBits(fxBitfield, 4, 4);
 
-		io.forward(1);
+		io.readU8(&program.unk2);
 
 		u8 pan;
 		io.readU8(&pan);
@@ -129,9 +129,20 @@ Bank load(const fs::path& path) {
 		io.readU8(&program.filter.releaseRate);
 		io.readU8(&program.filter.decayRate2);
 
-		// TODO: More data
+		io.readU32LE(&program.loopTime);
+		io.readU8(&program.baseNote);
 
-		ptrsToneData.push_back(program.ptrToneData_);
+		u8 bitdepth = tone::bitdepth(program.tone.format);
+		u32 endBytes = std::ceil(program.loopEnd * (bitdepth / 8.0));
+
+		if (auto t = tonePtrMap.find(program.ptrToneData_); t != tonePtrMap.end()) {
+			if (t->second < endBytes) {
+				t->second = endBytes;
+			}
+		} else {
+			tonePtrMap.insert({ program.ptrToneData_, endBytes });
+		}
+
 		bank.programs.push_back(std::move(program));
 
 		io.jump(pos);
@@ -139,31 +150,35 @@ Bank load(const fs::path& path) {
 
 	assert(bank.programs.size() == numPrograms);
 
-	// Same slop from mpb.cpp
-	std::sort(ptrsToneData.begin(), ptrsToneData.end());
-	ptrsToneData.erase(std::unique(ptrsToneData.begin(), ptrsToneData.end()), ptrsToneData.end());
-
+	/**
+	 * This process is pretty useless for OSB, as their loopEnds should always
+	 * be the full size of the tone data, mainly because the SDK tools didn't
+	 * allow you to change loop start or end.
+	 */
 	std::map<u32, tone::DataPtr> toneDataMap;
-	for (size_t i = 0; i < ptrsToneData.size(); i++) {
-		u32 start = ptrsToneData[i];
-		u32 end;
+	for (auto it = tonePtrMap.begin(); it != tonePtrMap.end(); it++) {
+		u32 start = it->first;
+		size_t size;
 
 		if (!start)
 			continue;
 
-		// TODO: This probably has the same trailing bytes/samples issue as MPB
-		if (i < ptrsToneData.size() - 1)
-			end = ptrsToneData[i + 1] - 8;
-		else
-			end = fileSize - 12; // account for ENDB, checksum(?) and ENDD
+		// Subtract 8 to account for contiguous footer then header
+		if (guessToneSize) {
+			auto it2 = std::next(it);
+			if (it2 != tonePtrMap.end()) {
+				size = (it2->first - start) - 8;
+			} else {
+				size = (bank.version >= 2 ? fileSize - 12 : fileSize - 8) - start;
+			}
+		} else {
+			size = it->second;
+		}
 
 		io.jump(start);
-
-		// I don't think OSB shares tone data like MSB does but whatever
-		auto toneData = tone::makeDataPtr(end - start);
+		auto toneData = tone::makeDataPtr(size);
 		io.readVec(*toneData);
-
-		toneDataMap[start] = toneData;
+		toneDataMap.insert({ start, toneData });
 	}
 
 	for (auto& program : bank.programs) {

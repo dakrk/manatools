@@ -39,14 +39,18 @@ namespace manatools::osb {
 		u8 unkFlags        = 0;
 
 		bool loop          = false;
-
-		// TODO: Loop points???
+		u16 loopStart      = 0;     // [0 -> 65535]
+		u16 loopEnd        = 0;     // [0 -> 65535]
 
 		AmpEnvelope amp;
+
+		u16 unk1           = 0;     // Unknown
 
 		bool lfoOn         = false;
 		ProgramLFO lfo;
 		ProgramFX fx;
+
+		u8 unk2            = 0;     // Unknown
 
 		s8 panPot          = 0;     // [-15 -> 15]
 		u8 directLevel     = 15;    // [0 -> 15]
@@ -56,7 +60,10 @@ namespace manatools::osb {
 		bool filterOn      = true;
 		FilterEnvelope filter;
 
-		// TODO: There's more data that needs to be investigated (also looping??)
+		u32 loopTime       = 0;
+		u8 baseNote        = 60;    // [0 -> 127]
+
+		// TODO: There's more data that needs to be investigated
 
 		u32 ptrToneData_   = 0;     // Only for presentation post-load
 		tone::Tone tone;
@@ -67,5 +74,5 @@ namespace manatools::osb {
 		std::vector<Program> programs;
 	};
 
-	Bank load(const fs::path& path);
+	Bank load(const fs::path& path, bool guessToneSize = true);
 } // namespace manatools::osb

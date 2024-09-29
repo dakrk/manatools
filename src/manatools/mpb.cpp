@@ -271,7 +271,7 @@ Bank load(const fs::path& path, bool guessToneSize) {
 		io.jump(start);
 		auto toneData = tone::makeDataPtr(size);
 		io.readVec(*toneData);
-		toneDataMap.insert({ start, toneData });		
+		toneDataMap.insert({ start, toneData });
 	}
 
 	for (auto& program : bank.programs) {
