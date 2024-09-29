@@ -131,8 +131,15 @@ namespace osb {
         // This is the only option in the editor.
         u32 loopMsec;
 
-        // 12 bytes on version 1, 20 bytes on version 2. (Including ENDP footer.)
-        unk[20];
+        // Seems likely, is always 60 and changing affects pitch
+        u8 baseNote;
+
+        /**
+         * 11 bytes on version 1, 19 bytes on version 2, including ENDP footer.
+         * I've only observed this area being all zeroes currently, except a repeat of the loopEnd
+         * being present. I haven't noticed any effect changing these to different values, though.
+         */
+        unk[19];
 
         // u8 toneData[12] @ ptrToneData + ((jump & 0x7F) << 16);
     };
