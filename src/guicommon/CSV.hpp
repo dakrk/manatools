@@ -1,7 +1,9 @@
+#pragma once
 #include <QStringList>
 #include <QTextStream>
+#include "common.hpp"
 
-struct CSV {
+struct GUICOMMON_EXPORT CSV {
 	void read(QTextStream& stream);
 	void write(QTextStream& stream) const;
 
