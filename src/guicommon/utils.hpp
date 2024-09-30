@@ -23,3 +23,7 @@ inline QString formatHex(std::signed_integral auto num, int width = 0) {
 inline constexpr QPointF mulPoint(QPointF point, qreal mulX, qreal mulY) {
 	return { point.x() * mulX, point.y() * mulY };
 }
+
+inline QIcon getPlaybackIcon(bool playing) {
+	return QIcon::fromTheme(playing ? "media-playback-stop" : "media-playback-start");
+}

@@ -75,7 +75,7 @@ void SplitEditor::init() {
 	});
 
 	connect(ui.btnTonePlay, &QPushButton::toggled, this, [this](bool checked) {
-		ui.btnTonePlay->setIcon(QIcon::fromTheme(checked ? "media-playback-stop" : "media-playback-start"));
+		ui.btnTonePlay->setIcon(getPlaybackIcon(checked));
 	});
 
 	connect(&tonePlayer, &TonePlayer::playingChanged, this, [this]() {

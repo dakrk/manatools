@@ -208,7 +208,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	});
 
 	connect(ui.btnSplitPlay, &QPushButton::toggled, this, [this](bool checked) {
-		ui.btnSplitPlay->setIcon(QIcon::fromTheme(checked ? "media-playback-stop" : "media-playback-start"));
+		ui.btnSplitPlay->setIcon(getPlaybackIcon(checked));
 	});
 
 	connect(&tonePlayer, &TonePlayer::playingChanged, this, [this]() {

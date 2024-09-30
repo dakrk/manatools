@@ -54,7 +54,17 @@ MainWindow::MainWindow(QWidget* parent) :
 	        [this](const QModelIndex &current, const QModelIndex &previous) {
 		Q_UNUSED(previous);
 		if (current.isValid()) {
+			tonePlayer.stop();
 			tonePlayer.setTone(bank.programs[current.row()].tone);
+		}
+	});
+
+	connect(model, &QAbstractTableModel::dataChanged, this,
+	        [this](const QModelIndex& tl, const QModelIndex& br, const QList<int>& roles) {
+		Q_UNUSED(tl);
+		Q_UNUSED(br);
+		if (roles.contains(Qt::DisplayRole) || roles.contains(Qt::EditRole) || roles.isEmpty()) {
+			setWindowModified(true);
 		}
 	});
 
@@ -63,7 +73,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	});
 
 	connect(ui.btnPlayProgram, &QPushButton::toggled, this, [this](bool checked) {
-		ui.btnPlayProgram->setIcon(QIcon::fromTheme(checked ? "media-playback-stop" : "media-playback-start"));
+		ui.btnPlayProgram->setIcon(getPlaybackIcon(checked));
 	});
 
 	connect(&tonePlayer, &TonePlayer::playingChanged, this, [this]() {

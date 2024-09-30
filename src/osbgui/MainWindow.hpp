@@ -35,7 +35,6 @@ private:
 	void reloadTable();
 
 	QString maybeDropEvent(QDropEvent* event);
-
 	bool maybeSave();
 	void setCurrentFile(const QString& path = "");
 
