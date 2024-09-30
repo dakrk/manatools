@@ -7,17 +7,17 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Edit split</string>
+   <string>Edit program</string>
   </property>
   <widget class="QGroupBox" name="groupAmpEnv">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>270</y>
+     <x>10</x>
+     <y>210</y>
      <width>251</width>
      <height>321</height>
     </rect>
@@ -231,10 +231,10 @@
   <widget class="QGroupBox" name="groupLFO">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>210</y>
+     <x>270</x>
+     <y>300</y>
      <width>251</width>
-     <height>211</height>
+     <height>231</height>
     </rect>
    </property>
    <property name="title">
@@ -382,7 +382,7 @@
      <x>530</x>
      <y>10</y>
      <width>261</width>
-     <height>511</height>
+     <height>521</height>
     </rect>
    </property>
    <property name="title">
@@ -796,37 +796,20 @@
     <string>General</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_5">
-    <item row="5" column="0">
-     <spacer name="verticalSpacer_3">
-      <property name="orientation">
-       <enum>Qt::Orientation::Vertical</enum>
+    <item row="2" column="0" colspan="2">
+     <widget class="QLabel" name="lblDirectLevel">
+      <property name="text">
+       <string>Direct Level</string>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
       </property>
-     </spacer>
-    </item>
-    <item row="1" column="5">
-     <widget class="QSpinBox" name="spinDirectLevel">
-      <property name="maximum">
-       <number>15</number>
+      <property name="buddy">
+       <cstring>spinDirectLevel</cstring>
       </property>
      </widget>
     </item>
-    <item row="0" column="5">
-     <widget class="QSpinBox" name="spinPanPot">
-      <property name="minimum">
-       <number>-15</number>
-      </property>
-      <property name="maximum">
-       <number>15</number>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2" colspan="3">
+    <item row="1" column="2" colspan="3">
      <widget class="QSlider" name="sliderPanPot">
       <property name="minimum">
        <number>-15</number>
@@ -848,33 +831,38 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="0" colspan="2">
-     <widget class="QLabel" name="lblPanPot">
-      <property name="text">
-       <string>Pan Pot</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-      </property>
-      <property name="buddy">
-       <cstring>spinPanPot</cstring>
+    <item row="2" column="5">
+     <widget class="QSpinBox" name="spinDirectLevel">
+      <property name="maximum">
+       <number>15</number>
       </property>
      </widget>
     </item>
-    <item row="1" column="0" colspan="2">
-     <widget class="QLabel" name="lblDirectLevel">
-      <property name="text">
-       <string>Direct Level</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-      </property>
-      <property name="buddy">
-       <cstring>spinDirectLevel</cstring>
+    <item row="3" column="5">
+     <widget class="QSpinBox" name="spinOscLvl">
+      <property name="maximum">
+       <number>255</number>
       </property>
      </widget>
     </item>
-    <item row="1" column="2" colspan="3">
+    <item row="3" column="2" colspan="3">
+     <widget class="QSlider" name="sliderOscLvl">
+      <property name="maximum">
+       <number>255</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2" colspan="3">
+     <widget class="QSpinBox" name="spinBaseNote">
+      <property name="maximum">
+       <number>127</number>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="2" colspan="3">
      <widget class="QSlider" name="sliderDirectLevel">
       <property name="maximum">
        <number>15</number>
@@ -884,14 +872,14 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="5">
-     <widget class="QSpinBox" name="spinOscLvl">
-      <property name="maximum">
-       <number>255</number>
+    <item row="0" column="5">
+     <widget class="QLabel" name="lblBaseNoteVal">
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </item>
-    <item row="2" column="0" colspan="2">
+    <item row="3" column="0" colspan="2">
      <widget class="QLabel" name="lblOscLvl">
       <property name="toolTip">
        <string>Oscillator Level</string>
@@ -907,15 +895,54 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="2" colspan="3">
-     <widget class="QSlider" name="sliderOscLvl">
-      <property name="maximum">
-       <number>255</number>
+    <item row="0" column="0" colspan="2">
+     <widget class="QLabel" name="lblBaseNote">
+      <property name="text">
+       <string>Base Note</string>
       </property>
-      <property name="orientation">
-       <enum>Qt::Orientation::Horizontal</enum>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>spinBaseNote</cstring>
       </property>
      </widget>
+    </item>
+    <item row="1" column="5">
+     <widget class="QSpinBox" name="spinPanPot">
+      <property name="minimum">
+       <number>-15</number>
+      </property>
+      <property name="maximum">
+       <number>15</number>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QLabel" name="lblPanPot">
+      <property name="text">
+       <string>Pan Pot</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+      <property name="buddy">
+       <cstring>spinPanPot</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <spacer name="verticalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Orientation::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
     </item>
    </layout>
   </widget>
@@ -925,7 +952,7 @@
      <x>270</x>
      <y>10</y>
      <width>251</width>
-     <height>251</height>
+     <height>281</height>
     </rect>
    </property>
    <property name="title">
@@ -1046,27 +1073,111 @@
      </widget>
     </item>
     <item>
-     <spacer name="verticalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Orientation::Vertical</enum>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <property name="verticalSpacing">
+       <number>3</number>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
+      <item row="0" column="0">
+       <widget class="QLabel" name="lblLoopStart">
+        <property name="text">
+         <string>Loop Start</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinLoopStart</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>samples</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>samples</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="lblLoopEnd">
+        <property name="text">
+         <string>Loop End</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinLoopEnd</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="2">
+       <widget class="QSpinBox" name="spinLoopStart">
+        <property name="maximum">
+         <number>65535</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="2">
+       <widget class="QSpinBox" name="spinLoopEnd">
+        <property name="maximum">
+         <number>65535</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="lblLoopTime">
+        <property name="font">
+         <font>
+          <underline>true</underline>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>The length of time in milliseconds that this will play for until a note off is fired.
+Amp envelope can be used for a fade in and fade out.</string>
+        </property>
+        <property name="text">
+         <string>Loop Time</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinLoopTime</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>msecs</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="2">
+       <widget class="QSpinBox" name="spinLoopTime">
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>520</x>
-     <y>560</y>
-     <width>271</width>
-     <height>24</height>
+     <x>540</x>
+     <y>540</y>
+     <width>251</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -1085,10 +1196,10 @@
   <widget class="QPushButton" name="btnEditUnk">
    <property name="geometry">
     <rect>
-     <x>530</x>
-     <y>530</y>
-     <width>261</width>
-     <height>22</height>
+     <x>10</x>
+     <y>540</y>
+     <width>251</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="text">
@@ -1141,20 +1252,13 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>checkLFOSync</tabstop>
-  <tabstop>sliderLFOFreq</tabstop>
-  <tabstop>spinLFOFreq</tabstop>
-  <tabstop>sliderLFOPitchDepth</tabstop>
-  <tabstop>spinLFOPitchDepth</tabstop>
-  <tabstop>comboLFOPitchWave</tabstop>
-  <tabstop>sliderLFOAmpDepth</tabstop>
-  <tabstop>spinLFOAmpDepth</tabstop>
-  <tabstop>comboLFOAmpWave</tabstop>
-  <tabstop>placeholderWaveform</tabstop>
-  <tabstop>checkLoopOn</tabstop>
-  <tabstop>btnTonePlay</tabstop>
-  <tabstop>toolbtnToneEdit</tabstop>
-  <tabstop>ampEnvelope</tabstop>
+  <tabstop>spinBaseNote</tabstop>
+  <tabstop>sliderPanPot</tabstop>
+  <tabstop>spinPanPot</tabstop>
+  <tabstop>sliderDirectLevel</tabstop>
+  <tabstop>spinDirectLevel</tabstop>
+  <tabstop>sliderOscLvl</tabstop>
+  <tabstop>spinOscLvl</tabstop>
   <tabstop>sliderAmpAttack</tabstop>
   <tabstop>spinAmpAttack</tabstop>
   <tabstop>sliderAmpDecay1</tabstop>
@@ -1167,6 +1271,22 @@
   <tabstop>spinAmpRelease</tabstop>
   <tabstop>sliderAmpKeyRateScaling</tabstop>
   <tabstop>spinAmpKeyRateScaling</tabstop>
+  <tabstop>placeholderWaveform</tabstop>
+  <tabstop>checkLoopOn</tabstop>
+  <tabstop>btnTonePlay</tabstop>
+  <tabstop>toolbtnToneEdit</tabstop>
+  <tabstop>spinLoopStart</tabstop>
+  <tabstop>spinLoopEnd</tabstop>
+  <tabstop>spinLoopTime</tabstop>
+  <tabstop>checkLFOSync</tabstop>
+  <tabstop>sliderLFOFreq</tabstop>
+  <tabstop>spinLFOFreq</tabstop>
+  <tabstop>sliderLFOPitchDepth</tabstop>
+  <tabstop>spinLFOPitchDepth</tabstop>
+  <tabstop>comboLFOPitchWave</tabstop>
+  <tabstop>sliderLFOAmpDepth</tabstop>
+  <tabstop>spinLFOAmpDepth</tabstop>
+  <tabstop>comboLFOAmpWave</tabstop>
   <tabstop>checkFilterOn</tabstop>
   <tabstop>sliderFilterStartLvl</tabstop>
   <tabstop>spinFilterStartLvl</tabstop>
@@ -1513,34 +1633,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>sliderOscLvl</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinOscLvl</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>192</x>
-     <y>258</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>248</x>
-     <y>262</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>sliderLFOFreq</sender>
    <signal>valueChanged(int)</signal>
    <receiver>spinLFOFreq</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>201</x>
-     <y>454</y>
+     <x>461</x>
+     <y>380</y>
     </hint>
     <hint type="destinationlabel">
-     <x>248</x>
-     <y>458</y>
+     <x>508</x>
+     <y>384</y>
     </hint>
    </hints>
   </connection>
@@ -1551,12 +1655,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>201</x>
-     <y>483</y>
+     <x>461</x>
+     <y>412</y>
     </hint>
     <hint type="destinationlabel">
-     <x>248</x>
-     <y>487</y>
+     <x>508</x>
+     <y>416</y>
     </hint>
    </hints>
   </connection>
@@ -1567,28 +1671,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>201</x>
-     <y>541</y>
+     <x>461</x>
+     <y>476</y>
     </hint>
     <hint type="destinationlabel">
-     <x>248</x>
-     <y>545</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinOscLvl</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>sliderOscLvl</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>262</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>192</x>
-     <y>258</y>
+     <x>508</x>
+     <y>480</y>
     </hint>
    </hints>
   </connection>
@@ -1599,12 +1687,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>458</y>
+     <x>508</x>
+     <y>384</y>
     </hint>
     <hint type="destinationlabel">
-     <x>201</x>
-     <y>454</y>
+     <x>461</x>
+     <y>380</y>
     </hint>
    </hints>
   </connection>
@@ -1615,12 +1703,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>487</y>
+     <x>508</x>
+     <y>416</y>
     </hint>
     <hint type="destinationlabel">
-     <x>201</x>
-     <y>483</y>
+     <x>461</x>
+     <y>412</y>
     </hint>
    </hints>
   </connection>
@@ -1631,12 +1719,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>545</y>
+     <x>508</x>
+     <y>480</y>
     </hint>
     <hint type="destinationlabel">
-     <x>201</x>
-     <y>541</y>
+     <x>461</x>
+     <y>476</y>
     </hint>
    </hints>
   </connection>
@@ -1647,12 +1735,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>507</x>
-     <y>577</y>
+     <x>247</x>
+     <y>517</y>
     </hint>
     <hint type="destinationlabel">
-     <x>460</x>
-     <y>573</y>
+     <x>200</x>
+     <y>513</y>
     </hint>
    </hints>
   </connection>
@@ -1663,12 +1751,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>460</x>
-     <y>573</y>
+     <x>200</x>
+     <y>513</y>
     </hint>
     <hint type="destinationlabel">
-     <x>507</x>
-     <y>577</y>
+     <x>247</x>
+     <y>517</y>
     </hint>
    </hints>
   </connection>
@@ -1679,12 +1767,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>507</x>
-     <y>521</y>
+     <x>247</x>
+     <y>461</y>
     </hint>
     <hint type="destinationlabel">
-     <x>460</x>
-     <y>517</y>
+     <x>200</x>
+     <y>457</y>
     </hint>
    </hints>
   </connection>
@@ -1695,12 +1783,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>460</x>
-     <y>517</y>
+     <x>200</x>
+     <y>457</y>
     </hint>
     <hint type="destinationlabel">
-     <x>507</x>
-     <y>521</y>
+     <x>247</x>
+     <y>461</y>
     </hint>
    </hints>
   </connection>
@@ -1711,12 +1799,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>460</x>
-     <y>489</y>
+     <x>200</x>
+     <y>429</y>
     </hint>
     <hint type="destinationlabel">
-     <x>507</x>
-     <y>493</y>
+     <x>247</x>
+     <y>433</y>
     </hint>
    </hints>
   </connection>
@@ -1727,12 +1815,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>507</x>
-     <y>493</y>
+     <x>247</x>
+     <y>433</y>
     </hint>
     <hint type="destinationlabel">
-     <x>460</x>
-     <y>489</y>
+     <x>200</x>
+     <y>429</y>
     </hint>
    </hints>
   </connection>
@@ -1743,12 +1831,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>507</x>
-     <y>437</y>
+     <x>247</x>
+     <y>377</y>
     </hint>
     <hint type="destinationlabel">
-     <x>460</x>
-     <y>433</y>
+     <x>200</x>
+     <y>373</y>
     </hint>
    </hints>
   </connection>
@@ -1759,12 +1847,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>460</x>
-     <y>433</y>
+     <x>200</x>
+     <y>373</y>
     </hint>
     <hint type="destinationlabel">
-     <x>507</x>
-     <y>437</y>
+     <x>247</x>
+     <y>377</y>
     </hint>
    </hints>
   </connection>
@@ -1775,12 +1863,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>507</x>
-     <y>549</y>
+     <x>247</x>
+     <y>489</y>
     </hint>
     <hint type="destinationlabel">
-     <x>460</x>
-     <y>545</y>
+     <x>200</x>
+     <y>485</y>
     </hint>
    </hints>
   </connection>
@@ -1791,12 +1879,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>460</x>
-     <y>545</y>
+     <x>200</x>
+     <y>485</y>
     </hint>
     <hint type="destinationlabel">
-     <x>507</x>
-     <y>549</y>
+     <x>247</x>
+     <y>489</y>
     </hint>
    </hints>
   </connection>
@@ -1807,12 +1895,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>460</x>
-     <y>461</y>
+     <x>200</x>
+     <y>401</y>
     </hint>
     <hint type="destinationlabel">
-     <x>507</x>
-     <y>465</y>
+     <x>247</x>
+     <y>405</y>
     </hint>
    </hints>
   </connection>
@@ -1823,76 +1911,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>507</x>
-     <y>465</y>
+     <x>247</x>
+     <y>405</y>
     </hint>
     <hint type="destinationlabel">
-     <x>460</x>
-     <y>461</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sliderPanPot</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinPanPot</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>197</x>
-     <y>148</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>215</x>
-     <y>136</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinPanPot</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>sliderPanPot</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>152</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>197</x>
-     <y>148</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sliderDirectLevel</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinDirectLevel</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>197</x>
-     <y>178</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>229</x>
-     <y>167</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinDirectLevel</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>sliderDirectLevel</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>182</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>197</x>
-     <y>178</y>
+     <x>200</x>
+     <y>401</y>
     </hint>
    </hints>
   </connection>
@@ -1903,8 +1927,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>665</x>
-     <y>573</y>
+     <x>685</x>
+     <y>553</y>
     </hint>
     <hint type="destinationlabel">
      <x>664</x>
@@ -1925,6 +1949,102 @@
     <hint type="destinationlabel">
      <x>748</x>
      <y>548</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderOscLvl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinOscLvl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>195</x>
+     <y>140</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>248</x>
+     <y>144</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinOscLvl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderOscLvl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderDirectLevel</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinDirectLevel</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>195</x>
+     <y>112</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>248</x>
+     <y>116</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinDirectLevel</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderDirectLevel</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>112</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinPanPot</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderPanPot</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>84</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderPanPot</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinPanPot</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>195</x>
+     <y>84</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>248</x>
+     <y>88</y>
     </hint>
    </hints>
   </connection>
