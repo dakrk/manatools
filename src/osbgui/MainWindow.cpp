@@ -6,6 +6,7 @@
 #include <QMimeData>
 #include <guicommon/CursorOverride.hpp>
 #include <guicommon/HorizontalLineItemDropStyle.hpp>
+#include <guicommon/tone.hpp>
 #include <guicommon/utils.hpp>
 
 #include "MainWindow.hpp"
@@ -71,10 +72,16 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	connect(model, &QAbstractTableModel::dataChanged, this,
 	        [this](const QModelIndex& tl, const QModelIndex& br, const QList<int>& roles) {
-		Q_UNUSED(tl);
-		Q_UNUSED(br);
 		if (roles.contains(Qt::DisplayRole) || roles.contains(Qt::EditRole) || roles.isEmpty()) {
 			setWindowModified(true);
+
+			// get the thing to reload tone when current program has been modified
+			auto curIdx = ui.tblPrograms->currentIndex();
+			if (curIdx.isValid() && std::cmp_less_equal(tl.row(), curIdx.row()) &&
+			    (!br.isValid() || std::cmp_greater_equal(br.row(), curIdx.row())))
+			{
+				tonePlayer.setTone(bank.programs[curIdx.row()].tone);
+			}
 		}
 	});
 
@@ -83,12 +90,6 @@ MainWindow::MainWindow(QWidget* parent) :
 			editProgram();
 		}
 	});
-
-	connect(ui.btnAddProgram, &QPushButton::clicked, this, [this]() {
-		insertItemRowHere(ui.tblPrograms);
-	});
-
-	connect(ui.btnDelProgram, &QPushButton::clicked, this, &MainWindow::delProgram);
 
 	connect(ui.btnPlayProgram, &QPushButton::clicked, this, [this](bool checked) {
 		checked ? tonePlayer.play() : tonePlayer.stop();
@@ -102,6 +103,13 @@ MainWindow::MainWindow(QWidget* parent) :
 		ui.btnPlayProgram->setChecked(tonePlayer.isPlaying());
 	});
 
+	connect(ui.btnAddProgram, &QPushButton::clicked, this, [this]() {
+		insertItemRowHere(ui.tblPrograms);
+	});
+
+	connect(ui.btnDelProgram, &QPushButton::clicked, this, &MainWindow::delProgram);
+	connect(ui.btnToneImport, &QPushButton::clicked, this, &MainWindow::importTone);
+	connect(ui.btnToneExport, &QPushButton::clicked, this, &MainWindow::exportTone);
 	connect(ui.btnEditProgram, &QPushButton::clicked, this, &MainWindow::editProgram);
 }
 
@@ -215,6 +223,40 @@ void MainWindow::about() {
 		.arg(QApplication::applicationVersion())
 		.arg(tr(APP_DESCRIPTION))
 		.arg("https://github.com/dakrk/manatools")
+	);
+}
+
+bool MainWindow::importTone() {
+	auto curIdx = ui.tblPrograms->currentIndex();
+	if (!curIdx.isValid())
+		return false;
+
+	auto& program = bank.programs[curIdx.row()];
+	auto metadata = tone::Metadata::fromOSB(program);
+
+	bool success = tone::importDialog(program.tone, &metadata, getOutPath(curFile, true), this);
+	if (success) {
+		emitRowChanged(model, curIdx.row());
+	}
+
+	return success;
+}
+
+bool MainWindow::exportTone() {
+	auto curIdx = ui.tblPrograms->currentIndex();
+	if (!curIdx.isValid())
+		return false;
+
+	const auto& program = bank.programs[curIdx.row()];
+	auto metadata = tone::Metadata::fromOSB(program);
+
+	return tone::exportDialog(
+		program.tone,
+		&metadata,
+		getOutPath(curFile, true),
+		QFileInfo(curFile).baseName(),
+		QString::number(curIdx.row()),
+		this
 	);
 }
 

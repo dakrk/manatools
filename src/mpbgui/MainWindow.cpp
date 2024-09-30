@@ -470,6 +470,7 @@ bool MainWindow::importTone() {
 		return false;
 
 	auto metadata = tone::Metadata::fromMPB(*split);
+	
 	bool success = tone::importDialog(split->tone, &metadata, getOutPath(curFile, true), this);
 	if (success) {
 		emitRowChanged(splitsModel, splitIdx);
@@ -497,7 +498,6 @@ bool MainWindow::exportTone() {
 
 void MainWindow::editBankProperties() {
 	BankPropertiesDialog dlg(&bank, this);
-
 	if (dlg.exec() == QDialog::Accepted) {
 		setWindowModified(true);
 	}

@@ -22,6 +22,8 @@ public slots:
 	void delProgram();
 	void selectAll();
 	void about();
+	bool importTone();
+	bool exportTone();
 	void editProgram();
 
 protected:
