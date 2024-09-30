@@ -2,6 +2,8 @@
 #include <QString>
 #include <QWidget>
 #include <manatools/mpb.hpp>
+#include <manatools/osb.hpp>
+#include <manatools/tone.hpp>
 #include "common.hpp"
 
 namespace tone {
@@ -10,12 +12,57 @@ namespace tone {
 		WAV, DAT
 	};
 
-	GUICOMMON_EXPORT bool importDialog(manatools::mpb::Split& split, const QString& basePath, QWidget* parent = nullptr);
-	GUICOMMON_EXPORT bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* parent = nullptr);
+	struct GUICOMMON_EXPORT Metadata {
+		bool loop;
+		u32 loopStart;
+		u32 loopEnd;
 
-	GUICOMMON_EXPORT bool exportDialog(const manatools::mpb::Split& split, const QString& basePath, const QString& baseName,
-	                  const QString& tonePath, QWidget* parent = nullptr);
-	GUICOMMON_EXPORT bool exportFile(const manatools::mpb::Split& split, const QString& path, FileType type, QWidget* parent = nullptr);
+		bool isInstrument;
+		u8 startNote;
+		u8 endNote;
+		u8 baseNote;
+		u8 startVel;
+		u8 endVel;
 
-	GUICOMMON_EXPORT bool convertToADPCM(manatools::tone::Tone& tone, QWidget* parent = nullptr);
+		static Metadata fromMPB(const manatools::mpb::Split& split) {
+			return {
+				.loop = split.loop,
+				.loopStart = split.loopStart,
+				.loopEnd = split.loopEnd,
+
+				.isInstrument = true,
+				.startNote = split.startNote,
+				.endNote = split.endNote,
+				.baseNote = split.baseNote,
+				.startVel = split.velocityLow,
+				.endVel = split.velocityHigh
+			};
+		}
+
+		static Metadata fromOSB(const manatools::osb::Program& program) {
+			return {
+				.loop = program.loop,
+				.loopStart = program.loopStart,
+				.loopEnd = program.loopEnd,
+
+				.isInstrument = false,
+				.startNote = 0,
+				.endNote = 0,
+				.baseNote = 0,
+				.startVel = 0,
+				.endVel = 0
+			};			
+		}
+	};
+
+	using manatools::tone::Tone;
+
+	GUICOMMON_EXPORT bool importDialog(Tone& tone, Metadata* metadata, const QString& basePath, QWidget* parent = nullptr);
+	GUICOMMON_EXPORT bool importFile(Tone& tone, Metadata* metadata, const QString& path, QWidget* parent = nullptr);
+
+	GUICOMMON_EXPORT bool exportDialog(const Tone& tone, const Metadata* metadata, const QString& basePath,
+	                                   const QString& baseName, const QString& tonePath, QWidget* parent = nullptr);
+	GUICOMMON_EXPORT bool exportFile(const Tone& tone, const Metadata* metadata, const QString& path, FileType type, QWidget* parent = nullptr);
+
+	GUICOMMON_EXPORT bool convertToADPCM(Tone& tone, QWidget* parent = nullptr);
 } // namespace tone

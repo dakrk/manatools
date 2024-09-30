@@ -7,10 +7,7 @@ const QString OSBModel::MIMEType = QStringLiteral("application/x-manatools-osbgu
 
 OSBModel::OSBModel(Bank* bank, QObject* parent) :
 	QAbstractTableModel(parent),
-	bank(bank)
-{
-	headerFont.setBold(true);
-}
+	bank(bank) {}
 
 int OSBModel::rowCount(const QModelIndex& parent) const {
 	return parent.isValid() ? 0 : bank->programs.size();
@@ -42,14 +39,6 @@ QVariant OSBModel::data(const QModelIndex& index, int role) const {
 			case 4: return program.fx.level;
 			case 5: return program.fx.inputCh;
 		}
-	} else if (role == Qt::TextAlignmentRole) {
-		if (index.column() == 0) {
-			return QVariant(Qt::AlignCenter | Qt::AlignVCenter);
-		}
-	} else if (role == Qt::FontRole) {
-		switch (index.column()) {
-			case 0: return headerFont;
-		}
 	}
 
 	return {};
@@ -78,7 +67,7 @@ bool OSBModel::setData(const QModelIndex& index, const QVariant& value, int role
 	if (!index.isValid())
 		return false;
 
-	manatools::osb::Program& program = bank->programs[index.row()];
+	auto& program = bank->programs[index.row()];
 
 	/**
 	 * Not sure if I want a program name change to appear as if the bank has changed, since
@@ -141,7 +130,7 @@ Qt::ItemFlags OSBModel::flags(const QModelIndex& index) const {
 	if (index.isValid()) {
 		f |= Qt::ItemIsDragEnabled;
 
-		if (index.column() > 1) {
+		if (index.column() != 1) {
 			f |= Qt::ItemIsEditable;
 		}
 	}

@@ -4,6 +4,7 @@
 #include <QSettings>
 #include <manatools/osb.hpp>
 #include <guicommon/TonePlayer.hpp>
+#include <optional>
 
 #include "ui_ProgramEditor.h"
 
@@ -53,8 +54,7 @@ private:
 	Ui::ProgramEditor ui;
 	QMenu* editToneMenu;
 
-	bool pathSet = false;
-	size_t programIdx_ = 0;
+	std::optional<size_t> programIdx;
 
 	TonePlayer tonePlayer;
 };

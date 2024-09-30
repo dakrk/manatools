@@ -6,19 +6,12 @@
 #include <QVBoxLayout>
 #include <manatools/types.hpp>
 #include "common.hpp"
+#include "tone.hpp"
 
 class GUICOMMON_EXPORT InstDataDialog : public QDialog {
 	Q_OBJECT
 public:
-	struct Data {
-		u8 startNote;
-		u8 endNote;
-		u8 baseNote;
-		u8 startVel;
-		u8 endVel;
-	};
-
-	explicit InstDataDialog(Data current, Data imported, QWidget* parent = nullptr);
+	explicit InstDataDialog(tone::Metadata current, tone::Metadata imported, QWidget* parent = nullptr);
 
 private:
 	QVBoxLayout* mainLayout;

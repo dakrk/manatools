@@ -4,7 +4,6 @@
 #include <QMessageBox>
 #include <QMimeData>
 #include <QScreen>
-#include <QThread>
 #include <utility>
 #include <guicommon/tone.hpp>
 #include <guicommon/utils.hpp>
@@ -296,24 +295,35 @@ void SplitEditor::setPath(size_t programIdx, size_t layerIdx, size_t splitIdx) {
 
 void SplitEditor::editVelCurve() {
 	VelCurveEditor editor(velocities, this);
-
 	if (editor.exec() == QDialog::Accepted) {
 		velocities = editor.velocities;
 	}
 }
 
 bool SplitEditor::importTone() {
-	bool success = tone::importDialog(split, getOutPath(curFile, true), this);
-	if (success)
+	auto metadata = tone::Metadata::fromMPB(split);
+	bool success = tone::importDialog(split.tone, &metadata, getOutPath(curFile, true), this);
+	if (success) {
 		loadSplitData();
+	}
 	return success;
 }
 
 bool SplitEditor::exportTone() {
 	QString tonePath;
-	if (pathSet)
+	if (pathSet) {
 		tonePath = QString("%1-%2-%3").arg(programIdx_).arg(layerIdx_).arg(splitIdx_);
-	return tone::exportDialog(split, getOutPath(curFile, true), QFileInfo(curFile).baseName(), tonePath, this);
+	}
+
+	auto metadata = tone::Metadata::fromMPB(split);
+	return tone::exportDialog(
+		split.tone,
+		&metadata,
+		getOutPath(curFile, true),
+		QFileInfo(curFile).baseName(),
+		tonePath,
+		this
+	);
 }
 
 void SplitEditor::convertToADPCM() {
@@ -323,7 +333,6 @@ void SplitEditor::convertToADPCM() {
 
 void SplitEditor::editUnknownProps() {
 	SplitUnkEditor editor(split, this);
-
 	if (editor.exec() == QDialog::Accepted) {
 		split = std::move(editor.split);
 	}
@@ -340,8 +349,11 @@ void SplitEditor::dragEnterEvent(QDragEnterEvent* event) {
 
 void SplitEditor::dropEvent(QDropEvent* event) {
 	const QString path = maybeDropEvent(event);
-	if (!path.isEmpty() && tone::importFile(split, path, this)) {
-		loadSplitData();
+	if (!path.isEmpty()) {
+		auto metadata = tone::Metadata::fromMPB(split);
+		if (tone::importFile(split.tone, &metadata, path, this)) {
+			loadSplitData();
+		}
 	}
 }
 

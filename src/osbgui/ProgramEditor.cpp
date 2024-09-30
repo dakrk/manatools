@@ -4,8 +4,6 @@
 #include <QMessageBox>
 #include <QMimeData>
 #include <QScreen>
-#include <QThread>
-#include <utility>
 #include <guicommon/tone.hpp>
 #include <guicommon/utils.hpp>
 
@@ -88,7 +86,7 @@ void ProgramEditor::init() {
 	connect(ui.actionImportTone, &QAction::triggered, this, &ProgramEditor::importTone);
 	connect(ui.actionExportTone, &QAction::triggered, this, &ProgramEditor::exportTone);
 	connect(ui.actionConvertToADPCM, &QAction::triggered, this, &ProgramEditor::convertToADPCM);
-	//connect(ui.btnEditUnk, &QPushButton::clicked, this, &ProgramEditor::editUnknownProps);
+	connect(ui.btnEditUnk, &QPushButton::clicked, this, &ProgramEditor::editUnknownProps);
 
 	connect(this, &QDialog::accepted, this, &ProgramEditor::setProgramData);
 	connect(this, &QDialog::finished, this, &ProgramEditor::saveSettings);
@@ -173,7 +171,11 @@ void ProgramEditor::loadProgramData() {
 	ui.spinFilterDecayRate2->setValue(program.filter.decayRate2);
 	ui.filterEnvelope->filter = program.filter;
 
-	// ui.spinLoopTime->setValue();
+	/**
+	 * Would like to indicate that this value isn't exact, like I do in
+	 * mpbgui's LayerEditor, but there's no space
+	 */
+	ui.spinLoopTime->setValue(program.loopTime * 4);
 	ui.spinBaseNote->setValue(program.baseNote);
 
 	loadToneData();
@@ -218,7 +220,7 @@ void ProgramEditor::setProgramData() {
 	program.filter.releaseRate = ui.spinFilterReleaseRate->value();
 	program.filter.decayRate2 = ui.spinFilterDecayRate2->value();
 
-	// program.loopTime =
+	program.loopTime = ui.spinLoopTime->value() / 4;
 	program.baseNote = ui.spinBaseNote->value();
 }
 
@@ -227,23 +229,34 @@ void ProgramEditor::setCurFile(const QString& in) {
 }
 
 void ProgramEditor::setPath(size_t programIdx) {
-	pathSet = true;
-	programIdx_ = programIdx;
+	this->programIdx = programIdx;
 	setWindowTitle(tr("Edit program [%1]").arg(programIdx));
 }
 
 bool ProgramEditor::importTone() {
-/*	bool success = tone::importDialog(program, getOutPath(curFile, true), this);
-	if (success)
+	auto metadata = tone::Metadata::fromOSB(program);
+	bool success = tone::importDialog(program.tone, &metadata, getOutPath(curFile, true), this);
+	if (success) {
 		loadProgramData();
-	return success;*/
+	}
+	return success;
 }
 
 bool ProgramEditor::exportTone() {
-/*	QString tonePath;
-	if (pathSet)
-		tonePath = QString("%1").arg(programIdx_);
-	return tone::exportDialog(program, getOutPath(curFile, true), QFileInfo(curFile).baseName(), tonePath, this);*/
+	QString tonePath;
+	if (programIdx.has_value()) {
+		tonePath = QString::number(*programIdx);
+	}
+
+	auto metadata = tone::Metadata::fromOSB(program);
+	return tone::exportDialog(
+		program.tone,
+		&metadata,
+		getOutPath(curFile, true),
+		QFileInfo(curFile).baseName(),
+		tonePath,
+		this
+	);
 }
 
 void ProgramEditor::convertToADPCM() {
@@ -253,7 +266,6 @@ void ProgramEditor::convertToADPCM() {
 
 void ProgramEditor::editUnknownProps() {
 /*	ProgramUnkEditor editor(program, this);
-
 	if (editor.exec() == QDialog::Accepted) {
 		program = std::move(editor.program);
 	}*/
@@ -269,10 +281,13 @@ void ProgramEditor::dragEnterEvent(QDragEnterEvent* event) {
 }
 
 void ProgramEditor::dropEvent(QDropEvent* event) {
-/*	const QString path = maybeDropEvent(event);
-	if (!path.isEmpty() && tone::importFile(program, path, this)) {
-		loadProgramData();
-	}*/
+	const QString path = maybeDropEvent(event);
+	if (!path.isEmpty()) {
+		auto metadata = tone::Metadata::fromOSB(program);
+		if (tone::importFile(program.tone, &metadata, path, this)) {
+			loadProgramData();
+		}
+	}
 }
 
 QString ProgramEditor::maybeDropEvent(QDropEvent* event) {

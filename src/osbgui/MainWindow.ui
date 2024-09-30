@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>600</height>
+    <width>500</width>
+    <height>550</height>
    </rect>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -62,6 +62,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="btnToneImport">
+        <property name="toolTip">
+         <string>Change program audio</string>
+        </property>
         <property name="icon">
          <iconset theme="document-open"/>
         </property>
@@ -69,6 +72,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="btnToneExport">
+        <property name="toolTip">
+         <string>Save program audio</string>
+        </property>
         <property name="icon">
          <iconset theme="document-save-as"/>
         </property>
@@ -76,6 +82,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="btnEditProgram">
+        <property name="toolTip">
+         <string>Edit program</string>
+        </property>
         <property name="text">
          <string>Edit</string>
         </property>
@@ -93,7 +102,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>600</width>
+     <width>500</width>
      <height>19</height>
     </rect>
    </property>

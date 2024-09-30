@@ -1,6 +1,5 @@
 #pragma once
 #include <QAbstractTableModel>
-#include <QFont>
 #include <manatools/osb.hpp>
 
 class OSBModel : public QAbstractTableModel {
@@ -42,5 +41,4 @@ private:
 	}
 
 	Bank* bank;
-	QFont headerFont;
 };

@@ -1139,7 +1139,7 @@
          </font>
         </property>
         <property name="toolTip">
-         <string>The length of time in milliseconds that this will play for until a note off is fired.
+         <string>The time in milliseconds that the tone will play for until a note off is fired. Must be a multiple of 4.
 Amp envelope can be used for a fade in and fade out.</string>
         </property>
         <property name="text">

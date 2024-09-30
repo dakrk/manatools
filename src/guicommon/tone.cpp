@@ -2,7 +2,6 @@
 #include <QMessageBox>
 #include <guicommon/ChannelSelectDialog.hpp>
 #include <guicommon/CursorOverride.hpp>
-#include <manatools/tone.hpp>
 #include <manatools/tonedecoder.hpp>
 #include <manatools/wav.hpp>
 #include <sndfile.hh>
@@ -22,7 +21,7 @@ namespace tone {
 
 constexpr const size_t READ_SIZE = 512;
 
-bool importDialog(manatools::mpb::Split& split, const QString& basePath, QWidget* parent) {
+bool importDialog(Tone& tone, Metadata* metadata, const QString& basePath, QWidget* parent) {
 	const QString path = QFileDialog::getOpenFileName(
 		parent,
 		tr("Import tone"),
@@ -32,10 +31,10 @@ bool importDialog(manatools::mpb::Split& split, const QString& basePath, QWidget
 	if (path.isEmpty())
 		return false;
 
-	return importFile(split, path, parent);
+	return importFile(tone, metadata, path, parent);
 }
 
-bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* parent) {
+bool importFile(Tone& tone, Metadata* metadata, const QString& path, QWidget* parent) {
 	CursorOverride cursor(Qt::WaitCursor);
 
 	#ifdef _WIN32
@@ -84,7 +83,7 @@ bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* pare
 	sndFile.command(SFC_SET_SCALE_FLOAT_INT_READ, nullptr, true);
 
 	std::vector<s16> readBuf(READ_SIZE * channels);
-	manatools::tone::Tone newTone;
+	Tone newTone;
 	newTone.format = manatools::tone::Format::PCM16,
 	newTone.data = manatools::tone::makeDataPtr(sndFile.frames() * sizeof(s16));	
 
@@ -104,61 +103,62 @@ bool importFile(manatools::mpb::Split& split, const QString& path, QWidget* pare
 		return false;
 	}
 
-	/**
-	 * Loop end is also used as tone data length.
-	 * It can be 0 or 65535, but the Dreamcast can misbehave and put noise at the end of tones.
-	 */
-	split.loop = false;
-	split.loopStart = 0;
-	split.loopEnd = sndFile.frames();
+	if (metadata) {
+		/**
+		 * Loop end is also used as tone data length.
+		 * It can be 0 or 65535, but the Dreamcast can misbehave and put noise at the end of tones.
+		 */
+		metadata->loop = false;
+		metadata->loopStart = 0;
+		metadata->loopEnd = sndFile.frames();
 
-	SF_INSTRUMENT instrument;
-	if (sndFile.command(SFC_GET_INSTRUMENT, &instrument, sizeof(instrument))) {
-		if (instrument.loop_count >= 1) {
-			if (instrument.loop_count > 1)
-				QMessageBox::warning(parent, tr("Import tone"), tr("Imported sound file has more than one loop. Using first loop."));
+		SF_INSTRUMENT instrument;
+		if (sndFile.command(SFC_GET_INSTRUMENT, &instrument, sizeof(instrument))) {
+			if (instrument.loop_count >= 1) {
+				if (instrument.loop_count > 1)
+					QMessageBox::warning(parent, tr("Import tone"), tr("Imported sound file has more than one loop. Using first loop."));
 
-			auto loop = instrument.loops[0];
-			split.loop = loop.mode != SF_LOOP_NONE;
-			split.loopStart = loop.start;
-			split.loopEnd = loop.end;
-		}
+				auto loop = instrument.loops[0];
+				metadata->loop = loop.mode != SF_LOOP_NONE;
+				metadata->loopStart = loop.start;
+				metadata->loopEnd = loop.end;
+			}
 
-		InstDataDialog instDataDlg(
-			{
-				.startNote = split.startNote,
-				.endNote   = split.endNote,
-				.baseNote  = split.baseNote,
-				.startVel  = split.velocityLow,
-				.endVel    = split.velocityHigh
-			},
-			{
-				// should probably just make instdatadialog take an s8 instead but... whatever
-				.startNote = static_cast<u8>(instrument.key_lo),
-				.endNote   = static_cast<u8>(instrument.key_hi),
-				.baseNote  = static_cast<u8>(instrument.basenote),
-				.startVel  = static_cast<u8>(instrument.velocity_lo),
-				.endVel    = static_cast<u8>(instrument.velocity_hi)
-			},
-			parent
-		);
+			if (metadata->isInstrument) {
+				InstDataDialog instDataDlg(
+					*metadata,
+					{
+						.loop         = false,
+						.loopStart    = 0,
+						.loopEnd      = 0,
+						.isInstrument = true,
+						.startNote    = static_cast<u8>(instrument.key_lo),
+						.endNote      = static_cast<u8>(instrument.key_hi),
+						.baseNote     = static_cast<u8>(instrument.basenote),
+						.startVel     = static_cast<u8>(instrument.velocity_lo),
+						.endVel       = static_cast<u8>(instrument.velocity_hi)
+					},
+					parent
+				);
 
-		if (instDataDlg.exec() == QDialog::Accepted) {
-			split.startNote    = instrument.key_lo;
-			split.endNote      = instrument.key_hi;
-			split.baseNote     = instrument.basenote;
-			split.velocityLow  = instrument.velocity_lo;
-			split.velocityHigh = instrument.velocity_hi;
+				if (instDataDlg.exec() == QDialog::Accepted) {
+					metadata->startNote = instrument.key_lo;
+					metadata->endNote   = instrument.key_hi;
+					metadata->baseNote  = instrument.basenote;
+					metadata->startVel  = instrument.velocity_lo;
+					metadata->endVel    = instrument.velocity_hi;
+				}
+			}
 		}
 	}
 
-	split.tone = std::move(newTone);
+	tone = std::move(newTone);
 
 	return true;
 }
 
-bool exportDialog(const manatools::mpb::Split& split, const QString& basePath, const QString& baseName,
-                  const QString& tonePath, QWidget* parent)
+bool exportDialog(const Tone& tone, const Metadata* metadata, const QString& basePath,
+                  const QString& baseName, const QString& tonePath, QWidget* parent)
 {
 	const QStringList filters = {
 		tr("WAV file (*.wav)"),
@@ -190,15 +190,15 @@ bool exportDialog(const manatools::mpb::Split& split, const QString& basePath, c
 	else
 		type = FileType::DAT;
 
-	return exportFile(split, path, type, parent);
+	return exportFile(tone, metadata, path, type, parent);
 }
 
-bool exportFile(const manatools::mpb::Split& split, const QString& path, FileType type, QWidget* parent) {
+bool exportFile(const Tone& tone, const Metadata* metadata, const QString& path, FileType type, QWidget* parent) {
 	CursorOverride cursor(Qt::WaitCursor);
 
-	if (!split.tone.data) {
+	if (!tone.data) {
 		cursor.restore();
-		QMessageBox::warning(parent, tr("Export tone"), tr("Selected split has no tone data."));
+		QMessageBox::warning(parent, tr("Export tone"), tr("Selected item has no tone data."));
 		return false;
 	}
 
@@ -208,21 +208,21 @@ bool exportFile(const manatools::mpb::Split& split, const QString& path, FileTyp
 				// TODO: hmm. could probably replace this with libsndfile
 				manatools::wav::WAV<s16> wav(1, 22050);
 
-				if (split.loop) {
+				if (metadata && metadata->loop) {
 					wav.sampler = {
 						.midiUnityNote = 60,
 						.midiPitchFraction = 0,
 						.loops = {
 							{
-								.start = split.loopStart,
-								.end = split.loopEnd - 1u // WAV plays last sample
+								.start = metadata->loopStart,
+								.end = metadata->loopEnd - 1u // WAV plays last sample
 							}
 						}
 					};
 				}
 
-				manatools::tone::Decoder decoder(&split.tone);
-				wav.data.resize(split.tone.samples());
+				manatools::tone::Decoder decoder(&tone);
+				wav.data.resize(tone.samples());
 				decoder.decode(wav.data);
 				
 				wav.save(path.toStdWString());
@@ -231,7 +231,7 @@ bool exportFile(const manatools::mpb::Split& split, const QString& path, FileTyp
 
 			case FileType::DAT: {
 				manatools::io::FileIO file(path.toStdWString(), "wb");
-				file.writeVec(*split.tone.data);
+				file.writeVec(*tone.data);
 				break;
 			}
 
@@ -248,23 +248,28 @@ bool exportFile(const manatools::mpb::Split& split, const QString& path, FileTyp
 	return true;
 }
 
-bool convertToADPCM(manatools::tone::Tone& tone, QWidget* parent) {
+bool convertToADPCM(Tone& tone, QWidget* parent) {
 	if (!tone.data)
 		return false;
 
 	using enum manatools::tone::Format;
 	switch (tone.format) {
-		case ADPCM:
+		case ADPCM: {
 			return true;
+		}
 
 		case PCM16: {
 			if (tone.data->size() % 2) {
-				QMessageBox::warning(parent, tr("Convert to ADPCM"), tr("Cannot convert tone to ADPCM: Size of PCM-16 data must be a multiple of 2 bytes."));
+				QMessageBox::warning(
+					parent,
+					tr("Convert to ADPCM"),
+					tr("Cannot convert tone to ADPCM: Size of PCM-16 data must be a multiple of 2 bytes.")
+				);
 				return false;
 			}
 
-			manatools::tone::Tone newTone;
-			newTone.format = manatools::tone::Format::ADPCM,
+			Tone newTone;
+			newTone.format = ADPCM,
 			// really not sure about this whole divide and ceil stuff
 			newTone.data = manatools::tone::makeDataPtr(std::ceil(tone.samples() / 2.));
 

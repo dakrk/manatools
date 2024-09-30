@@ -5,7 +5,7 @@
 	table->setItem(row, 0, new QTableWidgetItem(QString::number(num))); \
 	table->setItem(row, 1, new QTableWidgetItem(QString::number(num2)));
 
-InstDataDialog::InstDataDialog(Data current, Data imported, QWidget* parent) :
+InstDataDialog::InstDataDialog(tone::Metadata current, tone::Metadata imported, QWidget* parent) :
 	QDialog(parent)
 {
 	setFixedSize(300, 250);

@@ -469,10 +469,11 @@ bool MainWindow::importTone() {
 	if (!split)
 		return false;
 
-	bool success = tone::importDialog(*split, getOutPath(curFile, true), this);
-
-	if (success)
+	auto metadata = tone::Metadata::fromMPB(*split);
+	bool success = tone::importDialog(split->tone, &metadata, getOutPath(curFile, true), this);
+	if (success) {
 		emitRowChanged(splitsModel, splitIdx);
+	}
 
 	return success;
 }
@@ -482,8 +483,16 @@ bool MainWindow::exportTone() {
 	if (!split)
 		return false;
 
+	auto metadata = tone::Metadata::fromMPB(*split);
 	auto tonePath = QString("%1-%2-%3").arg(programIdx).arg(layerIdx).arg(splitIdx);
-	return tone::exportDialog(*split, getOutPath(curFile, true), QFileInfo(curFile).baseName(), tonePath, this);
+	return tone::exportDialog(
+		split->tone,
+		&metadata,
+		getOutPath(curFile, true),
+		QFileInfo(curFile).baseName(),
+		tonePath,
+		this
+	);
 }
 
 void MainWindow::editBankProperties() {

@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	ui.tblPrograms->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui.tblPrograms->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	ui.tblPrograms->setStyle(new HorizontalLineItemDropStyle(ui.tblPrograms->style()));
+	ui.tblPrograms->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+	ui.tblPrograms->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
 
 	setCurrentFile();
 	resetTableLayout();
@@ -73,6 +75,12 @@ MainWindow::MainWindow(QWidget* parent) :
 		Q_UNUSED(br);
 		if (roles.contains(Qt::DisplayRole) || roles.contains(Qt::EditRole) || roles.isEmpty()) {
 			setWindowModified(true);
+		}
+	});
+
+	connect(ui.tblPrograms, &QTableView::activated, this, [this](const QModelIndex& index) {
+		if (index.isValid() && index.column() == 1) {
+			editProgram();
 		}
 	});
 
