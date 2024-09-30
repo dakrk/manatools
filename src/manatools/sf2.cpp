@@ -22,14 +22,14 @@ SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
 	for (size_t p = 0; p < mpb.programs.size(); p++) {
 		const auto& program = mpb.programs[p];
 
-		auto preset = sf2.NewPreset(std::to_string(p + 1), static_cast<u16>(p), 0);
+		auto preset = sf2.NewPreset(std::to_string(p), static_cast<u16>(p), 0);
 
 		for (size_t l = 0; l < program.layers.size(); l++) {
 			const auto& layer = program.layers[l];
 			if (!layer)
 				continue;
 
-			auto instrument = sf2.NewInstrument(preset->name() + ":" += std::to_string(l + 1));
+			auto instrument = sf2.NewInstrument(preset->name() + ":" += std::to_string(l));
 
 			for (size_t s = 0; s < layer->splits.size(); s++) {
 				const auto& split = layer->splits[s];
@@ -43,7 +43,7 @@ SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
 
 				// not 100% sure about the exact accuracy of the fine tune
 				auto sample = sf2.NewSample(
-					instrument->name() + ":" += std::to_string(s + 1),
+					instrument->name() + ":" += std::to_string(s),
 					sampleData,
 					split.loopStart,
 					split.loopEnd,

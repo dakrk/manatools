@@ -412,7 +412,7 @@ void Bank::save(const fs::path& path) {
 
 			if (layer->splits.size() >= MAX_SPLITS) {
 				char err[64];
-				snprintf(err, std::size(err), "Too many splits in MPB program layer %zu:%zu", p + 1, l + 1);
+				snprintf(err, std::size(err), "Too many splits in MPB program layer %zu:%zu", p, l);
 				throw std::runtime_error(err);
 			}
 
@@ -555,18 +555,18 @@ void Bank::save(const fs::path& path) {
 					continue;
 
 				if (!tonePtrs.contains(toneData)) {
-					tonePtrs[toneData] = io.tell();
 					if (split.tone.samples() >= tone::MAX_SAMPLES) {
 						char err[96];
-						snprintf(err, std::size(err), "Too many samples (>%zu) in MPB tone %zu:%zu:%zu", tone::MAX_SAMPLES, p + 1, l + 1, s + 1);
+						snprintf(err, std::size(err), "Too many samples (>%zu) in MPB tone %zu:%zu:%zu", tone::MAX_SAMPLES, p, l, s);
 						throw std::runtime_error(err);
 					}
+					
+					tonePtrs[toneData] = io.tell();
 					io.writeVec(*toneData);
 				}
 
 				auto tonePos = tonePtrs[toneData];
 				u8 jump = (tonePos >> 16) & 0x7F;
-
 				if (split.tone.format == tone::Format::PCM8)
 					jump |= 0x80;
 

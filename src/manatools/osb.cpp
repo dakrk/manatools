@@ -2,6 +2,7 @@
 #include <cstring>
 #include <map>
 #include <stdexcept>
+#include <unordered_map>
 
 #include "osb.hpp"
 #include "io.hpp"
@@ -205,7 +206,6 @@ void Bank::save(const fs::path& path) {
 
 	auto fileSizePos = io.tell();
 	io.writeU32LE(0);
-
 	io.writeU32LE(programs.size());
 
 	// Write these once they're known
@@ -214,6 +214,7 @@ void Bank::save(const fs::path& path) {
 		io.writeU32LE(0);
 	}
 
+	std::vector<u32> programPtrs(programs.size());
 	for (size_t p = 0; p < programs.size(); p++) {
 		const auto& program = programs[p];
 
@@ -221,12 +222,11 @@ void Bank::save(const fs::path& path) {
 		io.jump(programPtrsPos + (p * sizeof(u32)));
 		io.writeU32LE(pos);
 		io.jump(pos);
+		programPtrs[p] = pos;
 
 		u8 flags = program.unkFlags & 0b11111100;
-
 		if (program.loop)
 			flags |= pfLoop;
-
 		if (program.tone.format == tone::Format::ADPCM)
 			flags |= pfADPCM;
 
@@ -296,7 +296,41 @@ void Bank::save(const fs::path& path) {
 		io.writeFourCC(OSP_END);
 	}
 
-	// TODO: Write tone data!!!
+	std::unordered_map<tone::DataPtr, u32> tonePtrs;
+	for (size_t p = 0; p < programs.size(); p++) {
+		assert(programPtrs[p]);
+		const auto& program = programs[p];
+		const auto& toneData = program.tone.data;
+		
+		if (!toneData)
+			continue;
+
+		if (!tonePtrs.contains(toneData)) {
+			if (program.tone.samples() >= tone::MAX_SAMPLES) {
+				char err[96];
+				snprintf(err, std::size(err), "Too many samples (>%zu) in OSB tone %zu", tone::MAX_SAMPLES, p);
+				throw std::runtime_error(err);
+			}
+
+			io.writeFourCC(OSD_MAGIC);
+			tonePtrs[toneData] = io.tell();
+			io.writeVec(*toneData);
+			io.writeFourCC(OSD_END);
+		}
+
+		auto tonePos = tonePtrs[toneData];
+		u8 jump = (tonePos >> 16) & 0x7F;
+		if (program.tone.format == tone::Format::PCM8)
+			jump |= 0x80;
+
+		auto pos = io.tell();
+		io.jump(programPtrs[p]);
+		io.forward(4);                   // skip over FourCC
+		io.writeU8(jump);                // jump
+		io.forward(1);                   // don't need to rewrite flags
+		io.writeU16LE(tonePos & 0xFFFF); // ptrToneData
+		io.jump(pos);
+	}
 
 	auto endPos = io.tell();
 	io.jump(fileSizePos);
@@ -308,7 +342,6 @@ void Bank::save(const fs::path& path) {
 		for (long i = 4; i < endPos; i++) {
 			checksum += io.vec()[i];
 		}
-
 		io.writeU32LE(checksum);
 	}
 
