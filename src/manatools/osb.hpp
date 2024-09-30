@@ -1,4 +1,5 @@
 #pragma once
+#include <any>
 #include <vector>
 
 #include "common.hpp"
@@ -71,6 +72,7 @@ namespace manatools::osb {
 
 		u32 ptrToneData_   = 0;     // Only for presentation post-load
 		tone::Tone tone;
+		std::any userData;
 	};
 
 	struct Bank {

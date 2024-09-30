@@ -34,8 +34,8 @@ int main(int argc, char** argv) {
 	MainWindow mainWindow;
 	mainWindow.show();
 	
-/*	if (filePath.size())
-		mainWindow.loadFile(filePath);*/
+	if (filePath.size())
+		mainWindow.loadFile(filePath);
 
 	return app.exec();
 }

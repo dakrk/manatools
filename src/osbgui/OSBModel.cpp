@@ -1,6 +1,5 @@
 #include <QIODevice>
 #include <QMimeData>
-#include <guicommon/utils.hpp>
 #include <optional>
 #include "OSBModel.hpp"
 
@@ -25,11 +24,18 @@ QVariant OSBModel::data(const QModelIndex& index, int role) const {
 	if (!index.isValid())
 		return {};
 
-	manatools::osb::Program& program = bank->programs[index.row()];
-
 	if (role == Qt::DisplayRole || role == Qt::EditRole) {
+		const auto& program = bank->programs[index.row()];
+
 		switch (index.column()) {
-			case 0: return index.row();
+			case 0: {
+				const QString* name = std::any_cast<QString>(&program.userData);
+				if (name && !name->isEmpty()) {
+					return *name;
+				} else {
+					return tr("Program %1").arg(index.row());
+				}
+			}
 			case 1: return static_cast<uint>(program.tone.samples());
 			case 2: return program.directLevel;
 			case 3: return program.panPot;
@@ -53,7 +59,7 @@ QVariant OSBModel::headerData(int section, Qt::Orientation orientation, int role
 	if (role == Qt::DisplayRole) {
 		if (orientation == Qt::Horizontal) {
 			switch (section) {
-				case 0: return tr("Program");
+				case 0: return tr("Program Name");
 				case 1: return tr("Samples");
 				case 2: return tr("Direct Level");
 				case 3: return tr("Pan Pot");
@@ -74,8 +80,13 @@ bool OSBModel::setData(const QModelIndex& index, const QVariant& value, int role
 
 	manatools::osb::Program& program = bank->programs[index.row()];
 
+	/**
+	 * Not sure if I want a program name change to appear as if the bank has changed, since
+	 * program names are not actually stored in the file
+	 */
 	if (role == Qt::EditRole) {
 		switch (index.column()) {
+			case 0: { program.userData = value.toString(); return true; }
 			case 2: return changeData(index, program.directLevel, qBound(value.toInt(),   0, 15));
 			case 3: return changeData(index, program.panPot,      qBound(value.toInt(), -15, 15));
 			case 4: return changeData(index, program.fx.level,    qBound(value.toInt(),   0, 15));

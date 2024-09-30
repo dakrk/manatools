@@ -19,6 +19,7 @@ public slots:
 	bool open();
 	bool save();
 	bool saveAs();
+	void delProgram();
 	void selectAll();
 	void about();
 	void editProgram();

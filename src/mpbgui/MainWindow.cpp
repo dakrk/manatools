@@ -35,9 +35,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	tonePlayer(22050, this)
 {
 	ui.setupUi(this);
-	restoreSettings();
-
 	ui.statusbar->hide();
+	restoreSettings();
 
 	// Fix program list at a sensible size across resizes
 	ui.splitProgramList->setSizes({ 190, 810 });
@@ -117,12 +116,12 @@ MainWindow::MainWindow(QWidget* parent) :
 	connect(ui.actionAboutQt, &QAction::triggered, this, [this]() { QMessageBox::aboutQt(this); });
 
 	#define CONNECT_BTN_ADD(button, table) \
-		connect(button, &QPushButton::clicked, this, [&]() { \
+		connect(button, &QPushButton::clicked, this, [this]() { \
 			insertItemRowHere(table); \
 		});
 
 	#define CONNECT_BTN_DEL(button, table) \
-		connect(button, &QPushButton::clicked, this, [&]() { \
+		connect(button, &QPushButton::clicked, this, [this]() { \
 			removeSelectedViewItems(table); \
 		});
 

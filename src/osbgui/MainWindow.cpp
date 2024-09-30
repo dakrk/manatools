@@ -5,9 +5,11 @@
 #include <QMessageBox>
 #include <QMimeData>
 #include <guicommon/CursorOverride.hpp>
+#include <guicommon/HorizontalLineItemDropStyle.hpp>
 #include <guicommon/utils.hpp>
 
 #include "MainWindow.hpp"
+#include "ProgramEditor.hpp"
 #include "osbgui.hpp"
 
 MainWindow::MainWindow(QWidget* parent) :
@@ -16,12 +18,17 @@ MainWindow::MainWindow(QWidget* parent) :
 	tonePlayer(44100, this)
 {
 	ui.setupUi(this);
+	ui.statusbar->hide();
 	restoreSettings();
 
-	ui.statusbar->hide();
-
 	model = new OSBModel(&bank);
+
 	ui.tblPrograms->setModel(model);
+	ui.tblPrograms->setDragEnabled(true);
+	ui.tblPrograms->setDragDropMode(QAbstractItemView::InternalMove);
+	ui.tblPrograms->setSelectionBehavior(QAbstractItemView::SelectRows);
+	ui.tblPrograms->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	ui.tblPrograms->setStyle(new HorizontalLineItemDropStyle(ui.tblPrograms->style()));
 
 	setCurrentFile();
 	resetTableLayout();
@@ -45,6 +52,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	connect(ui.actionSaveAs, &QAction::triggered, this, &MainWindow::saveAs);
 	connect(ui.actionQuit, &QAction::triggered, this, &QApplication::quit);
 
+	connect(ui.actionDelete, &QAction::triggered, this, &MainWindow::delProgram);
 	connect(ui.actionSelectAll, &QAction::triggered, this, &MainWindow::selectAll);
 
 	connect(ui.actionAbout, &QAction::triggered, this, &MainWindow::about);
@@ -68,6 +76,12 @@ MainWindow::MainWindow(QWidget* parent) :
 		}
 	});
 
+	connect(ui.btnAddProgram, &QPushButton::clicked, this, [this]() {
+		insertItemRowHere(ui.tblPrograms);
+	});
+
+	connect(ui.btnDelProgram, &QPushButton::clicked, this, &MainWindow::delProgram);
+
 	connect(ui.btnPlayProgram, &QPushButton::clicked, this, [this](bool checked) {
 		checked ? tonePlayer.play() : tonePlayer.stop();
 	});
@@ -79,6 +93,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	connect(&tonePlayer, &TonePlayer::playingChanged, this, [this]() {
 		ui.btnPlayProgram->setChecked(tonePlayer.isPlaying());
 	});
+
+	connect(ui.btnEditProgram, &QPushButton::clicked, this, &MainWindow::editProgram);
 }
 
 bool MainWindow::loadFile(const QString& path) {
@@ -170,6 +186,10 @@ bool MainWindow::saveAs() {
 	return saveFile(path);
 }
 
+void MainWindow::delProgram() {
+	removeSelectedViewItems(ui.tblPrograms);
+}
+
 void MainWindow::selectAll() {
 	ui.tblPrograms->selectAll();
 }
@@ -197,14 +217,14 @@ void MainWindow::editProgram() {
 
 	auto& program = bank.programs[curIdx.row()];
 
-/*	ProgramEditor editor(program, this);
+	ProgramEditor editor(program, this);
 	editor.setCurFile(curFile);
 	editor.setPath(curIdx.row());
 
 	if (editor.exec() == QDialog::Accepted) {
-		program = std::move(editor.split);
+		program = std::move(editor.program);
 		emitRowChanged(model, curIdx.row());
-	}*/
+	}
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {

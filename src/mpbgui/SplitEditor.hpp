@@ -13,7 +13,6 @@ public:
 	typedef manatools::mpb::LFOWaveType LFOWaveType;
 	typedef manatools::mpb::Split Split;
 	typedef manatools::mpb::Velocity Velocity;
-	typedef manatools::mpb::Bank Bank;
 	typedef manatools::tone::Tone Tone;
 
 	explicit SplitEditor(QWidget* parent = nullptr);

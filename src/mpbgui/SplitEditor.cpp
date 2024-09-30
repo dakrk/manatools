@@ -287,8 +287,7 @@ void SplitEditor::setPath(size_t programIdx, size_t layerIdx, size_t splitIdx) {
 	splitIdx_ = splitIdx;
 
 	setWindowTitle(
-		QString("%1 [%2:%3:%4]")
-			.arg(tr("Edit split"))
+		tr("Edit split [%1:%2:%3]")
 			.arg(programIdx)
 			.arg(layerIdx)
 			.arg(splitIdx)
@@ -343,7 +342,7 @@ void SplitEditor::dropEvent(QDropEvent* event) {
 	const QString path = maybeDropEvent(event);
 	if (!path.isEmpty() && tone::importFile(split, path, this)) {
 		loadSplitData();
-	}	
+	}
 }
 
 QString SplitEditor::maybeDropEvent(QDropEvent* event) {

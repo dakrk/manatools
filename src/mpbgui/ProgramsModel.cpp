@@ -26,19 +26,21 @@ QVariant ProgramsModel::data(const QModelIndex& index, int role) const {
 		return {};
 
 	if (role == Qt::DisplayRole || role == Qt::EditRole) {
+		const auto& program = bank->programs[index.row()];
+
 		switch (index.column()) {
 			case 0: {
-				const QString* name = std::any_cast<QString>(&bank->programs[index.row()].userData);
+				const QString* name = std::any_cast<QString>(&program.userData);
 				if (name && !name->isEmpty()) {
 					return *name;
 				} else {
-					return tr("Program %1").arg(index.row() + 1);
+					return tr("Program %1").arg(index.row());
 				}
 			}
 
 			case 1: {
 				uint splits = 0;
-				for (const auto& layer : bank->programs[index.row()].layers) {
+				for (const auto& layer : program.layers) {
 					if (!layer)
 						continue;
 
