@@ -12,7 +12,8 @@
 
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow(parent),
-	settings()
+	settings(),
+	tonePlayer(44100, this)
 {
 	ui.setupUi(this);
 	restoreSettings();
@@ -49,7 +50,25 @@ MainWindow::MainWindow(QWidget* parent) :
 	connect(ui.actionAbout, &QAction::triggered, this, &MainWindow::about);
 	connect(ui.actionAboutQt, &QAction::triggered, this, [this]() { QMessageBox::aboutQt(this); });
 
+	connect(ui.tblPrograms->selectionModel(), &QItemSelectionModel::currentRowChanged, this,
+	        [this](const QModelIndex &current, const QModelIndex &previous) {
+		Q_UNUSED(previous);
+		if (current.isValid()) {
+			tonePlayer.setTone(bank.programs[current.row()].tone);
+		}
+	});
 
+	connect(ui.btnPlayProgram, &QPushButton::clicked, this, [this](bool checked) {
+		checked ? tonePlayer.play() : tonePlayer.stop();
+	});
+
+	connect(ui.btnPlayProgram, &QPushButton::toggled, this, [this](bool checked) {
+		ui.btnPlayProgram->setIcon(QIcon::fromTheme(checked ? "media-playback-stop" : "media-playback-start"));
+	});
+
+	connect(&tonePlayer, &TonePlayer::playingChanged, this, [this]() {
+		ui.btnPlayProgram->setChecked(tonePlayer.isPlaying());
+	});
 }
 
 bool MainWindow::loadFile(const QString& path) {
@@ -81,19 +100,18 @@ bool MainWindow::loadFile(const QString& path) {
 }
 
 bool MainWindow::saveFile(const QString& path) {
-/*	CursorOverride cursor(Qt::WaitCursor);
+	CursorOverride cursor(Qt::WaitCursor);
 
 	try {
-		osb.save(path.toStdWString());
+		bank.save(path.toStdWString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
 		QMessageBox::warning(this, tr("Save One Shot bank"), tr("Failed to save bank file: %1").arg(err.what()));
 		return false;
 	}
 
-	setCurrentFile(path); */
-	Q_UNUSED(path)
-	return false;
+	setCurrentFile(path);
+	return true;
 }
 
 void MainWindow::newFile() {
@@ -142,6 +160,10 @@ bool MainWindow::saveAs() {
 	return saveFile(path);
 }
 
+void MainWindow::selectAll() {
+	ui.tblPrograms->selectAll();
+}
+
 void MainWindow::about() {
 	QMessageBox::about(
 		this,
@@ -158,8 +180,21 @@ void MainWindow::about() {
 	);
 }
 
-void MainWindow::selectAll() {
-	ui.tblPrograms->selectAll();
+void MainWindow::editProgram() {
+	auto curIdx = ui.tblPrograms->selectionModel()->currentIndex();
+	if (!curIdx.isValid())
+		return;
+
+	auto& program = bank.programs[curIdx.row()];
+
+/*	ProgramEditor editor(program, this);
+	editor.setCurFile(curFile);
+	editor.setPath(curIdx.row());
+
+	if (editor.exec() == QDialog::Accepted) {
+		program = std::move(editor.split);
+		emitRowChanged(model, curIdx.row());
+	}*/
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {
@@ -180,6 +215,12 @@ void MainWindow::dropEvent(QDropEvent* event) {
 	if (!path.isEmpty() && maybeSave()) {
 		loadFile(path);
 	}
+}
+
+void MainWindow::emitRowChanged(QAbstractItemModel* model, int row) {
+	auto topLeft = model->index(row, 0);
+	auto bottomRight = model->index(row, model->columnCount());
+	emit model->dataChanged(topLeft, bottomRight, { Qt::DisplayRole, Qt::EditRole });
 }
 
 void MainWindow::resetTableLayout() {

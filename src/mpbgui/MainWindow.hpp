@@ -1,6 +1,5 @@
 #pragma once
 #include <QSettings>
-#include <QMessageBox>
 #include <manatools/mpb.hpp>
 #include <guicommon/TonePlayer.hpp>
 

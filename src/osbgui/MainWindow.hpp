@@ -1,8 +1,7 @@
 #pragma once
-#include <QMainWindow>
 #include <QSettings>
-#include <QTableView>
 #include <manatools/osb.hpp>
+#include <guicommon/TonePlayer.hpp>
 
 #include "ui_MainWindow.h"
 #include "OSBModel.hpp"
@@ -20,8 +19,9 @@ public slots:
 	bool open();
 	bool save();
 	bool saveAs();
-	void about();
 	void selectAll();
+	void about();
+	void editProgram();
 
 protected:
 	void closeEvent(QCloseEvent* event) override;
@@ -29,6 +29,8 @@ protected:
 	void dropEvent(QDropEvent* event) override;
 
 private:
+	void emitRowChanged(QAbstractItemModel* table, int row);
+
 	void resetTableLayout();
 	void reloadTable();
 
@@ -47,4 +49,8 @@ private:
 	OSBModel* model;
 
 	manatools::osb::Bank bank;
+
+	TonePlayer tonePlayer;
+
+	std::optional<bool> saveMappings;
 };
