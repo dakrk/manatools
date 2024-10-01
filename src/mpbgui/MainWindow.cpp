@@ -470,9 +470,9 @@ bool MainWindow::importTone() {
 		return false;
 
 	auto metadata = tone::Metadata::fromMPB(*split);
-	
 	bool success = tone::importDialog(split->tone, &metadata, getOutPath(curFile, true), this);
 	if (success) {
+		metadata.toMPB(*split);
 		emitRowChanged(splitsModel, splitIdx);
 	}
 

@@ -237,6 +237,7 @@ bool ProgramEditor::importTone() {
 	auto metadata = tone::Metadata::fromOSB(program);
 	bool success = tone::importDialog(program.tone, &metadata, getOutPath(curFile, true), this);
 	if (success) {
+		metadata.toOSB(program);
 		loadProgramData();
 	}
 	return success;
@@ -285,6 +286,7 @@ void ProgramEditor::dropEvent(QDropEvent* event) {
 	if (!path.isEmpty()) {
 		auto metadata = tone::Metadata::fromOSB(program);
 		if (tone::importFile(program.tone, &metadata, path, this)) {
+			metadata.toOSB(program);
 			loadProgramData();
 		}
 	}

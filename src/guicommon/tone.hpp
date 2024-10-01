@@ -51,7 +51,24 @@ namespace tone {
 				.baseNote = 0,
 				.startVel = 0,
 				.endVel = 0
-			};			
+			};
+		}
+
+		void toMPB(manatools::mpb::Split& split) const {
+			split.loop = loop;
+			split.loopStart = loopStart;
+			split.loopEnd = loopEnd;
+			split.startNote = startNote;
+			split.endNote = endNote;
+			split.baseNote = baseNote;
+			split.velocityLow = startVel;
+			split.velocityHigh = endVel;
+		}
+
+		void toOSB(manatools::osb::Program& program) const {
+			program.loop = loop;
+			program.loopStart = loopStart;
+			program.loopEnd = loopEnd;
 		}
 	};
 

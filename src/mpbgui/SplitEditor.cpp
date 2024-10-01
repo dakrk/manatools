@@ -304,6 +304,7 @@ bool SplitEditor::importTone() {
 	auto metadata = tone::Metadata::fromMPB(split);
 	bool success = tone::importDialog(split.tone, &metadata, getOutPath(curFile, true), this);
 	if (success) {
+		metadata.toMPB(split);
 		loadSplitData();
 	}
 	return success;
@@ -352,6 +353,7 @@ void SplitEditor::dropEvent(QDropEvent* event) {
 	if (!path.isEmpty()) {
 		auto metadata = tone::Metadata::fromMPB(split);
 		if (tone::importFile(split.tone, &metadata, path, this)) {
+			metadata.toMPB(split);
 			loadSplitData();
 		}
 	}

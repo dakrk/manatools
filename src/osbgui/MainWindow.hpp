@@ -34,7 +34,6 @@ protected:
 private:
 	void emitRowChanged(QAbstractItemModel* table, int row);
 
-	void resetTableLayout();
 	void reloadTable();
 
 	QString maybeDropEvent(QDropEvent* event);

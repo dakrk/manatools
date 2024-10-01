@@ -34,7 +34,6 @@ MainWindow::MainWindow(QWidget* parent) :
 	ui.tblPrograms->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
 
 	setCurrentFile();
-	resetTableLayout();
 
 	ui.actionNew->setShortcut(QKeySequence::New);
 	ui.actionOpen->setShortcut(QKeySequence::Open);
@@ -236,6 +235,7 @@ bool MainWindow::importTone() {
 
 	bool success = tone::importDialog(program.tone, &metadata, getOutPath(curFile, true), this);
 	if (success) {
+		metadata.toOSB(program);
 		emitRowChanged(model, curIdx.row());
 	}
 
@@ -301,16 +301,6 @@ void MainWindow::emitRowChanged(QAbstractItemModel* model, int row) {
 	auto topLeft = model->index(row, 0);
 	auto bottomRight = model->index(row, model->columnCount());
 	emit model->dataChanged(topLeft, bottomRight, { Qt::DisplayRole, Qt::EditRole });
-}
-
-void MainWindow::resetTableLayout() {
-	ui.tblPrograms->horizontalHeader()->resizeSection(0, QHeaderView::ResizeToContents);
-	ui.tblPrograms->horizontalHeader()->resizeSection(1, QHeaderView::ResizeToContents);
-
-	if (ui.tblPrograms->columnWidth(0) < 64)
-		ui.tblPrograms->setColumnWidth(0, 64);
-	if (ui.tblPrograms->columnWidth(1) < 64)
-		ui.tblPrograms->setColumnWidth(1, 64);
 }
 
 void MainWindow::reloadTable() {
