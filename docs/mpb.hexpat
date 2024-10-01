@@ -60,7 +60,7 @@ namespace mpb {
         unk : 1;
     };
 
-    std::assert(sizeof(ProgramPitch) == 2, "SplitPitch must be 2 bytes");
+    std::assert(sizeof(SplitPitch) == 2, "SplitPitch must be 2 bytes");
 
     bitfield SplitFX {
         inputCh : 4; // [0 -> 15] [def. 0]
