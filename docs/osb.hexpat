@@ -8,6 +8,8 @@ import std.sys;
 #define unk padding
 
 namespace osb {
+    u32 g_currentVersion;
+
     enum LFOWaveType : u8 {
         Saw = 0,
         Square = 1,
@@ -19,17 +21,21 @@ namespace osb {
         ADPCM : 1;
         Loop : 1;
         Noise : 1;
+        unk : 3;
+        KYONB : 1; // Found in some version 1 files
+        KYONEX : 1; // ^^
     };
 
     bitfield ProgramAmpEnvelope {
         attackRate : 5;     // [0 -> 31] [def. 31]
         unk : 1;
         decayRate1 : 5;     // [0 -> 31] [def. 0]
-        decayRate2 : 5;     // [0 -> 31] [def. 0]
+        decayRate2 : 5;     // [0 -> 31] [def. 0]    AICA docs say sustain?
         releaseRate : 5;    // [0 -> 31] [def. 31]
         decayLevel : 5;     // [0 -> 31] [def. 0]
         keyRateScaling : 4; // [0 -> 15] [def. 0]
-        unk : 2;
+        lpslink : 1;
+        unk : 1;
     };
 
     std::assert(sizeof(ProgramAmpEnvelope) == 4, "ProgramAmpEnvelope must be 4 bytes");
@@ -46,7 +52,16 @@ namespace osb {
     };
 
     std::assert(sizeof(ProgramLFO) == 2, "ProgramLFO must be 2 bytes");
-    
+
+    // Haven't quite tested this yet, but it is in AICA docs
+    bitfield ProgramPitch {
+        fns : 11;
+        oct : 4;
+        unk : 1;
+    };
+
+    std::assert(sizeof(ProgramPitch) == 2, "ProgramPitch must be 2 bytes");
+
     bitfield ProgramFX {
         inputCh : 4; // [0 -> 15] [def. 0]
         level : 4;   // [0 -> 15] [def. 0]
@@ -57,7 +72,8 @@ namespace osb {
     bitfield ProgramFilterPre {
         resonance : 5; // [0 -> 31] [def. 0]
         off : 1;       // [def. false]
-        unk : 2;
+        voff : 1;
+        unk : 1;
     };
 
     std::assert(sizeof(ProgramFilterPre) == 1, "ProgramFilterPre must be 1 byte");
@@ -86,6 +102,8 @@ namespace osb {
         u32 version;
         u32 fileSize;
         u32 numPrograms;
+
+        g_currentVersion = version;
     };
     
     // Well, I can assume they're called programs. The FourCC ends with 'P'.
@@ -106,8 +124,7 @@ namespace osb {
 
         ProgramAmpEnvelope ampEnvelope;
 
-        unk[2];
-
+        ProgramPitch pitch;
         ProgramLFO lfo;
         ProgramFX fx;
         
@@ -131,19 +148,46 @@ namespace osb {
         u8 filterReleaseRate; // [0 -> 31] [def. 25]
         u8 filterDecayRate2;  // [0 -> 31] [def. 25]
 
-        // Time in (msecs / 4) until a note off is fired.
-        // Amp envelope is effective.
-        u32 loopTime;
+        match (g_currentVersion) {
+            (1): {
+                /**
+                 * TODO: Not sure what this is measured in.
+                 * Same as version 2? Haven't yet tested.
+                 */
+                u8 loopTime;
 
-        // Seems likely, is always 60 and changing affects pitch
-        u8 baseNote;
+                unk[1];
 
-        /**
-         * 11 bytes on version 1, 19 bytes on version 2, including ENDP footer.
-         * I've only observed this area being all zeroes currently, except a repeat of the loopEnd
-         * being present. I haven't noticed any effect changing these to different values, though.
-         */
-        unk[19];
+                u8 baseNote;
+
+                /**
+                 * Same as version 2, although I haven't yet tried testing any
+                 * differences.
+                 */
+                unk[13];
+            }
+            
+            (2): {
+                /**
+                 * Time in (msecs / 4) until a note off is fired.
+                 * Amp envelope is effective.
+                 */
+                u32 loopTime;
+        
+                /**
+                 * Seems likely, is typically 60 (and other multiples of 12)
+                 * and changing affects pitch.
+                 */
+                u8 baseNote;
+
+                /**
+                 * I've only observed a repeat of loopEnd being here so far,
+                 * with the rest being zeroes. Setting these to other values
+                 * does not seem to have any audible difference.
+                 */
+                unk[19];
+            }
+        }
 
         // u8 toneData[12] @ ptrToneData + ((jump & 0x7F) << 16);
     };

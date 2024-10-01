@@ -22,20 +22,20 @@ namespace mpb {
         Loop : 1;
         Noise : 1;
         unk : 3;
-        unknown2 : 1; // Found in some version 1 files
-        unknown1 : 1; // ^^
+        KYONB : 1; // Found in some version 1 files
+        KYONEX : 1; // ^^
     };
 
-    // Ugh, I wish I could put the bitfields directly inside the Split struct declaration
     bitfield SplitAmpEnvelope {
         attackRate : 5;     // [0 -> 31] [def. 31]
         unk : 1;
         decayRate1 : 5;     // [0 -> 31] [def. 0]
-        decayRate2 : 5;     // [0 -> 31] [def. 0]
+        decayRate2 : 5;     // [0 -> 31] [def. 0]    AICA docs say sustain?
         releaseRate : 5;    // [0 -> 31] [def. 31]
         decayLevel : 5;     // [0 -> 31] [def. 0]
         keyRateScaling : 4; // [0 -> 15] [def. 0]
-        unk : 2;
+        lpslink : 1;
+        unk : 1;
     };
 
     std::assert(sizeof(SplitAmpEnvelope) == 4, "SplitAmpEnvelope must be 4 bytes");
@@ -52,7 +52,16 @@ namespace mpb {
     };
 
     std::assert(sizeof(SplitLFO) == 2, "SplitLFO must be 2 bytes");
-    
+
+    // Haven't quite tested this yet, but it is in AICA docs
+    bitfield SplitPitch {
+        fns : 11;
+        oct : 4;
+        unk : 1;
+    };
+
+    std::assert(sizeof(ProgramPitch) == 2, "SplitPitch must be 2 bytes");
+
     bitfield SplitFX {
         inputCh : 4; // [0 -> 15] [def. 0]
         level : 4;   // [0 -> 15] [def. 0]
@@ -63,7 +72,8 @@ namespace mpb {
     bitfield SplitFilterPre {
         resonance : 5; // [0 -> 31] [def. 4]
         off : 1;       // [def. false]
-        unk : 2;
+        voff : 1;
+        unk : 1;
     };
 
     std::assert(sizeof(SplitFilterPre) == 1, "SplitFilterPre must be 1 byte");
@@ -118,8 +128,7 @@ namespace mpb {
 
         SplitAmpEnvelope ampEnvelope;
         
-        unk[2];
-        
+        SplitPitch pitch;
         SplitLFO lfo;
         SplitFX fx;
         
