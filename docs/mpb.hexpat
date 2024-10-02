@@ -34,7 +34,7 @@ namespace mpb {
         releaseRate : 5;    // [0 -> 31] [def. 31]
         decayLevel : 5;     // [0 -> 31] [def. 0]
         keyRateScaling : 4; // [0 -> 15] [def. 0]
-        lpslink : 1;
+        LPSLNK : 1;
         unk : 1;
     };
 
@@ -55,8 +55,8 @@ namespace mpb {
 
     // Haven't quite tested this yet, but it is in AICA docs
     bitfield SplitPitch {
-        fns : 11;
-        oct : 4;
+        FNS : 11;
+        OCT : 4;
         unk : 1;
     };
 

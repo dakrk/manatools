@@ -21,6 +21,7 @@ public slots:
 	bool saveAs();
 	void delProgram();
 	void selectAll();
+	void versionDialog();
 	void about();
 	bool importTone();
 	bool exportTone();

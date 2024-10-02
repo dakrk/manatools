@@ -130,6 +130,8 @@
     </property>
     <addaction name="actionDelete"/>
     <addaction name="actionSelectAll"/>
+    <addaction name="separator"/>
+    <addaction name="actionBankVersion"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -229,6 +231,14 @@ Requires reloading the file to take effect.</string>
    </property>
    <property name="text">
     <string>Select &amp;All</string>
+   </property>
+  </action>
+  <action name="actionBankVersion">
+   <property name="icon">
+    <iconset theme="document-properties"/>
+   </property>
+   <property name="text">
+    <string>Bank &amp;Version</string>
    </property>
   </action>
  </widget>

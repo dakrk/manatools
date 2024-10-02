@@ -2,6 +2,7 @@
 #include <QDropEvent>
 #include <QFileDialog>
 #include <QHeaderView>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QMimeData>
 #include <guicommon/CursorOverride.hpp>
@@ -56,6 +57,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	connect(ui.actionDelete, &QAction::triggered, this, &MainWindow::delProgram);
 	connect(ui.actionSelectAll, &QAction::triggered, this, &MainWindow::selectAll);
+	connect(ui.actionBankVersion, &QAction::triggered, this, &MainWindow::versionDialog);
 
 	connect(ui.actionAbout, &QAction::triggered, this, &MainWindow::about);
 	connect(ui.actionAboutQt, &QAction::triggered, this, [this]() { QMessageBox::aboutQt(this); });
@@ -207,6 +209,26 @@ void MainWindow::delProgram() {
 
 void MainWindow::selectAll() {
 	ui.tblPrograms->selectAll();
+}
+
+void MainWindow::versionDialog() {
+	bool ok;
+	auto verStr = QInputDialog::getText(
+		this,
+		tr("Set bank version"),
+		tr("Version:"),
+		QLineEdit::Normal,
+		formatHex(bank.version),
+		&ok
+	);
+
+	if (ok && !verStr.isEmpty()) {
+		u32 newVer = verStr.toUInt(&ok, 0);
+		if (ok && newVer != bank.version) {
+			bank.version = newVer;
+			setWindowModified(true);
+		}
+	}
 }
 
 void MainWindow::about() {
