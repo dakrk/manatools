@@ -17,7 +17,7 @@
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow(parent),
 	settings(),
-	tonePlayer(44100, this)
+	tonePlayer(this)
 {
 	ui.setupUi(this);
 	ui.statusbar->hide();

@@ -58,7 +58,7 @@ void mpbExtractTones(const fs::path& mpbPath, const fs::path& outPath, ToneExpor
 				filename += std::to_string(s);
 
 				if (exportType == ToneExportType::WAV) {
-					manatools::wav::WAV<s16> wavFile(1, manatools::tone::SAMPLE_RATE);
+					manatools::wav::WAV<s16> wavFile(1, split.tone.sampleRate);
 
 					if (split.loop) {
 						wavFile.sampler = {
@@ -87,7 +87,7 @@ void mpbExtractTones(const fs::path& mpbPath, const fs::path& outPath, ToneExpor
 					txth.reserve(175);
 					txth += "codec = "       + std::string(manatools::tone::formatName(split.tone.format)) += '\n';
 					txth += "channels = 1\n";
-					txth += "sample_rate = " + std::to_string(manatools::tone::SAMPLE_RATE) += '\n';
+					txth += "sample_rate = " + std::to_string(split.tone.sampleRate) += '\n';
 					txth += "data_size = "   + std::to_string(split.tone.data->size()) += '\n';
 					txth += "num_samples = data_size\n";
 					txth += "loop_flag = "   + std::string(split.loop ? "1" : "0") += '\n';

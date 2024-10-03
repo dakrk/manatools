@@ -85,6 +85,7 @@ bool importFile(Tone& tone, Metadata* metadata, const QString& path, QWidget* pa
 	std::vector<s16> readBuf(READ_SIZE * channels);
 	Tone newTone;
 	newTone.format = manatools::tone::Format::PCM16,
+	newTone.sampleRate = sndFile.samplerate();
 	newTone.data = manatools::tone::makeDataPtr(sndFile.frames() * sizeof(s16));	
 
 	sf_count_t framesRead;
@@ -206,7 +207,7 @@ bool exportFile(const Tone& tone, const Metadata* metadata, const QString& path,
 		switch (type) {
 			case FileType::WAV: {
 				// TODO: hmm. could probably replace this with libsndfile
-				manatools::wav::WAV<s16> wav(1, 22050);
+				manatools::wav::WAV<s16> wav(1, tone.sampleRate);
 
 				if (metadata && metadata->loop) {
 					wav.sampler = {

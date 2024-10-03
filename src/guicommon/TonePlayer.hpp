@@ -1,6 +1,7 @@
 #pragma once
 #include <QObject>
 #include <portaudio.h>
+#include <manatools/aica.hpp>
 #include <manatools/tone.hpp>
 #include <manatools/tonedecoder.hpp>
 #include <manatools/utils.hpp>
@@ -10,6 +11,9 @@ class GUICOMMON_EXPORT TonePlayer : public QObject {
 	Q_OBJECT
 public:
 	typedef manatools::tone::Tone Tone;
+
+	explicit TonePlayer(QObject* parent = nullptr) :
+		TonePlayer(manatools::aica::SAMPLE_RATE, parent) {};
 
 	TonePlayer(double sampleRate, QObject* parent = nullptr);
 	~TonePlayer();
@@ -33,7 +37,7 @@ public slots:
 	void stop();
 
 private:
-	MT_DISABLE_COPY(TonePlayer)
+	Q_DISABLE_COPY(TonePlayer)
 
 	static constexpr float MAX_PAD_DURATION = 0.05; // 50ms
 

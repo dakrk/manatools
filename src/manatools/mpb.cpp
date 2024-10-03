@@ -116,6 +116,9 @@ Bank load(const fs::path& path, bool guessToneSize) {
 					else
 						split.tone.format = tone::Format::PCM16;
 
+					// TODO: Guess from start/end/base note and OCT/FNS
+					split.tone.sampleRate = 22050;
+
 					split.loop = flags & sfLoop;
 
 					u16 ptrToneData;

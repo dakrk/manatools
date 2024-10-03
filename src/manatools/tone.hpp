@@ -14,9 +14,6 @@ namespace manatools::tone {
 	 */
 	constexpr size_t MAX_SAMPLES = 65535;
 
-	// TODO: Determine tone sample rate from MPB start/end/base note
-	constexpr uint SAMPLE_RATE = 22050; // seemingly usually.
-
 	enum class Format {
 		ADPCM,
 		PCM8,
@@ -63,6 +60,7 @@ namespace manatools::tone {
 		}
 
 		Format format{Format::PCM16};
+		double sampleRate;
 		DataPtr data;
 	};
 } // namespace manatools::tone

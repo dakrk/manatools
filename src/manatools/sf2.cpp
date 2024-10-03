@@ -47,7 +47,7 @@ SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
 					sampleData,
 					split.loopStart,
 					split.loopEnd,
-					tone::SAMPLE_RATE,
+					22050,
 					split.baseNote - 12, // 1 octave down
 					static_cast<s8>(roundf(utils::remap(split.fineTune, -128, 127, -48, 47)))
 				);

@@ -72,6 +72,9 @@ Bank load(const fs::path& path, bool guessToneSize) {
 		else
 			program.tone.format = tone::Format::PCM16;
 
+		// TODO: Guess from base note & the other byte after it
+		program.tone.sampleRate = 44100;
+
 		program.loop = flags & pfLoop;
 
 		u16 ptrToneData;

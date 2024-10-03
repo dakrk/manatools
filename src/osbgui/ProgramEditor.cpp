@@ -12,7 +12,7 @@
 ProgramEditor::ProgramEditor(QWidget* parent) :
 	QDialog(parent),
 	settings(),
-	tonePlayer(44100, this)
+	tonePlayer(this)
 {
 	init();
 }
@@ -21,7 +21,7 @@ ProgramEditor::ProgramEditor(const Program& program, QWidget* parent) :
 	QDialog(parent),
 	program(program),
 	settings(),
-	tonePlayer(44100, this)
+	tonePlayer(this)
 {
 	init();
 }
