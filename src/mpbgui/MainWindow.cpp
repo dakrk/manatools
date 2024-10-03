@@ -8,7 +8,6 @@
 #include <QTimer>
 #include <stdexcept>
 #include <manatools/sf2.hpp>
-#include <manatools/wav.hpp>
 #include <guicommon/CSV.hpp>
 #include <guicommon/CursorOverride.hpp>
 #include <guicommon/HorizontalLineItemDropStyle.hpp>
@@ -259,7 +258,6 @@ bool MainWindow::saveFile(const QString& path) {
 	}
 
 	bool doSaveMappings = saveMappingsDialog();
-
 	CursorOverride cursor(Qt::WaitCursor);
 
 	try {

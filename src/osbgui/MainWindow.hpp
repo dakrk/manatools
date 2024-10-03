@@ -2,6 +2,7 @@
 #include <QSettings>
 #include <manatools/osb.hpp>
 #include <guicommon/TonePlayer.hpp>
+#include <optional>
 
 #include "ui_MainWindow.h"
 #include "OSBModel.hpp"
@@ -13,6 +14,8 @@ public:
 
 	bool loadFile(const QString& path);
 	bool saveFile(const QString& path);
+	bool loadMapFile(const QString& path);
+	bool saveMapFile(const QString& path);
 
 public slots:
 	void newFile();
@@ -36,6 +39,9 @@ private:
 	void emitRowChanged(QAbstractItemModel* table, int row);
 
 	void reloadTable();
+
+	bool programNameSet() const;
+	bool saveMappingsDialog();
 
 	QString maybeDropEvent(QDropEvent* event);
 	bool maybeSave();

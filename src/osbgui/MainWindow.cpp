@@ -5,6 +5,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QMimeData>
+#include <guicommon/CSV.hpp>
 #include <guicommon/CursorOverride.hpp>
 #include <guicommon/HorizontalLineItemDropStyle.hpp>
 #include <guicommon/tone.hpp>
@@ -127,6 +128,11 @@ bool MainWindow::loadFile(const QString& path) {
 
 	cursor.restore();
 
+	if (!loadMapFile(path % ".csv")) {
+		loadMapFile(getOutPath(path, true) % "/manatools_osb_map.csv");
+	}
+
+	saveMappings.reset();
 	setCurrentFile(path);
 	reloadTable();
 
@@ -143,6 +149,16 @@ bool MainWindow::loadFile(const QString& path) {
 }
 
 bool MainWindow::saveFile(const QString& path) {
+	if (bank.version != 2) {
+		QMessageBox::warning(
+			this,
+			tr("Unsupported file version"),
+			tr("Bank is being saved as an untested version. There may be inaccuracies. (Expected 2, got %1)")
+				.arg(bank.version)
+		);
+	}
+
+	bool doSaveMappings = saveMappingsDialog();
 	CursorOverride cursor(Qt::WaitCursor);
 
 	try {
@@ -153,13 +169,81 @@ bool MainWindow::saveFile(const QString& path) {
 		return false;
 	}
 
+	if (doSaveMappings && !saveMapFile(path % ".csv")) {
+		QMessageBox::warning(this, tr("Save map file"), tr("Failed to save map file."));
+	}
+
 	setCurrentFile(path);
+	return true;
+}
+
+bool MainWindow::loadMapFile(const QString& path) {
+	CursorOverride cursor(Qt::WaitCursor);
+
+	QFile file(path);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+		return false;
+
+	CSV csv;
+	QTextStream stream(&file);
+	csv.read(stream);
+
+	for (qsizetype i = 1; i < csv.rows.size(); i++) {
+		const auto& cols = csv.rows[i];
+		if (cols.size() < 2) {
+			QMessageBox::warning(
+				this,
+				tr("Load map file"),
+				tr("Map file is invalid, has less than 2 columns.").arg(cols[0])
+			);
+			return false;
+		}
+
+		bool ok;
+		ulong index = cols[0].toULong(&ok);
+
+		if (!ok || index + 1 > bank.programs.size()) {
+			QMessageBox::warning(
+				this,
+				tr("Load map file"),
+				tr("Map file contains invalid/out of bounds index: %1").arg(cols[0])
+			);
+			continue;
+		}
+
+		bank.programs[index].userData = std::move(cols[1]);
+	}
+
+	return true;
+}
+
+bool MainWindow::saveMapFile(const QString& path) {
+	CursorOverride cursor(Qt::WaitCursor);
+
+	QFile file(path);
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+		return false;
+
+	CSV csv;
+	QTextStream stream(&file);
+
+	csv.rows.emplaceBack(QStringList { "path", "name" });
+
+	for (size_t i = 0; i < bank.programs.size(); i++) {
+		const QString* name = std::any_cast<QString>(&bank.programs[i].userData);
+		if (name && !name->isEmpty()) {
+			csv.rows.emplaceBack(QStringList { QString::number(i), *name });	
+		}
+	}
+
+	csv.write(stream);
 	return true;
 }
 
 void MainWindow::newFile() {
 	if (maybeSave()) {
 		bank = {};
+		saveMappings.reset();
 		setCurrentFile();
 		reloadTable();
 	}
@@ -327,6 +411,42 @@ void MainWindow::emitRowChanged(QAbstractItemModel* model, int row) {
 
 void MainWindow::reloadTable() {
 	model->setBank(&bank);
+}
+
+bool MainWindow::programNameSet() const {
+	for (const auto& program : bank.programs) {
+		const QString* name = std::any_cast<QString>(&program.userData);
+		if (name && !name->isEmpty()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool MainWindow::saveMappingsDialog() {
+	if (saveMappings.has_value()) {
+		return *saveMappings;
+	} else if (programNameSet()) {
+		QMessageBox mb(
+			QMessageBox::Question,
+			tr("Save map file"),
+			tr("Program names were set in this bank. Would you like to save the mapping file with the bank?"),
+			QMessageBox::Yes | QMessageBox::No,
+			this
+		);
+
+		QCheckBox cb(tr("Don't ask me again this session"), &mb);
+		mb.setCheckBox(&cb);
+
+		bool ret = mb.exec() == QMessageBox::Yes;
+		if (cb.isChecked()) {
+			saveMappings = ret;
+		}
+
+		return ret;
+	}
+
+	return false;
 }
 
 QString MainWindow::maybeDropEvent(QDropEvent* event) {
