@@ -158,13 +158,26 @@ namespace osb {
 
                 unk[1];
 
+                /**
+                 * Seems very likely, 60 is 44100Hz and going up an octave to
+                 * 72 is 22050Hz.
+                 */
                 u8 baseNote;
+
+                /**
+                 * Not sure what this is representing yet or if it's only 1
+                 * byte, but this is present when a program uses an unusual
+                 * sample rate as so frequency can be adjusted to finer values
+                 * than what just baseNote can represent.
+                 * See issue #16.
+                 */
+                u8 freqAdjust;
 
                 /**
                  * Same as version 2, although I haven't yet tried testing any
                  * differences.
                  */
-                unk[13];
+                unk[12];
             }
             
             (2): {
@@ -173,19 +186,20 @@ namespace osb {
                  * Amp envelope is effective.
                  */
                 u32 loopTime;
-        
+
                 /**
-                 * Seems likely, is typically 60 (and other multiples of 12)
-                 * and changing affects pitch.
+                 * These are the same as version 1, except that freqAdjust is
+                 * represented differently.
                  */
                 u8 baseNote;
+                u8 freqAdjust;
 
                 /**
                  * I've only observed a repeat of loopEnd being here so far,
                  * with the rest being zeroes. Setting these to other values
                  * does not seem to have any audible difference.
                  */
-                unk[19];
+                unk[18];
             }
         }
 
