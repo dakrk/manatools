@@ -65,8 +65,9 @@ namespace manatools::osb {
 		bool filterOn      = true;
 		FilterEnvelope filter;
 
-		u32 loopTime       = 0;
+		u32 loopTime       = 0;     // On version 1, only 1 or 2 bytes, and values unknown
 		u8 baseNote        = 60;    // [0 -> 127]
+		u8 freqAdjust      = 0;     // Unknown, different between versions
 
 		// TODO: There's more data that needs to be investigated
 

@@ -134,8 +134,20 @@ Bank load(const fs::path& path, bool guessToneSize) {
 		io.readU8(&program.filter.releaseRate);
 		io.readU8(&program.filter.decayRate2);
 
-		io.readU32LE(&program.loopTime);
-		io.readU8(&program.baseNote);
+		// See save code for annotations
+		if (bank.version <= 1) {
+			u16 loopTime;
+			io.readU16LE(&loopTime);
+			program.loopTime = loopTime;
+			io.readU8(&program.baseNote);
+			io.readU8(&program.freqAdjust);
+			io.forward(8);
+		} else {
+			io.readU32LE(&program.loopTime);
+			io.readU8(&program.baseNote);
+			io.readU8(&program.freqAdjust);
+			io.forward(14);
+		}
 
 		u8 bitdepth = tone::bitdepth(program.tone.format);
 		u32 endBytes = std::ceil(program.loopEnd * (bitdepth / 8.0));
@@ -288,14 +300,23 @@ void Bank::save(const fs::path& path) {
 		io.writeU8(program.filter.releaseRate);
 		io.writeU8(program.filter.decayRate2);
 
-		// write baseNote as a U32LE for the extra 3 bytes
-		io.writeU32LE(program.loopTime);
-		io.writeU32LE(program.baseNote);
+		// TODO: Expose editing the unknown bytes
+		if (version <= 1) {
+			io.writeU16LE(std::min(program.loopTime, u32(0xFFFF))); // Not sure if 2 bytes
+			io.writeU8(program.baseNote);
+			io.writeU8(program.freqAdjust); // Different between versions
+			io.writeU32LE(0); // Unknown
+			io.writeU32LE(program.loopEnd); // Not sure the purpose of repeating
+		} else {
+			io.writeU32LE(program.loopTime);
+			io.writeU8(program.baseNote);
+			io.writeU8(program.freqAdjust);
+			io.writeU16LE(0); // Unknown
+			io.writeU32LE(0); // Unknown
+			io.writeU32LE(program.loopEnd); // Not sure the purpose of repeating
+			io.writeU32LE(0); // Unknown
+		}
 
-		// TODO: Expose editing this range, and look at version 1 files again
-		io.writeU32LE(0);
-		io.writeU32LE(program.loopEnd); // not sure the purpose of this
-		io.writeU32LE(0);
 		io.writeFourCC(OSP_END);
 	}
 
