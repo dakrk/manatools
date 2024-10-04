@@ -144,7 +144,7 @@ void ProgramEditor::loadProgramData() {
 	ui.spinAmpKeyRateScaling->setValue(program.amp.keyRateScaling);
 	ui.ampEnvelope->amp = program.amp;
 
-	ui.checkLFOSync->setChecked(program.lfoOn);
+	ui.checkLFOSync->setChecked(program.lfo.sync);
 	ui.spinLFOAmpDepth->setValue(program.lfo.ampDepth);
 	setLFOWaveType(ui.comboLFOAmpWave, program.lfo.ampWave);
 	ui.spinLFOPitchDepth->setValue(program.lfo.pitchDepth);
@@ -158,7 +158,7 @@ void ProgramEditor::loadProgramData() {
 
 	ui.spinOscLvl->setValue(program.oscillatorLevel);
 
-	ui.checkFilterOn->setChecked(program.filterOn);
+	ui.checkFilterOn->setChecked(program.filter.on);
 	ui.spinFilterQ->setValue(program.filter.resonance);
 	ui.spinFilterStartLvl->setValue(program.filter.startLevel);
 	ui.spinFilterAttackLvl->setValue(program.filter.attackLevel);
@@ -194,7 +194,7 @@ void ProgramEditor::setProgramData() {
 	program.amp.decayLevel = ui.spinAmpDecayLvl->value();
 	program.amp.keyRateScaling = ui.spinAmpKeyRateScaling->value();
 
-	program.lfoOn = ui.checkLFOSync->isChecked();
+	program.lfo.sync = ui.checkLFOSync->isChecked();
 	program.lfo.ampDepth = ui.spinLFOAmpDepth->value();
 	program.lfo.ampWave = ui.comboLFOAmpWave->currentData().value<LFOWaveType>();
 	program.lfo.pitchDepth = ui.spinLFOPitchDepth->value();
@@ -208,7 +208,7 @@ void ProgramEditor::setProgramData() {
 
 	program.oscillatorLevel = ui.spinOscLvl->value();
 
-	program.filterOn = ui.checkFilterOn->isChecked();
+	program.filter.on = ui.checkFilterOn->isChecked();
 	program.filter.resonance = ui.spinFilterQ->value();
 	program.filter.startLevel = ui.spinFilterStartLvl->value();
 	program.filter.attackLevel = ui.spinFilterAttackLvl->value();

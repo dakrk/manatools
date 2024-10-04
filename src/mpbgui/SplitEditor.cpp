@@ -183,7 +183,7 @@ void SplitEditor::loadSplitData() {
 	ui.spinAmpKeyRateScaling->setValue(split.amp.keyRateScaling);
 	ui.ampEnvelope->amp = split.amp;
 
-	ui.checkLFOSync->setChecked(split.lfoOn);
+	ui.checkLFOSync->setChecked(split.lfo.sync);
 	ui.spinLFOAmpDepth->setValue(split.lfo.ampDepth);
 	setLFOWaveType(ui.comboLFOAmpWave, split.lfo.ampWave);
 	ui.spinLFOPitchDepth->setValue(split.lfo.pitchDepth);
@@ -197,7 +197,7 @@ void SplitEditor::loadSplitData() {
 
 	ui.spinOscLvl->setValue(split.oscillatorLevel);
 
-	ui.checkFilterOn->setChecked(split.filterOn);
+	ui.checkFilterOn->setChecked(split.filter.on);
 	ui.spinFilterQ->setValue(split.filter.resonance);
 	ui.spinFilterStartLvl->setValue(split.filter.startLevel);
 	ui.spinFilterAttackLvl->setValue(split.filter.attackLevel);
@@ -237,7 +237,7 @@ void SplitEditor::setSplitData() {
 	split.amp.decayLevel = ui.spinAmpDecayLvl->value();
 	split.amp.keyRateScaling = ui.spinAmpKeyRateScaling->value();
 
-	split.lfoOn = ui.checkLFOSync->isChecked();
+	split.lfo.sync = ui.checkLFOSync->isChecked();
 	split.lfo.ampDepth = ui.spinLFOAmpDepth->value();
 	split.lfo.ampWave = ui.comboLFOAmpWave->currentData().value<LFOWaveType>();
 	split.lfo.pitchDepth = ui.spinLFOPitchDepth->value();
@@ -251,7 +251,7 @@ void SplitEditor::setSplitData() {
 
 	split.oscillatorLevel = ui.spinOscLvl->value();
 
-	split.filterOn = ui.checkFilterOn->isChecked();
+	split.filter.on = ui.checkFilterOn->isChecked();
 	split.filter.resonance = ui.spinFilterQ->value();
 	split.filter.startLevel = ui.spinFilterStartLvl->value();
 	split.filter.attackLevel = ui.spinFilterAttackLvl->value();

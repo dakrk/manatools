@@ -48,7 +48,7 @@ namespace osb {
         LFOWaveType pitchWave : 2; // [0 -> 3] [def. 0 (Saw)]
 
         frequency : 5; // [0 -> 31] [def. 0]
-        on : 1;        // [def. false]
+        sync : 1;      // [def. false]
     };
 
     std::assert(sizeof(ProgramLFO) == 2, "ProgramLFO must be 2 bytes");
@@ -106,8 +106,10 @@ namespace osb {
         g_currentVersion = version;
     };
     
-    // Well, I can assume they're called programs. The FourCC ends with 'P'.
-    // For the most part, this is similar to MPB.
+    /**
+     * Well, I can assume they're called programs. The FourCC ends with 'P'.
+     * Just like MPB, maps directly to AICA registers, up until loopTime.
+     */
     struct Program {
         char fourCC[4];
         u8 jump;
@@ -135,7 +137,11 @@ namespace osb {
 
         ProgramFilterPre filterPre;
 
-        u8 oscillatorLevel; // [0 -> 255] [def. 255]    Bits inverted, 255 is actually 0. Binary NOT (~) it.
+        /**
+         * This is an attenuation level, so 0 means full volume, while 255 is
+         * lowest. Tools invert this to be clearer (a binary NOT should work). 
+         */
+        u8 oscillatorLevel; // [0 -> 255] [def. 0]
 
         u16 filterStartLevel;   // [8 -> 8184] [def. 8184]
         u16 filterAttackLevel;  // [8 -> 8184] [def. 8184]

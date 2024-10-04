@@ -22,17 +22,10 @@ namespace manatools::mpb {
 
 	using common::LFOWaveType;
 	using common::AmpEnvelope;
+	using common::PitchRegs;
+	using common::LFORegs;
+	using common::FXRegs;
 	using common::FilterEnvelope;
-
-	struct SplitLFO {
-		u8 ampDepth   = 0; // [0 -> 7]
-		LFOWaveType ampWave   = LFOWaveType::Saw;
-
-		u8 pitchDepth = 0; // [0 -> 7]
-		LFOWaveType pitchWave = LFOWaveType::Saw;
-
-		u8 frequency  = 0; // [0 -> 31]
-	};
 
 	struct SplitFX {
 		u8 inputCh = 0; // [0 -> 15]
@@ -52,20 +45,17 @@ namespace manatools::mpb {
 
 		AmpEnvelope amp;
 
-		u16 unk1           = 0;     // Unknown
+		PitchRegs pitch;
+		LFORegs lfo;
+		FXRegs fx;
 
-		bool lfoOn         = false;
-		SplitLFO lfo;
-		SplitFX fx;
-
-		u8 unk2            = 0;     // Unknown
+		u8 unk1            = 0;     // Unknown
 
 		s8 panPot          = 0;     // [-15 -> 15]
 		u8 directLevel     = 15;    // [0 -> 15]
 
 		u8 oscillatorLevel = 255;   // [0 -> 255]
 
-		bool filterOn      = true;
 		FilterEnvelope filter;
 
 		u8 startNote       = 0;     // [0 -> 127]
@@ -73,7 +63,7 @@ namespace manatools::mpb {
 		u8 baseNote        = 60;    // [0 -> 127]
 		s8 fineTune        = 0;     // [-128 -> 127]
 
-		u16 unk3           = 0;     // Unknown (seemingly fine tune related on version 1?)
+		u16 unk2           = 0;     // Unknown (seemingly fine tune related on version 1?)
 
 		u8 velocityCurveID = 0;
 		u8 velocityLow     = 1;     // [0 -> 127]
@@ -82,7 +72,7 @@ namespace manatools::mpb {
 		bool drumMode      = false;
 		u8 drumGroupID     = 0;     // [0 -> 255]
 
-		u8 unk4            = 0;     // Unknown
+		u8 unk3            = 0;     // Unknown
 
 		u32 ptrToneData_   = 0;     // Only for presentation post-load
 		tone::Tone tone;

@@ -312,6 +312,14 @@
     </item>
     <item row="0" column="0" colspan="3">
      <widget class="QCheckBox" name="checkLFOSync">
+      <property name="font">
+       <font>
+        <underline>true</underline>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>If set, the LFO phase is reset at the start of each loop.</string>
+      </property>
       <property name="text">
        <string>LFO Sync</string>
       </property>
@@ -1106,6 +1114,14 @@
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="lblLoopEnd">
+        <property name="font">
+         <font>
+          <underline>true</underline>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Serves as tone length, even with looping disabled.</string>
+        </property>
         <property name="text">
          <string>Loop End</string>
         </property>

@@ -48,7 +48,7 @@ namespace mpb {
         LFOWaveType pitchWave : 2; // [0 -> 3] [def. 0 (Saw)]
 
         frequency : 5; // [0 -> 31] [def. 0]
-        on : 1;        // [def. false]
+        sync : 1;      // [def. false]
     };
 
     std::assert(sizeof(SplitLFO) == 2, "SplitLFO must be 2 bytes");
@@ -111,7 +111,10 @@ namespace mpb {
         u32 numUnk2;
     };
     
-    // Max 128 Splits per Layer
+    /**
+     * Max 128 Splits per Layer.
+     * Everything up until startNote maps directly to AICA registers.
+     */
     struct Split {
         u8 jump; // `(jump & 0x80)` if the data is 8-bit PCM. Otherwise 16-bit if not ADPCM or 8-bit PCM.
         SplitFlags flags; // [def. ADPCM]
@@ -144,7 +147,11 @@ namespace mpb {
         
         SplitFilterPre filterPre;
         
-        u8 oscillatorLevel; // [0 -> 255] [def. 255]    Bits inverted, 255 is actually 0. Binary NOT (~) it.
+        /**
+         * This is an attenuation level, so 0 means full volume, while 255 is
+         * lowest. Tools invert this to be clearer (a binary NOT should work). 
+         */
+        u8 oscillatorLevel; // [0 -> 255] [def. 255]
         
         u16 filterStartLevel;   // [0 -> 8184] [def. 8184]    The slider in the editor only goes down to 8, but typing can go down to 0.
         u16 filterAttackLevel;  // [0 -> 8184] [def. 8184]    ^^

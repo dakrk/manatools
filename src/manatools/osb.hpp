@@ -19,22 +19,10 @@ namespace manatools::osb {
 
 	using common::LFOWaveType;
 	using common::AmpEnvelope;
+	using common::PitchRegs;
+	using common::LFORegs;
+	using common::FXRegs;
 	using common::FilterEnvelope;
-
-	struct ProgramLFO {
-		u8 ampDepth   = 0; // [0 -> 7]
-		LFOWaveType ampWave   = LFOWaveType::Saw;
-
-		u8 pitchDepth = 0; // [0 -> 7]
-		LFOWaveType pitchWave = LFOWaveType::Saw;
-
-		u8 frequency  = 0; // [0 -> 31]
-	};
-
-	struct ProgramFX {
-		u8 inputCh = 0; // [0 -> 15]
-		u8 level   = 0; // [0 -> 15]
-	};
 
 	// Well, I can assume they're called programs. The FourCC ends with 'P'.
 	struct Program {
@@ -49,20 +37,17 @@ namespace manatools::osb {
 
 		AmpEnvelope amp;
 
-		u16 unk1           = 0;     // Unknown
+		PitchRegs pitch;
+		LFORegs lfo;
+		FXRegs fx;
 
-		bool lfoOn         = false;
-		ProgramLFO lfo;
-		ProgramFX fx;
-
-		u8 unk2            = 0;     // Unknown
+		u8 unk1            = 0;     // Unknown
 
 		s8 panPot          = 0;     // [-15 -> 15]
 		u8 directLevel     = 15;    // [0 -> 15]
 
 		u8 oscillatorLevel = 255;   // [0 -> 255]
 
-		bool filterOn      = true;
 		FilterEnvelope filter;
 
 		u32 loopTime       = 0;     // On version 1, only 1 or 2 bytes, and values unknown

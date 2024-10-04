@@ -16,30 +16,6 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="2">
-      <widget class="QSpinBox" name="spinUnk3">
-       <property name="maximum">
-        <number>65535</number>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QSlider" name="sliderUnk4">
-       <property name="maximum">
-        <number>255</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QSpinBox" name="spinUnk2">
-       <property name="maximum">
-        <number>255</number>
-       </property>
-      </widget>
-     </item>
      <item row="2" column="0">
       <widget class="QLabel" name="lblUnk3">
        <property name="text">
@@ -50,18 +26,8 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="lblUnk4">
-       <property name="text">
-        <string>Unknown 4</string>
-       </property>
-       <property name="buddy">
-        <cstring>spinUnk4</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QSlider" name="sliderUnk1">
+     <item row="1" column="1">
+      <widget class="QSlider" name="sliderUnk2">
        <property name="maximum">
         <number>65535</number>
        </property>
@@ -73,20 +39,22 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <widget class="QSpinBox" name="spinUnk1">
-       <property name="maximum">
-        <number>65535</number>
+     <item row="1" column="3">
+      <widget class="QLabel" name="lblUnk2Hex">
+       <property name="font">
+        <font>
+         <family>Monospace</family>
+        </font>
+       </property>
+       <property name="text">
+        <string>0x0</string>
        </property>
       </widget>
      </item>
      <item row="2" column="1">
       <widget class="QSlider" name="sliderUnk3">
        <property name="maximum">
-        <number>65535</number>
-       </property>
-       <property name="pageStep">
-        <number>1024</number>
+        <number>255</number>
        </property>
        <property name="orientation">
         <enum>Qt::Orientation::Horizontal</enum>
@@ -103,8 +71,15 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QSlider" name="sliderUnk2">
+     <item row="2" column="2">
+      <widget class="QSpinBox" name="spinUnk3">
+       <property name="maximum">
+        <number>255</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSlider" name="sliderUnk1">
        <property name="maximum">
         <number>255</number>
        </property>
@@ -113,44 +88,17 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="2">
-      <widget class="QSpinBox" name="spinUnk4">
+     <item row="0" column="2">
+      <widget class="QSpinBox" name="spinUnk1">
        <property name="maximum">
         <number>255</number>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="lblUnk1">
-       <property name="text">
-        <string>Unknown 1</string>
-       </property>
-       <property name="buddy">
-        <cstring>spinUnk1</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="QLabel" name="lblUnk1Hex">
-       <property name="font">
-        <font>
-         <family>Monospace</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>0x0</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QLabel" name="lblUnk2Hex">
-       <property name="font">
-        <font>
-         <family>Monospace</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>0x0</string>
+     <item row="1" column="2">
+      <widget class="QSpinBox" name="spinUnk2">
+       <property name="maximum">
+        <number>65535</number>
        </property>
       </widget>
      </item>
@@ -166,8 +114,18 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="3">
-      <widget class="QLabel" name="lblUnk4Hex">
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblUnk1">
+       <property name="text">
+        <string>Unknown 1</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinUnk1</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLabel" name="lblUnk1Hex">
        <property name="font">
         <font>
          <family>Monospace</family>
@@ -408,38 +366,6 @@
     <hint type="destinationlabel">
      <x>264</x>
      <y>76</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sliderUnk4</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinUnk4</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>264</x>
-     <y>100</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>103</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinUnk4</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>sliderUnk4</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>280</x>
-     <y>104</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>264</x>
-     <y>100</y>
     </hint>
    </hints>
   </connection>

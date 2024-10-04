@@ -135,9 +135,20 @@ Bank load(const fs::path& path, bool guessToneSize) {
 					split.amp.decayRate2     = utils::readBits(ampBitfield, 11, 5);
 					split.amp.releaseRate    = utils::readBits(ampBitfield, 16, 5);
 					split.amp.decayLevel     = utils::readBits(ampBitfield, 21, 5);
-					split.amp.keyRateScaling = utils::readBits(ampBitfield, 26, 4); // 2 unknown bits after this
+					split.amp.keyRateScaling = utils::readBits(ampBitfield, 26, 4);
+					split.amp.LPSLNK         = utils::readBits(ampBitfield, 30, 1); // 1 unknown bit after this
 
-					io.readU16LE(&split.unk1);
+					u16 pitchBitfield;
+					io.readU16LE(&pitchBitfield);
+					split.pitch.FNS = utils::readBits(pitchBitfield, 0, 11);
+					split.pitch.OCT = utils::readBits(pitchBitfield, 11, 4);
+
+					// Convert from 4 bit signed
+					if (split.pitch.OCT & 0b1000) {
+						split.pitch.OCT = -(split.pitch.OCT & 0b0111);
+					} else {
+						split.pitch.OCT = (split.pitch.OCT & 0b0111);
+					}
 
 					u16 lfoBitfield;
 					io.readU16LE(&lfoBitfield);
@@ -146,14 +157,14 @@ Bank load(const fs::path& path, bool guessToneSize) {
 					split.lfo.pitchDepth = utils::readBits(lfoBitfield,  5, 3);
 					split.lfo.pitchWave  = static_cast<LFOWaveType>(utils::readBits(lfoBitfield,  8, 2)); // ughh
 					split.lfo.frequency  = utils::readBits(lfoBitfield, 10, 5);
-					split.lfoOn          = utils::readBits(lfoBitfield, 15, 1);
+					split.lfo.sync       = utils::readBits(lfoBitfield, 15, 1);
 
 					u8 fxBitfield;
 					io.readU8(&fxBitfield);
 					split.fx.inputCh = utils::readBits(fxBitfield, 0, 4);
 					split.fx.level   = utils::readBits(fxBitfield, 4, 4);
 
-					io.readU8(&split.unk2);
+					io.readU8(&split.unk1);
 
 					u8 pan;
 					io.readU8(&pan);
@@ -163,7 +174,8 @@ Bank load(const fs::path& path, bool guessToneSize) {
 					u8 filterBitfield;
 					io.readU8(&filterBitfield);
 					split.filter.resonance = utils::readBits(filterBitfield, 0, 5);
-					split.filterOn         = utils::readBits(filterBitfield, 5, 1);
+					split.filter.on        = !utils::readBits(filterBitfield, 5, 1);
+					split.filter.voff      = utils::readBits(filterBitfield, 6, 1);
 
 					io.readU8(&split.oscillatorLevel);
 					split.oscillatorLevel = ~split.oscillatorLevel;
@@ -183,7 +195,7 @@ Bank load(const fs::path& path, bool guessToneSize) {
 					io.readU8(&split.baseNote);
 					io.readS8(&split.fineTune);
 
-					io.readU16LE(&split.unk3);
+					io.readU16LE(&split.unk2);
 
 					io.readU8(&split.velocityCurveID);
 					io.readU8(&split.velocityLow);
@@ -192,7 +204,7 @@ Bank load(const fs::path& path, bool guessToneSize) {
 					io.readBool(&split.drumMode);
 					io.readU8(&split.drumGroupID);
 
-					io.readU8(&split.unk4);
+					io.readU8(&split.unk3);
 
 					u8 bitdepth = tone::bitdepth(split.tone.format);
 					u32 endBytes = std::ceil(split.loopEnd * (bitdepth / 8.0));
@@ -474,10 +486,20 @@ void Bank::save(const fs::path& path) {
 				WRITEBITS(ampBits, split.amp.decayRate2,     11, 5);
 				WRITEBITS(ampBits, split.amp.releaseRate,    16, 5);
 				WRITEBITS(ampBits, split.amp.decayLevel,     21, 5);
-				WRITEBITS(ampBits, split.amp.keyRateScaling, 26, 5);
+				WRITEBITS(ampBits, split.amp.keyRateScaling, 26, 4);
+				WRITEBITS(ampBits, split.amp.LPSLNK,         30, 1);
 				io.writeU32LE(ampBits);
 
-				io.writeU16LE(split.unk1);
+				u16 pitchBits = 0;
+				WRITEBITS(pitchBits, split.pitch.FNS, 0, 11);
+
+				u8 pitchOCT = split.pitch.OCT & 0b0111;
+				if (split.pitch.OCT < 0) {
+					pitchOCT |= 0b1000;
+				}
+
+				WRITEBITS(pitchBits, pitchOCT, 11, 4);
+				io.writeU16LE(pitchBits);
 
 				u16 lfoBits = 0;
 				WRITEBITS(lfoBits, split.lfo.ampDepth,   0, 3);
@@ -485,7 +507,7 @@ void Bank::save(const fs::path& path) {
 				WRITEBITS(lfoBits, split.lfo.pitchDepth, 5, 3);
 				WRITEBITS(lfoBits, static_cast<u8>(split.lfo.pitchWave), 8, 2);
 				WRITEBITS(lfoBits, split.lfo.frequency, 10, 5);
-				WRITEBITS(lfoBits, split.lfoOn,         15, 1);
+				WRITEBITS(lfoBits, split.lfo.sync,      15, 1);
 				io.writeU16LE(lfoBits);
 
 				u8 fxBits = 0;
@@ -493,14 +515,15 @@ void Bank::save(const fs::path& path) {
 				WRITEBITS(fxBits, split.fx.level,   4, 4);
 				io.writeU8(fxBits);
 
-				io.writeU8(split.unk2);
+				io.writeU8(split.unk1);
 
 				io.writeU8(Split::toPanPot(split.panPot, version));
 				io.writeU8(split.directLevel);
 
 				u8 filterBits = 0;
 				WRITEBITS(filterBits, split.filter.resonance, 0, 5);
-				WRITEBITS(filterBits, split.filterOn, 5, 1);
+				WRITEBITS(filterBits, !split.filter.on,       5, 1);
+				WRITEBITS(filterBits, split.filter.voff,      6, 1);
 				io.writeU8(filterBits);
 
 				io.writeU8(~split.oscillatorLevel);
@@ -520,7 +543,7 @@ void Bank::save(const fs::path& path) {
 				io.writeU8(split.baseNote);
 				io.writeS8(split.fineTune);
 
-				io.writeU16LE(split.unk3);
+				io.writeU16LE(split.unk2);
 
 				io.writeU8(split.velocityCurveID);
 				io.writeU8(split.velocityLow);
@@ -529,7 +552,7 @@ void Bank::save(const fs::path& path) {
 				io.writeBool(split.drumMode);
 				io.writeU8(split.drumGroupID);
 
-				io.writeU8(split.unk4);
+				io.writeU8(split.unk3);
 			}
 		}
 	}
