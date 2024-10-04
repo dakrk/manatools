@@ -26,11 +26,6 @@ namespace manatools::mpb {
 	using common::LFORegs;
 	using common::FXRegs;
 	using common::FilterEnvelope;
-
-	struct SplitFX {
-		u8 inputCh = 0; // [0 -> 15]
-		u8 level   = 0; // [0 -> 15]
-	};
 	
 	// Max 128 Splits per Layer
 	struct Split {

@@ -101,7 +101,7 @@ void SplitEditor::init() {
 	connect(ui.actionImportTone, &QAction::triggered, this, &SplitEditor::importTone);
 	connect(ui.actionExportTone, &QAction::triggered, this, &SplitEditor::exportTone);
 	connect(ui.actionConvertToADPCM, &QAction::triggered, this, &SplitEditor::convertToADPCM);
-	connect(ui.btnEditUnk, &QPushButton::clicked, this, &SplitEditor::editUnknownProps);
+	connect(ui.btnEditMisc, &QPushButton::clicked, this, &SplitEditor::editUnknownProps);
 
 	connect(this, &QDialog::accepted, this, &SplitEditor::setSplitData);
 	connect(this, &QDialog::finished, this, &SplitEditor::saveSettings);
@@ -198,6 +198,7 @@ void SplitEditor::loadSplitData() {
 	ui.spinOscLvl->setValue(split.oscillatorLevel);
 
 	ui.checkFilterOn->setChecked(split.filter.on);
+	ui.checkFilterVOFF->setChecked(split.filter.voff);
 	ui.spinFilterQ->setValue(split.filter.resonance);
 	ui.spinFilterStartLvl->setValue(split.filter.startLevel);
 	ui.spinFilterAttackLvl->setValue(split.filter.attackLevel);
@@ -252,6 +253,7 @@ void SplitEditor::setSplitData() {
 	split.oscillatorLevel = ui.spinOscLvl->value();
 
 	split.filter.on = ui.checkFilterOn->isChecked();
+	split.filter.voff = ui.checkFilterVOFF->isChecked();
 	split.filter.resonance = ui.spinFilterQ->value();
 	split.filter.startLevel = ui.spinFilterStartLvl->value();
 	split.filter.attackLevel = ui.spinFilterAttackLvl->value();
