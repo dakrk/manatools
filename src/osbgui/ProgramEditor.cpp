@@ -86,7 +86,7 @@ void ProgramEditor::init() {
 	connect(ui.actionImportTone, &QAction::triggered, this, &ProgramEditor::importTone);
 	connect(ui.actionExportTone, &QAction::triggered, this, &ProgramEditor::exportTone);
 	connect(ui.actionConvertToADPCM, &QAction::triggered, this, &ProgramEditor::convertToADPCM);
-	connect(ui.btnEditUnk, &QPushButton::clicked, this, &ProgramEditor::editUnknownProps);
+	connect(ui.btnEditMisc, &QPushButton::clicked, this, &ProgramEditor::editUnknownProps);
 
 	connect(this, &QDialog::accepted, this, &ProgramEditor::setProgramData);
 	connect(this, &QDialog::finished, this, &ProgramEditor::saveSettings);
@@ -159,6 +159,7 @@ void ProgramEditor::loadProgramData() {
 	ui.spinOscLvl->setValue(program.oscillatorLevel);
 
 	ui.checkFilterOn->setChecked(program.filter.on);
+	ui.checkFilterVOFF->setChecked(program.filter.voff);
 	ui.spinFilterQ->setValue(program.filter.resonance);
 	ui.spinFilterStartLvl->setValue(program.filter.startLevel);
 	ui.spinFilterAttackLvl->setValue(program.filter.attackLevel);
@@ -209,6 +210,7 @@ void ProgramEditor::setProgramData() {
 	program.oscillatorLevel = ui.spinOscLvl->value();
 
 	program.filter.on = ui.checkFilterOn->isChecked();
+	program.filter.voff = ui.checkFilterVOFF->isChecked();
 	program.filter.resonance = ui.spinFilterQ->value();
 	program.filter.startLevel = ui.spinFilterStartLvl->value();
 	program.filter.attackLevel = ui.spinFilterAttackLvl->value();

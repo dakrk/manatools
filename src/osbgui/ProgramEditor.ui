@@ -408,50 +408,36 @@
      </widget>
     </item>
     <item>
-     <layout class="QGridLayout" name="gridLayout_4">
-      <item row="6" column="2">
-       <widget class="QSpinBox" name="spinFilterDecayRate1">
-        <property name="maximum">
-         <number>31</number>
-        </property>
-       </widget>
-      </item>
-      <item row="12" column="2">
-       <widget class="QSpinBox" name="spinFilterReleaseLvl">
-        <property name="maximum">
-         <number>8184</number>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="2">
-       <widget class="QSpinBox" name="spinFilterReleaseRate">
-        <property name="maximum">
-         <number>31</number>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="2">
-       <widget class="QSpinBox" name="spinFilterAttackLvl">
-        <property name="maximum">
-         <number>8184</number>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="0">
-       <widget class="QLabel" name="lblFilterReleaseRate">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QCheckBox" name="checkFilterOn">
         <property name="text">
-         <string>Release Rate</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>spinFilterReleaseRate</cstring>
+         <string>Filter On</string>
         </property>
        </widget>
       </item>
-      <item row="7" column="1">
-       <widget class="QSlider" name="sliderFilterDecayLvl1">
+      <item>
+       <widget class="QCheckBox" name="checkFilterVOFF">
+        <property name="font">
+         <font>
+          <underline>true</underline>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>&quot;If set, the constant attenuation, envelope, and LFO volumes will not take effect.
+However, the note will still end when the envelope level reaches zero in the release state.&quot;</string>
+        </property>
+        <property name="text">
+         <string>VOFF</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="4" column="1">
+       <widget class="QSlider" name="sliderFilterAttackLvl">
         <property name="maximum">
          <number>8184</number>
         </property>
@@ -466,36 +452,116 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QSlider" name="sliderFilterAttackRate">
+      <item row="9" column="1">
+       <widget class="QSlider" name="sliderFilterDecayLvl2">
         <property name="maximum">
-         <number>31</number>
+         <number>8184</number>
+        </property>
+        <property name="singleStep">
+         <number>100</number>
+        </property>
+        <property name="pageStep">
+         <number>500</number>
         </property>
         <property name="orientation">
          <enum>Qt::Orientation::Horizontal</enum>
         </property>
        </widget>
       </item>
-      <item row="8" column="0">
-       <widget class="QLabel" name="lblFilterDecayRate2">
+      <item row="11" column="2">
+       <widget class="QSpinBox" name="spinFilterReleaseRate">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="2">
+       <widget class="QSpinBox" name="spinFilterQ">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="2">
+       <widget class="QSpinBox" name="spinFilterReleaseLvl">
+        <property name="maximum">
+         <number>8184</number>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2">
+       <widget class="QSpinBox" name="spinFilterDecayLvl1">
+        <property name="maximum">
+         <number>8184</number>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="0">
+       <widget class="QLabel" name="lblFilterReleaseLvl">
         <property name="text">
-         <string>Decay Rate 2</string>
+         <string>Release Filter Lev.</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
         <property name="buddy">
-         <cstring>spinFilterDecayRate2</cstring>
+         <cstring>spinFilterReleaseLvl</cstring>
         </property>
        </widget>
       </item>
-      <item row="11" column="1">
-       <widget class="QSlider" name="sliderFilterReleaseRate">
+      <item row="8" column="1">
+       <widget class="QSlider" name="sliderFilterDecayRate2">
         <property name="maximum">
          <number>31</number>
         </property>
         <property name="orientation">
          <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="lblFilterAttackRate">
+        <property name="text">
+         <string>Attack Rate</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterAttackRate</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="lblFilterDecayLvl1">
+        <property name="text">
+         <string>Decay Filter Lev. 1</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterDecayLvl1</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="lblFilterStartLvl">
+        <property name="text">
+         <string>Start Filter Lev.</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterStartLvl</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2">
+       <widget class="QSpinBox" name="spinFilterDecayRate1">
+        <property name="maximum">
+         <number>31</number>
         </property>
        </widget>
       </item>
@@ -538,8 +604,61 @@
         </property>
        </widget>
       </item>
-      <item row="9" column="1">
-       <widget class="QSlider" name="sliderFilterDecayLvl2">
+      <item row="1" column="2">
+       <widget class="QSpinBox" name="spinFilterStartLvl">
+        <property name="maximum">
+         <number>8184</number>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="0">
+       <widget class="QLabel" name="lblFilterReleaseRate">
+        <property name="text">
+         <string>Release Rate</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterReleaseRate</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="lblFilterAttackLvl">
+        <property name="text">
+         <string>Attack Filter Lev.</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterAttackLvl</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="QLabel" name="lblFilterDecayLvl2">
+        <property name="text">
+         <string>Decay Filter Lev. 2</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>spinFilterDecayLvl2</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="3">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QSlider" name="sliderFilterDecayLvl1">
         <property name="maximum">
          <number>8184</number>
         </property>
@@ -554,8 +673,8 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="1">
-       <widget class="QSlider" name="sliderFilterDecayRate1">
+      <item row="11" column="1">
+       <widget class="QSlider" name="sliderFilterReleaseRate">
         <property name="maximum">
          <number>31</number>
         </property>
@@ -577,23 +696,43 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="3">
-       <widget class="Line" name="line">
+      <item row="14" column="1">
+       <widget class="QSlider" name="sliderFilterQ">
+        <property name="maximum">
+         <number>31</number>
+        </property>
         <property name="orientation">
          <enum>Qt::Orientation::Horizontal</enum>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="lblFilterAttackRate">
+      <item row="9" column="2">
+       <widget class="QSpinBox" name="spinFilterDecayLvl2">
+        <property name="maximum">
+         <number>8184</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QSlider" name="sliderFilterAttackRate">
+        <property name="maximum">
+         <number>31</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="lblFilterDecayRate2">
         <property name="text">
-         <string>Attack Rate</string>
+         <string>Decay Rate 2</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
         <property name="buddy">
-         <cstring>spinFilterAttackRate</cstring>
+         <cstring>spinFilterDecayRate2</cstring>
         </property>
        </widget>
       </item>
@@ -604,28 +743,8 @@
         </property>
        </widget>
       </item>
-      <item row="14" column="2">
-       <widget class="QSpinBox" name="spinFilterQ">
-        <property name="maximum">
-         <number>31</number>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="0">
-       <widget class="QLabel" name="lblFilterDecayLvl2">
-        <property name="text">
-         <string>Decay Filter Lev. 2</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>spinFilterDecayLvl2</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="14" column="1">
-       <widget class="QSlider" name="sliderFilterQ">
+      <item row="6" column="1">
+       <widget class="QSlider" name="sliderFilterDecayRate1">
         <property name="maximum">
          <number>31</number>
         </property>
@@ -641,8 +760,8 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="2">
-       <widget class="QSpinBox" name="spinFilterDecayLvl1">
+      <item row="4" column="2">
+       <widget class="QSpinBox" name="spinFilterAttackLvl">
         <property name="maximum">
          <number>8184</number>
         </property>
@@ -661,13 +780,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QSpinBox" name="spinFilterStartLvl">
-        <property name="maximum">
-         <number>8184</number>
-        </property>
-       </widget>
-      </item>
       <item row="10" column="0" colspan="3">
        <widget class="Line" name="line_3">
         <property name="orientation">
@@ -675,102 +787,10 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="checkFilterOn">
-        <property name="text">
-         <string>Filter On</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="lblFilterAttackLvl">
-        <property name="text">
-         <string>Attack Filter Lev.</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>spinFilterAttackLvl</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="12" column="0">
-       <widget class="QLabel" name="lblFilterReleaseLvl">
-        <property name="text">
-         <string>Release Filter Lev.</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>spinFilterReleaseLvl</cstring>
-        </property>
-       </widget>
-      </item>
       <item row="13" column="0" colspan="3">
        <widget class="Line" name="line_4">
         <property name="orientation">
          <enum>Qt::Orientation::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="2">
-       <widget class="QSpinBox" name="spinFilterDecayLvl2">
-        <property name="maximum">
-         <number>8184</number>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="1">
-       <widget class="QSlider" name="sliderFilterDecayRate2">
-        <property name="maximum">
-         <number>31</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="0">
-       <widget class="QLabel" name="lblFilterDecayLvl1">
-        <property name="text">
-         <string>Decay Filter Lev. 1</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>spinFilterDecayLvl1</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QSlider" name="sliderFilterAttackLvl">
-        <property name="maximum">
-         <number>8184</number>
-        </property>
-        <property name="singleStep">
-         <number>100</number>
-        </property>
-        <property name="pageStep">
-         <number>500</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="lblFilterStartLvl">
-        <property name="text">
-         <string>Start Filter Lev.</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>spinFilterStartLvl</cstring>
         </property>
        </widget>
       </item>
@@ -1209,7 +1229,7 @@ Amp envelope can be used for a fade in and fade out.</string>
     <bool>false</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="btnEditUnk">
+  <widget class="QPushButton" name="btnEditMisc">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -1219,7 +1239,7 @@ Amp envelope can be used for a fade in and fade out.</string>
     </rect>
    </property>
    <property name="text">
-    <string>Edit unknown properties</string>
+    <string>Edit miscellaneous</string>
    </property>
   </widget>
   <action name="actionImportTone">
@@ -1303,7 +1323,6 @@ Amp envelope can be used for a fade in and fade out.</string>
   <tabstop>sliderLFOAmpDepth</tabstop>
   <tabstop>spinLFOAmpDepth</tabstop>
   <tabstop>comboLFOAmpWave</tabstop>
-  <tabstop>checkFilterOn</tabstop>
   <tabstop>sliderFilterStartLvl</tabstop>
   <tabstop>spinFilterStartLvl</tabstop>
   <tabstop>sliderFilterAttackRate</tabstop>
@@ -1324,7 +1343,7 @@ Amp envelope can be used for a fade in and fade out.</string>
   <tabstop>spinFilterReleaseLvl</tabstop>
   <tabstop>sliderFilterQ</tabstop>
   <tabstop>spinFilterQ</tabstop>
-  <tabstop>btnEditUnk</tabstop>
+  <tabstop>btnEditMisc</tabstop>
  </tabstops>
  <resources/>
  <connections>
