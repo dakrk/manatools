@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SplitMiscEditor</class>
- <widget class="QDialog" name="SplitMiscEditor">
+ <class>ProgramMiscEditor</class>
+ <widget class="QDialog" name="ProgramMiscEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Edit miscellaneous split properties</string>
+   <string>Edit miscellaneous program properties</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -205,6 +205,49 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Other</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="1">
+         <widget class="QSlider" name="horizontalSlider">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <underline>true</underline>
+           </font>
+          </property>
+          <property name="toolTip">
+           <string>&quot;Not sure what this is representing yet or if it's only 1 byte, but this is present when a program
+uses an unusual sample rate as so frequency can be adjusted to finer values than what just
+baseNote can represent. See issue #16.&quot;</string>
+          </property>
+          <property name="text">
+           <string>Freq. Adjust</string>
+          </property>
+          <property name="buddy">
+           <cstring>spinBox</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QSpinBox" name="spinBox"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Unknown</string>
@@ -212,101 +255,10 @@
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="2" column="0">
-         <widget class="QLabel" name="lblUnk3">
-          <property name="text">
-           <string>3</string>
-          </property>
-          <property name="buddy">
-           <cstring>spinUnk3</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QSlider" name="sliderUnk2">
-          <property name="maximum">
-           <number>65535</number>
-          </property>
-          <property name="pageStep">
-           <number>1024</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3">
-         <widget class="QLabel" name="lblUnk2Hex">
-          <property name="font">
-           <font>
-            <family>Monospace</family>
-           </font>
-          </property>
-          <property name="text">
-           <string>0x0</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QSlider" name="sliderUnk3">
-          <property name="maximum">
-           <number>255</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="lblUnk2">
-          <property name="text">
-           <string>2</string>
-          </property>
-          <property name="buddy">
-           <cstring>spinUnk2</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QSpinBox" name="spinUnk3">
-          <property name="maximum">
-           <number>255</number>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QSlider" name="sliderUnk1">
-          <property name="maximum">
-           <number>255</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="2">
          <widget class="QSpinBox" name="spinUnk1">
           <property name="maximum">
            <number>255</number>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QSpinBox" name="spinUnk2">
-          <property name="maximum">
-           <number>65535</number>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="3">
-         <widget class="QLabel" name="lblUnk3Hex">
-          <property name="font">
-           <font>
-            <family>Monospace</family>
-           </font>
-          </property>
-          <property name="text">
-           <string>0x0</string>
           </property>
          </widget>
         </item>
@@ -317,6 +269,16 @@
           </property>
           <property name="buddy">
            <cstring>spinUnk1</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSlider" name="sliderUnk1">
+          <property name="maximum">
+           <number>255</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
          </widget>
         </item>
@@ -371,24 +333,22 @@
   <tabstop>spinPitchFNS</tabstop>
   <tabstop>sliderPitchOCT</tabstop>
   <tabstop>spinPitchOCT</tabstop>
+  <tabstop>horizontalSlider</tabstop>
+  <tabstop>spinBox</tabstop>
   <tabstop>sliderUnk1</tabstop>
   <tabstop>spinUnk1</tabstop>
-  <tabstop>sliderUnk2</tabstop>
-  <tabstop>spinUnk2</tabstop>
-  <tabstop>sliderUnk3</tabstop>
-  <tabstop>spinUnk3</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>SplitMiscEditor</receiver>
+   <receiver>ProgramMiscEditor</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>236</x>
-     <y>379</y>
+     <x>245</x>
+     <y>490</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -399,12 +359,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>SplitMiscEditor</receiver>
+   <receiver>ProgramMiscEditor</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>304</x>
-     <y>379</y>
+     <x>313</x>
+     <y>490</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -419,12 +379,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>197</x>
-     <y>15</y>
+     <x>232</x>
+     <y>382</y>
     </hint>
     <hint type="destinationlabel">
-     <x>361</x>
-     <y>31</y>
+     <x>349</x>
+     <y>386</y>
     </hint>
    </hints>
   </connection>
@@ -435,76 +395,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>361</x>
-     <y>28</y>
+     <x>349</x>
+     <y>386</y>
     </hint>
     <hint type="destinationlabel">
-     <x>264</x>
-     <y>21</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sliderUnk2</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinUnk2</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>264</x>
-     <y>52</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>361</x>
-     <y>59</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinUnk2</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>sliderUnk2</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>361</x>
-     <y>59</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>264</x>
-     <y>48</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sliderUnk3</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinUnk3</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>264</x>
-     <y>80</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>361</x>
-     <y>87</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinUnk3</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>sliderUnk3</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>361</x>
-     <y>87</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>264</x>
-     <y>76</y>
+     <x>296</x>
+     <y>382</y>
     </hint>
    </hints>
   </connection>
@@ -515,8 +411,8 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>103</x>
-     <y>197</y>
+     <x>169</x>
+     <y>212</y>
     </hint>
     <hint type="destinationlabel">
      <x>368</x>
@@ -535,8 +431,8 @@
      <y>196</y>
     </hint>
     <hint type="destinationlabel">
-     <x>221</x>
-     <y>197</y>
+     <x>287</x>
+     <y>212</y>
     </hint>
    </hints>
   </connection>
@@ -547,8 +443,8 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>189</x>
-     <y>222</y>
+     <x>255</x>
+     <y>240</y>
     </hint>
     <hint type="destinationlabel">
      <x>371</x>
@@ -567,8 +463,40 @@
      <y>229</y>
     </hint>
     <hint type="destinationlabel">
-     <x>264</x>
-     <y>222</y>
+     <x>317</x>
+     <y>240</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>158</x>
+     <y>303</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>347</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>353</x>
+     <y>305</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>281</x>
+     <y>302</y>
     </hint>
    </hints>
   </connection>

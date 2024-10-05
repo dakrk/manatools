@@ -8,6 +8,7 @@
 #include <guicommon/utils.hpp>
 
 #include "ProgramEditor.hpp"
+#include "ProgramMiscEditor.hpp"
 
 ProgramEditor::ProgramEditor(QWidget* parent) :
 	QDialog(parent),
@@ -268,10 +269,10 @@ void ProgramEditor::convertToADPCM() {
 }
 
 void ProgramEditor::editUnknownProps() {
-/*	ProgramUnkEditor editor(program, this);
+	ProgramMiscEditor editor(program, this);
 	if (editor.exec() == QDialog::Accepted) {
 		program = std::move(editor.program);
-	}*/
+	}
 }
 
 void ProgramEditor::closeEvent(QCloseEvent* event) {

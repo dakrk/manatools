@@ -1175,8 +1175,9 @@ However, the note will still end when the envelope level reaches zero in the rel
          </font>
         </property>
         <property name="toolTip">
-         <string>The time in milliseconds that the tone will play for until a note off is fired. Must be a multiple of 4.
-Amp envelope can be used for a fade in and fade out.</string>
+         <string>&lt;p&gt;The time in milliseconds that the tone will play for until a note off is fired. Must be a multiple of 4.&lt;br&gt;
+Amp envelope can be used for a fade in and fade out.&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Does not yet work properly on version 1 files. Not confirmed to be milliseconds.&lt;/b&gt;&lt;/p&gt;</string>
         </property>
         <property name="text">
          <string>Loop Time</string>

@@ -11,6 +11,8 @@ add_executable(osbgui
 	OSBModel.cpp
 	ProgramEditor.ui
 	ProgramEditor.cpp
+	ProgramMiscEditor.ui
+	ProgramMiscEditor.cpp
 )
 
 target_link_libraries(osbgui PRIVATE
