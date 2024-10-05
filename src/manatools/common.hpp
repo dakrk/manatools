@@ -25,7 +25,7 @@ namespace manatools::common {
 	};
 
 	/**
-	 * Apparently, if the sample format is ADPCM and OCT is 2 or higher, FNS
+	 * Apparently, if the sample format is ADPCM and OCT is 2 or higher, OCT
 	 * is bumped up another octave.
 	 */
 	struct PitchRegs {

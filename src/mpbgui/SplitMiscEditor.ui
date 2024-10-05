@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>240</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,133 +15,9 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="0">
-      <widget class="QLabel" name="lblUnk3">
-       <property name="text">
-        <string>Unknown 3</string>
-       </property>
-       <property name="buddy">
-        <cstring>spinUnk3</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QSlider" name="sliderUnk2">
-       <property name="maximum">
-        <number>65535</number>
-       </property>
-       <property name="pageStep">
-        <number>1024</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QLabel" name="lblUnk2Hex">
-       <property name="font">
-        <font>
-         <family>Monospace</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>0x0</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QSlider" name="sliderUnk3">
-       <property name="maximum">
-        <number>255</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="lblUnk2">
-       <property name="text">
-        <string>Unknown 2</string>
-       </property>
-       <property name="buddy">
-        <cstring>spinUnk2</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QSpinBox" name="spinUnk3">
-       <property name="maximum">
-        <number>255</number>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QSlider" name="sliderUnk1">
-       <property name="maximum">
-        <number>255</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QSpinBox" name="spinUnk1">
-       <property name="maximum">
-        <number>255</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QSpinBox" name="spinUnk2">
-       <property name="maximum">
-        <number>65535</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="3">
-      <widget class="QLabel" name="lblUnk3Hex">
-       <property name="font">
-        <font>
-         <family>Monospace</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>0x0</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="lblUnk1">
-       <property name="text">
-        <string>Unknown 1</string>
-       </property>
-       <property name="buddy">
-        <cstring>spinUnk1</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="QLabel" name="lblUnk1Hex">
-       <property name="font">
-        <font>
-         <family>Monospace</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>0x0</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupUnkFlags">
+    <widget class="QGroupBox" name="groupFlags">
      <property name="title">
-      <string>Unknown flags</string>
+      <string>Flags</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="leftMargin">
@@ -157,44 +33,31 @@
        <number>6</number>
       </property>
       <item>
-       <widget class="QCheckBox" name="checkUnkFlag8">
+       <widget class="QCheckBox" name="checkFlagKYONEX">
         <property name="text">
-         <string>8</string>
+         <string>KYONEX</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkUnkFlag7">
+       <widget class="QCheckBox" name="checkFlagKYONB">
         <property name="text">
-         <string>7</string>
+         <string>KYONB</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkUnkFlag6">
-        <property name="text">
-         <string>6</string>
+       <widget class="QCheckBox" name="checkFlagSSCTL">
+        <property name="font">
+         <font>
+          <underline>true</underline>
+         </font>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkUnkFlag5">
-        <property name="text">
-         <string>5</string>
+        <property name="toolTip">
+         <string>If set, reads random data instead of sample data. Essentially a noise generator.</string>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkUnkFlag4">
         <property name="text">
-         <string>4</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkUnkFlag3">
-        <property name="text">
-         <string>3 (Noise?)</string>
+         <string>SSCTL</string>
         </property>
        </widget>
       </item>
@@ -210,6 +73,278 @@
          </size>
         </property>
        </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupEnvelopes">
+     <property name="title">
+      <string>Envelopes</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <property name="leftMargin">
+       <number>6</number>
+      </property>
+      <property name="topMargin">
+       <number>6</number>
+      </property>
+      <property name="rightMargin">
+       <number>6</number>
+      </property>
+      <property name="bottomMargin">
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="checkEnvLPSLNK">
+        <property name="font">
+         <font>
+          <underline>true</underline>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>&quot;If set, then the envelope transitions to the decay state when the sample loop start address is exceeded.&quot;</string>
+        </property>
+        <property name="text">
+         <string>LPSLNK</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupPitchRegs">
+     <property name="title">
+      <string>Pitch Registers</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>These seemingly have no audible impact, unless it impacts FX or envelopes?</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QLabel" name="lblPitchFNS">
+          <property name="text">
+           <string>FNS</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+          </property>
+          <property name="buddy">
+           <cstring>spinPitchFNS</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSlider" name="sliderPitchFNS">
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>2047</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QSpinBox" name="spinPitchFNS">
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>2047</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="lblPitchOCT">
+          <property name="font">
+           <font>
+            <underline>true</underline>
+           </font>
+          </property>
+          <property name="toolTip">
+           <string>Apparently, if the sample format is ADPCM and OCT is 2 or higher, OCT is bumped up another octave.</string>
+          </property>
+          <property name="text">
+           <string>Octave</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+          </property>
+          <property name="buddy">
+           <cstring>spinPitchOCT</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSlider" name="sliderPitchOCT">
+          <property name="minimum">
+           <number>-8</number>
+          </property>
+          <property name="maximum">
+           <number>7</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QSpinBox" name="spinPitchOCT">
+          <property name="minimum">
+           <number>-8</number>
+          </property>
+          <property name="maximum">
+           <number>7</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Unknown</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="2" column="0">
+         <widget class="QLabel" name="lblUnk3">
+          <property name="text">
+           <string>3</string>
+          </property>
+          <property name="buddy">
+           <cstring>spinUnk3</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSlider" name="sliderUnk2">
+          <property name="maximum">
+           <number>65535</number>
+          </property>
+          <property name="pageStep">
+           <number>1024</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QLabel" name="lblUnk2Hex">
+          <property name="font">
+           <font>
+            <family>Monospace</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>0x0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QSlider" name="sliderUnk3">
+          <property name="maximum">
+           <number>255</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="lblUnk2">
+          <property name="text">
+           <string>2</string>
+          </property>
+          <property name="buddy">
+           <cstring>spinUnk2</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QSpinBox" name="spinUnk3">
+          <property name="maximum">
+           <number>255</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSlider" name="sliderUnk1">
+          <property name="maximum">
+           <number>255</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QSpinBox" name="spinUnk1">
+          <property name="maximum">
+           <number>255</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QSpinBox" name="spinUnk2">
+          <property name="maximum">
+           <number>65535</number>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QLabel" name="lblUnk3Hex">
+          <property name="font">
+           <font>
+            <family>Monospace</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>0x0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="lblUnk1">
+          <property name="text">
+           <string>1</string>
+          </property>
+          <property name="buddy">
+           <cstring>spinUnk1</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QLabel" name="lblUnk1Hex">
+          <property name="font">
+           <font>
+            <family>Monospace</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>0x0</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -239,6 +374,22 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>checkFlagKYONEX</tabstop>
+  <tabstop>checkFlagKYONB</tabstop>
+  <tabstop>checkFlagSSCTL</tabstop>
+  <tabstop>checkEnvLPSLNK</tabstop>
+  <tabstop>sliderPitchFNS</tabstop>
+  <tabstop>spinPitchFNS</tabstop>
+  <tabstop>sliderPitchOCT</tabstop>
+  <tabstop>spinPitchOCT</tabstop>
+  <tabstop>sliderUnk1</tabstop>
+  <tabstop>spinUnk1</tabstop>
+  <tabstop>sliderUnk2</tabstop>
+  <tabstop>spinUnk2</tabstop>
+  <tabstop>sliderUnk3</tabstop>
+  <tabstop>spinUnk3</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -248,8 +399,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>227</x>
-     <y>181</y>
+     <x>236</x>
+     <y>379</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -264,8 +415,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>295</x>
-     <y>187</y>
+     <x>304</x>
+     <y>379</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -284,8 +435,8 @@
      <y>15</y>
     </hint>
     <hint type="destinationlabel">
-     <x>280</x>
-     <y>24</y>
+     <x>361</x>
+     <y>31</y>
     </hint>
    </hints>
   </connection>
@@ -296,8 +447,8 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>285</x>
-     <y>18</y>
+     <x>361</x>
+     <y>28</y>
     </hint>
     <hint type="destinationlabel">
      <x>264</x>
@@ -316,8 +467,8 @@
      <y>52</y>
     </hint>
     <hint type="destinationlabel">
-     <x>299</x>
-     <y>47</y>
+     <x>361</x>
+     <y>59</y>
     </hint>
    </hints>
   </connection>
@@ -328,8 +479,8 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>291</x>
-     <y>53</y>
+     <x>361</x>
+     <y>59</y>
     </hint>
     <hint type="destinationlabel">
      <x>264</x>
@@ -348,8 +499,8 @@
      <y>80</y>
     </hint>
     <hint type="destinationlabel">
-     <x>285</x>
-     <y>75</y>
+     <x>361</x>
+     <y>87</y>
     </hint>
    </hints>
   </connection>
@@ -360,12 +511,76 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>295</x>
-     <y>78</y>
+     <x>361</x>
+     <y>87</y>
     </hint>
     <hint type="destinationlabel">
      <x>264</x>
      <y>76</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderPitchFNS</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinPitchFNS</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>103</x>
+     <y>197</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>368</x>
+     <y>198</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinPitchFNS</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderPitchFNS</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>359</x>
+     <y>196</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>221</x>
+     <y>197</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sliderPitchOCT</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinPitchOCT</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>189</x>
+     <y>222</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>371</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinPitchOCT</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sliderPitchOCT</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>358</x>
+     <y>229</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>264</x>
+     <y>222</y>
     </hint>
    </hints>
   </connection>

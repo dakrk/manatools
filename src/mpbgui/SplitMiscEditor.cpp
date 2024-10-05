@@ -34,28 +34,32 @@ void SplitMiscEditor::connectSpinnerHexLabel(QSpinBox* spinner, QLabel* label) {
 }
 
 void SplitMiscEditor::loadSplitData() {
+	ui.checkFlagKYONEX->setChecked(split.unkFlags & (1 << 7));
+	ui.checkFlagKYONB->setChecked(split.unkFlags & (1 << 6));
+	ui.checkFlagSSCTL->setChecked(split.unkFlags & (1 << 2));
+
+	ui.checkEnvLPSLNK->setChecked(split.amp.LPSLNK);
+
+	ui.spinPitchFNS->setValue(split.pitch.FNS);
+	ui.spinPitchOCT->setValue(split.pitch.OCT);
+
 	ui.spinUnk1->setValue(split.unk1);
 	ui.spinUnk2->setValue(split.unk2);
 	ui.spinUnk3->setValue(split.unk3);
-
-	ui.checkUnkFlag8->setChecked(split.unkFlags & (1 << 7));
-	ui.checkUnkFlag7->setChecked(split.unkFlags & (1 << 6));
-	ui.checkUnkFlag6->setChecked(split.unkFlags & (1 << 5));
-	ui.checkUnkFlag5->setChecked(split.unkFlags & (1 << 4));
-	ui.checkUnkFlag4->setChecked(split.unkFlags & (1 << 3));
-	ui.checkUnkFlag3->setChecked(split.unkFlags & (1 << 2));
 }
 
 void SplitMiscEditor::setSplitData() {
+	split.unkFlags = 0;
+	split.unkFlags |= ui.checkFlagKYONEX->isChecked() ? (1 << 7) : 0;
+	split.unkFlags |= ui.checkFlagKYONB->isChecked() ? (1 << 6) : 0;
+	split.unkFlags |= ui.checkFlagSSCTL->isChecked() ? (1 << 2) : 0;
+
+	split.amp.LPSLNK = ui.checkEnvLPSLNK->isChecked();
+
+	split.pitch.FNS = ui.spinPitchFNS->value();
+	split.pitch.OCT = ui.spinPitchOCT->value();
+
 	split.unk1 = ui.spinUnk1->value();
 	split.unk2 = ui.spinUnk2->value();
 	split.unk3 = ui.spinUnk3->value();
-
-	split.unkFlags = 0;
-	split.unkFlags |= ui.checkUnkFlag8->isChecked() ? (1 << 7) : 0;
-	split.unkFlags |= ui.checkUnkFlag7->isChecked() ? (1 << 6) : 0;
-	split.unkFlags |= ui.checkUnkFlag6->isChecked() ? (1 << 5) : 0;
-	split.unkFlags |= ui.checkUnkFlag5->isChecked() ? (1 << 4) : 0;
-	split.unkFlags |= ui.checkUnkFlag4->isChecked() ? (1 << 3) : 0;
-	split.unkFlags |= ui.checkUnkFlag3->isChecked() ? (1 << 2) : 0;
 }
