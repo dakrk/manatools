@@ -301,17 +301,25 @@
          </layout>
         </widget>
        </widget>
-       <widget class="QTabWidget" name="tabs">
-        <widget class="QWidget" name="tabKeyMap">
-         <attribute name="title">
-          <string>Key Map</string>
-         </attribute>
-        </widget>
-        <widget class="QWidget" name="tabTone">
-         <attribute name="title">
-          <string>Tone</string>
-         </attribute>
-        </widget>
+       <widget class="QFrame" name="keyMap">
+        <property name="frameShape">
+         <enum>QFrame::Shape::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Shadow::Sunken</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Key map should be here, eventually...</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
      </widget>

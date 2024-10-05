@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SplitUnkEditor</class>
- <widget class="QDialog" name="SplitUnkEditor">
+ <class>SplitMiscEditor</class>
+ <widget class="QDialog" name="SplitMiscEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Edit unknown split properties</string>
+   <string>Edit miscellaneous split properties</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -244,7 +244,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>SplitUnkEditor</receiver>
+   <receiver>SplitMiscEditor</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -260,7 +260,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>SplitUnkEditor</receiver>
+   <receiver>SplitMiscEditor</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

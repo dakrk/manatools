@@ -30,7 +30,7 @@ public slots:
 	bool importTone();
 	bool exportTone();
 	void convertToADPCM();
-	void editUnknownProps();
+	void editMiscProps();
 
 protected:
 	void closeEvent(QCloseEvent* event) override;

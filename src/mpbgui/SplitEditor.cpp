@@ -9,7 +9,7 @@
 #include <guicommon/utils.hpp>
 
 #include "SplitEditor.hpp"
-#include "SplitUnkEditor.hpp"
+#include "SplitMiscEditor.hpp"
 #include "VelCurveEditor.hpp"
 
 SplitEditor::SplitEditor(QWidget* parent) :
@@ -101,7 +101,7 @@ void SplitEditor::init() {
 	connect(ui.actionImportTone, &QAction::triggered, this, &SplitEditor::importTone);
 	connect(ui.actionExportTone, &QAction::triggered, this, &SplitEditor::exportTone);
 	connect(ui.actionConvertToADPCM, &QAction::triggered, this, &SplitEditor::convertToADPCM);
-	connect(ui.btnEditMisc, &QPushButton::clicked, this, &SplitEditor::editUnknownProps);
+	connect(ui.btnEditMisc, &QPushButton::clicked, this, &SplitEditor::editMiscProps);
 
 	connect(this, &QDialog::accepted, this, &SplitEditor::setSplitData);
 	connect(this, &QDialog::finished, this, &SplitEditor::saveSettings);
@@ -334,8 +334,8 @@ void SplitEditor::convertToADPCM() {
 	loadToneData();
 }
 
-void SplitEditor::editUnknownProps() {
-	SplitUnkEditor editor(split, this);
+void SplitEditor::editMiscProps() {
+	SplitMiscEditor editor(split, this);
 	if (editor.exec() == QDialog::Accepted) {
 		split = std::move(editor.split);
 	}
