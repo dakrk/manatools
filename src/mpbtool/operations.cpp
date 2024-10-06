@@ -157,6 +157,7 @@ void mpbListInfo(const fs::path& mpbPath) {
 
 				printfDepth(3, "Pan pot             = %d\n", split.panPot);
 				printfDepth(3, "Direct level        = %u\n", split.directLevel);
+				printfDepth(3, "Oscillator level    = %u\n", split.oscillatorLevel);
 
 				printfDepth(3, "Loop?               = %s\n", BOOLSTR(split.loop));
 				printfDepth(3, "Loop start          = %u samples\n", split.loopStart);
@@ -178,9 +179,18 @@ void mpbListInfo(const fs::path& mpbPath) {
 				printfDepth(3, "Drum mode?          = %s\n", BOOLSTR(split.drumMode));
 				printfDepth(3, "Drum group ID       = %u\n", split.drumGroupID);
 
-				// TODO: Checksum?
+				printfDepth(3, "FX input channel    = %u\n", split.fx.inputCh);
+				printfDepth(3, "FX level            = %u\n", split.fx.level);
+
+				
 			}
 		}
 	}
+
+	/**
+	 * I feel like the envelope values would be too much information, so put
+	 * that behind a flag once better command line parsing is possible.
+	 * Perhaps do checksum comparisons, too?
+	 */
 	fputs("Currently, not all MPB information is listed.\n", stderr);
 }

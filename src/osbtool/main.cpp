@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cstdarg>
 #include <cstring>
 
 #include <manatools/filesystem.hpp>
@@ -8,6 +9,16 @@
 #include <manatools/version.hpp>
 #include <manatools/wav.hpp>
 
+#ifndef _WIN32
+	#define HEADING "\033[1m"
+	#define HEADING_END "\033[0m"
+#else
+	#define HEADING ""
+	#define HEADING_END ""
+#endif
+
+#define BOOLSTR(b) (b ? "true" : "false")
+
 namespace fs = manatools::fs;
 namespace io = manatools::io;
 
@@ -15,6 +26,16 @@ enum class ToneExportType {
 	WAV,
 	DAT_TXTH
 };
+
+static void printfDepth(uint depth, const char* format, ...) {
+	for (uint i = 0; i < depth; i++)
+		fputs("    ", stdout);
+
+	va_list args;
+	va_start(args, format);
+	vprintf(format, args);
+	va_end(args);
+}
 
 static void osbVersionCheck(u32 version) {
 	if (version != 2) {
@@ -64,6 +85,45 @@ void osbExtractTones(const fs::path& osbPath, const fs::path& outPath, ToneExpor
 	}	
 }
 
+void osbListInfo(const fs::path& mpbPath) {
+	auto osb = manatools::osb::load(mpbPath);
+
+	osbVersionCheck(osb.version);
+
+	printf("Version = %u\n", osb.version);
+
+	for (size_t p = 0; p < osb.programs.size(); p++) {
+		const auto& program = osb.programs[p];
+
+		printf(HEADING "Program %zu:\n" HEADING_END, p);
+		printfDepth(1, "Base note           = %u\n", program.baseNote);
+
+		printfDepth(1, "Pan pot             = %d\n", program.panPot);
+		printfDepth(1, "Direct level        = %u\n", program.directLevel);
+		printfDepth(1, "Oscillator level    = %u\n", program.oscillatorLevel);
+
+		printfDepth(1, "Loop?               = %s\n", BOOLSTR(program.loop));
+		printfDepth(1, "Loop start          = %u samples\n", program.loopStart);
+		printfDepth(1, "Loop end            = %u samples\n", program.loopEnd);
+		printfDepth(1, "Loop time           = %u\n", program.loopTime);
+
+		if (program.tone.data) {
+			printfDepth(1, "Tone format         = %s\n", manatools::tone::formatName(program.tone.format));
+			printfDepth(1, "Tone data size      = %zu samples\n", program.tone.samples());
+			printfDepth(1, "Tone data pointer   = %x\n", program.ptrToneData_);
+			printfDepth(1, "Tone data use count = %lu\n", program.tone.data.use_count());
+		} else {
+			printfDepth(1, "No tone data\n");
+		}
+
+		printfDepth(1, "FX input channel    = %u\n", program.fx.inputCh);
+		printfDepth(1, "FX level            = %u\n", program.fx.level);
+
+		printfDepth(1, "Freq. adjust(?)     = %u\n", program.freqAdjust);
+	}
+	fputs("Currently, not all OSB information is listed.\n", stderr);
+}
+
 // TODO: As with literally every other CLI tool so far, needs better argv parsing
 int main(int argc, char** argv) {
 	try {
@@ -81,6 +141,8 @@ int main(int argc, char** argv) {
 			} else {
 				goto invalid;
 			}
+		} else if (!strcmp(argv[1], "list")) {
+			osbListInfo(argv[2]);
 		} else {
 			goto invalid;
 		}
@@ -98,6 +160,7 @@ invalid:
 		"https://github.com/dakrk/manatools\n"
 		"\n"
 		"Usage: %s extract <format> <in.osb> <outdir>\n"
+		"       %s list <in.osb>\n"
 		"\n"
 		"Where \"extract\" exports multiple files of <format> to <outdir>.\n"
 		"<format> can be one of the following:\n"
@@ -109,6 +172,7 @@ invalid:
 		"\n"
 		"The aforementioned usage syntax is not final and will be revised.\n",
 		manatools::versionString,
+		argv[0],
 		argv[0]
 	);
 
