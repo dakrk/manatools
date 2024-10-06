@@ -14,7 +14,7 @@ int OSBModel::rowCount(const QModelIndex& parent) const {
 }
 
 int OSBModel::columnCount(const QModelIndex& parent) const {
-	return parent.isValid() ? 0 : 6;
+	return parent.isValid() ? 0 : 7;
 }
 
 QVariant OSBModel::data(const QModelIndex& index, int role) const {
@@ -34,10 +34,11 @@ QVariant OSBModel::data(const QModelIndex& index, int role) const {
 				}
 			}
 			case 1: return static_cast<uint>(program.tone.samples());
-			case 2: return program.directLevel;
-			case 3: return program.panPot;
-			case 4: return program.fx.level;
-			case 5: return program.fx.inputCh;
+			case 2: return program.oscillatorLevel;
+			case 3: return program.directLevel;
+			case 4: return program.panPot;
+			case 5: return program.fx.level;
+			case 6: return program.fx.inputCh;
 		}
 	}
 
@@ -50,10 +51,11 @@ QVariant OSBModel::headerData(int section, Qt::Orientation orientation, int role
 			switch (section) {
 				case 0: return tr("Program Name");
 				case 1: return tr("Samples");
-				case 2: return tr("Direct Level");
-				case 3: return tr("Pan Pot");
-				case 4: return tr("FX Level");
-				case 5: return tr("FX Ch.");
+				case 2: return tr("Osc. Level");
+				case 3: return tr("Direct Level");
+				case 4: return tr("Pan Pot");
+				case 5: return tr("FX Level");
+				case 6: return tr("FX Ch.");
 			}
 		} else if (orientation == Qt::Vertical) {
 			return section;
@@ -76,10 +78,11 @@ bool OSBModel::setData(const QModelIndex& index, const QVariant& value, int role
 	if (role == Qt::EditRole) {
 		switch (index.column()) {
 			case 0: { program.userData = value.toString(); return true; }
-			case 2: return changeData(index, program.directLevel, qBound(value.toInt(),   0, 15));
-			case 3: return changeData(index, program.panPot,      qBound(value.toInt(), -15, 15));
-			case 4: return changeData(index, program.fx.level,    qBound(value.toInt(),   0, 15));
-			case 5: return changeData(index, program.fx.inputCh,  qBound(value.toInt(),   0, 15));
+			case 2: return changeData(index, program.oscillatorLevel, qBound(value.toInt(),   0, 255));
+			case 3: return changeData(index, program.directLevel,     qBound(value.toInt(),   0,  15));
+			case 4: return changeData(index, program.panPot,          qBound(value.toInt(), -15,  15));
+			case 5: return changeData(index, program.fx.level,        qBound(value.toInt(),   0,  15));
+			case 6: return changeData(index, program.fx.inputCh,      qBound(value.toInt(),   0,  15));
 		}
 	}
 
