@@ -10,7 +10,6 @@
 #include <QPushButton>
 #include <QScreen>
 #include <QStatusBar>
-#include <QTimer>
 #include <QToolButton>
 #include <QVBoxLayout>
 #include <manatools/io.hpp>

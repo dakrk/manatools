@@ -4,12 +4,12 @@
 #include <manatools/version.hpp>
 
 #include "MainWindow.hpp"
-#include "mltgui.hpp"
+#include "fobgui.hpp"
 
 int main(int argc, char** argv) {
 	QApplication app(argc, argv);
-	app.setApplicationName("mltgui");
-	app.setApplicationDisplayName("mltgui");
+	app.setApplicationName("fobgui");
+	app.setApplicationDisplayName("fobgui");
 	app.setApplicationVersion(manatools::versionString);
 	app.setOrganizationName("DarkOK");
 	app.setOrganizationDomain("darkok.xyz");
@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
 	cmdline.setApplicationDescription(cmdline.tr(APP_DESCRIPTION));
 	cmdline.addHelpOption();
 	cmdline.addVersionOption();
-	cmdline.addPositionalArgument("file", cmdline.tr("Path to MLT file to open."));
+	cmdline.addPositionalArgument("file", cmdline.tr("Path to FOB file to open."));
 	cmdline.process(app);
 
 	const QStringList args = cmdline.positionalArguments();

@@ -14,6 +14,7 @@ add_subdirectory(mpbtool)
 add_subdirectory(msbtool)
 add_subdirectory(osbtool)
 
+add_subdirectory(fobgui)
 add_subdirectory(mltgui)
 add_subdirectory(mpbgui)
 add_subdirectory(osbgui)
@@ -29,6 +30,7 @@ install(
 		msbtool
 		osbtool
 
+		fobgui
 		mltgui
 		mpbgui
 		osbgui
