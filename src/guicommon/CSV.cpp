@@ -52,7 +52,7 @@ void CSV::write(QTextStream& stream) const {
 			const QString& col = cols[i];
 
 			if (col.contains(',') || col.contains('"')) {
-				QString colEscaped;
+				QString colEscaped = col;
 				colEscaped.replace("\"", "\"\"");
 				stream << '"' << colEscaped << '"';
 			} else {

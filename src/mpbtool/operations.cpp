@@ -181,8 +181,6 @@ void mpbListInfo(const fs::path& mpbPath) {
 
 				printfDepth(3, "FX input channel    = %u\n", split.fx.inputCh);
 				printfDepth(3, "FX level            = %u\n", split.fx.level);
-
-				
 			}
 		}
 	}
