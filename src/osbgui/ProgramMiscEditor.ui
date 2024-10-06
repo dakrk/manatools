@@ -110,7 +110,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>These seemingly have no audible impact, unless it impacts FX or envelopes?</string>
+         <string>These seemingly only impact envelopes.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -229,7 +229,7 @@
           <property name="toolTip">
            <string>&quot;Not sure what this is representing yet or if it's only 1 byte, but this is present when a program
 uses an unusual sample rate as so frequency can be adjusted to finer values than what just
-baseNote can represent. See issue #16.&quot;</string>
+baseNote can represent. Different between versions. See issue #16.&quot;</string>
           </property>
           <property name="text">
            <string>Freq. Adjust</string>

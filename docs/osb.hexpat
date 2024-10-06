@@ -79,11 +79,12 @@ namespace osb {
     std::assert(sizeof(ProgramFilterPre) == 1, "ProgramFilterPre must be 1 byte");
 
     /**
-     * Unlike MPB, OSB's pan values are the same between version 1 and 2. A 15 being
-     * in the calculation instead of a 16 like MPB means you don't have two centers.
+     * Unlike MPB, OSB pan values are usually the same between version 1 and 2.
+     * However, due to an SDK tool quirk, panning fully left isn't possible.
+     * (It considers 0x10 to be -1, and not 0.)
      */
     fn calcPanPot(u8 panIn) {
-        return panIn >= 16 ? 15 - s8(panIn) : s8(panIn);
+        return (panIn & 0x10) ? -s8(panIn & 0xF) : (panIn & 0xF);
     };
 
     fn calcChecksum(u32 start, u32 end) {

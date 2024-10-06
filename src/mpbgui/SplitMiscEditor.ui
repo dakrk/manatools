@@ -110,7 +110,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>These seemingly have no audible impact, unless it impacts FX or envelopes?</string>
+         <string>These seemingly only impact envelopes.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

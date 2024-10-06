@@ -98,13 +98,7 @@ Bank load(const fs::path& path, bool guessToneSize) {
 		io.readU16LE(&pitchBitfield);
 		program.pitch.FNS = utils::readBits(pitchBitfield, 0, 11);
 		program.pitch.OCT = utils::readBits(pitchBitfield, 11, 4);
-
-		// Convert from 4 bit signed
-		if (program.pitch.OCT & 0b1000) {
-			program.pitch.OCT = -(program.pitch.OCT & 0b0111);
-		} else {
-			program.pitch.OCT = (program.pitch.OCT & 0b0111);
-		}
+		program.pitch.OCT = (program.pitch.OCT & 0x7) - (program.pitch.OCT & 0x8);
 
 		u16 lfoBitfield;
 		io.readU16LE(&lfoBitfield);
@@ -277,13 +271,7 @@ void Bank::save(const fs::path& path) {
 
 		u16 pitchBits = 0;
 		WRITEBITS(pitchBits, program.pitch.FNS, 0, 11);
-
-		u8 pitchOCT = program.pitch.OCT & 0b0111;
-		if (program.pitch.OCT < 0) {
-			pitchOCT |= 0b1000;
-		}
-
-		WRITEBITS(pitchBits, pitchOCT, 11, 4);
+		WRITEBITS(pitchBits, (program.pitch.OCT + 0x10) & 0xF, 11, 4);
 		io.writeU16LE(pitchBits);
 
 		u16 lfoBits = 0;
@@ -405,11 +393,11 @@ void Bank::save(const fs::path& path) {
 }
 
 s8 Program::fromPanPot(u8 in) {
-	return in >= 16 ? 15 - (s8)in : (s8)in;
+	return (in & 0x10) ? -(in & 0xF) : (in & 0xF);
 }
 
 u8 Program::toPanPot(s8 in) {
-	return in >= 0 ? in : 15 - in;
+	return in >= 0 ? in : 16 - in;
 }
 
 } // namespace manatools::osb

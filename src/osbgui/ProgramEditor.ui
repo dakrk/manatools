@@ -925,6 +925,15 @@ However, the note will still end when the envelope level reaches zero in the rel
     </item>
     <item row="0" column="0" colspan="2">
      <widget class="QLabel" name="lblBaseNote">
+      <property name="font">
+       <font>
+        <underline>true</underline>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>This is used to determine what sample rate to play the tone at. 60 is 44100Hz, 72 is 22050Hz.
+Not done automatically yet due to complications with different sample rates and more, sorry.</string>
+      </property>
       <property name="text">
        <string>Base Note</string>
       </property>
