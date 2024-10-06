@@ -87,6 +87,10 @@ MainWindow::MainWindow(QWidget* parent) :
 		}
 	});
 
+	connect(model, &QAbstractTableModel::rowsInserted, this, [this]() { setWindowModified(true); });
+	connect(model, &QAbstractTableModel::rowsMoved,    this, [this]() { setWindowModified(true); });
+	connect(model, &QAbstractTableModel::rowsRemoved,  this, [this]() { setWindowModified(true); });
+
 	connect(ui.tblPrograms, &QTableView::activated, this, [this](const QModelIndex& index) {
 		if (index.isValid() && index.column() == 1) {
 			editProgram();
