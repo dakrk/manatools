@@ -17,11 +17,11 @@ namespace manatools::fob {
 		s8 pan[CHANNELS];
 	};
 
-	struct FOB {
+	struct Bank {
 		void save(const fs::path& path);
 		u32 version = 2;
 		std::vector<Mixer> mixers;
 	};
 
-	FOB load(const fs::path& path);
+	Bank load(const fs::path& path);
 } // namespace manatools::fob

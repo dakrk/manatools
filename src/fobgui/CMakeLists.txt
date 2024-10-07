@@ -7,6 +7,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 add_executable(fobgui
 	main.cpp
 	MainWindow.cpp
+	FOBModel.cpp
 )
 
 target_link_libraries(fobgui PRIVATE

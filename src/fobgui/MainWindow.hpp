@@ -1,7 +1,12 @@
 #pragma once
+#include <QListView>
 #include <QMainWindow>
 #include <QSettings>
+#include <QSlider>
+#include <QVector>
 #include <manatools/fob.hpp>
+
+#include "FOBModel.hpp"
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -35,5 +40,11 @@ private:
 	QSettings settings;
 	QString curFile;
 
-	manatools::fob::FOB fob;
+	QListView* list;
+	FOBModel* model;
+
+	QVector<QSlider*> levelSliders;
+	QVector<QSlider*> panSliders;
+
+	manatools::fob::Bank bank;
 };

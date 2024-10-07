@@ -3,9 +3,9 @@
 
 namespace manatools::fob {
 
-FOB load(const fs::path& path) {
+Bank load(const fs::path& path) {
 	io::FileIO io(path, "rb");
-	FOB fob;
+	Bank bank;
 
 	FourCC magic;
 	u32 numMixers;
@@ -15,21 +15,21 @@ FOB load(const fs::path& path) {
 		throw std::runtime_error("Invalid FOB file");
 	}
 
-	io.readU32LE(&fob.version);
-	if (fob.version != 1 && fob.version != 2) {
-		throw std::runtime_error("Invalid FOB version: " + std::to_string(fob.version));
+	io.readU32LE(&bank.version);
+	if (bank.version != 1 && bank.version != 2) {
+		throw std::runtime_error("Invalid FOB version: " + std::to_string(bank.version));
 	}
 
 	io.forward(4); // fileSize, but we don't need this
 	io.readU32LE(&numMixers);
 
-	fob.mixers.resize(numMixers);
+	bank.mixers.resize(numMixers);
 
 	u32 mixerDataPos;
 	io.readU32LE(&mixerDataPos);
 	io.jump(mixerDataPos);
 
-	for (auto& mixer : fob.mixers) {
+	for (auto& mixer : bank.mixers) {
 		for (uint i = 0; i < CHANNELS; i++) {
 			u8 pan;
 			io.readU8(&mixer.level[i]);
@@ -38,10 +38,10 @@ FOB load(const fs::path& path) {
 		}
 	}
 
-	return fob;
+	return bank;
 }
 
-void FOB::save(const fs::path& path) {
+void Bank::save(const fs::path& path) {
 	io::DynBufIO::VecType outBuf;
 	io::DynBufIO io(outBuf);
 

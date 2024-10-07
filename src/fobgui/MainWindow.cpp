@@ -4,6 +4,7 @@
 #include <QGridLayout>
 #include <QInputDialog>
 #include <QLabel>
+#include <QListView>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QMimeData>
@@ -41,6 +42,28 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	setCurrentFile();
 
+	list = new QListView();
+	model = new FOBModel(&bank);
+	list->setModel(model);
+
+	QPushButton* btnAdd = new QPushButton(QIcon::fromTheme("list-add"), "");
+	QPushButton* btnDel = new QPushButton(QIcon::fromTheme("list-remove"), "");
+
+	QHBoxLayout* listButtonsLayout = new QHBoxLayout();
+	listButtonsLayout->addWidget(btnAdd);
+	listButtonsLayout->addWidget(btnDel);
+	listButtonsLayout->addStretch(1);
+
+	QVBoxLayout* listLayout = new QVBoxLayout();
+	listLayout->addWidget(list);
+	listLayout->addLayout(listButtonsLayout);
+	listLayout->setContentsMargins(0, 0, 0, 0);
+
+	// dumb widget because Qt doesn't let you set the width of a layout itself
+	QWidget* listLayoutContainer = new QWidget();
+	listLayoutContainer->setLayout(listLayout);
+	listLayoutContainer->setMaximumWidth(150);
+
 	QFont headingFont = font();
 	headingFont.setBold(true);
 
@@ -61,15 +84,20 @@ MainWindow::MainWindow(QWidget* parent) :
 	mixerLayout->addWidget(lblFXLevel, 0, 1, 1, 1);
 	mixerLayout->addWidget(lblFXPan, 0, 3, 1, 1);
 
+	levelSliders.resize(manatools::fob::CHANNELS);
+	panSliders.resize(manatools::fob::CHANNELS);
+
 	for (uint i = 0; i < manatools::fob::CHANNELS; i++) {
 		QSlider* sliderLevel = new QSlider(Qt::Horizontal);
 		sliderLevel->setMaximum(15);
+		levelSliders[i] = sliderLevel;
 
 		QLabel* lblLevel = new QLabel();
 
 		QSlider* sliderPan = new QSlider(Qt::Horizontal);
 		sliderPan->setMinimum(-15);
 		sliderPan->setMaximum(15);
+		panSliders[i] = sliderPan;
 
 		QLabel* lblPan = new QLabel();
 
@@ -95,7 +123,9 @@ MainWindow::MainWindow(QWidget* parent) :
 	mixerLayout->setColumnMinimumWidth(4, 30);
 
 	QHBoxLayout* mainLayout = new QHBoxLayout();
+	mainLayout->addWidget(listLayoutContainer);
 	mainLayout->addLayout(mixerLayout);
+	mainLayout->setStretch(1, 1);
 
 	QWidget* mainLayoutWidget = new QWidget();
 	mainLayoutWidget->setLayout(mainLayout);
@@ -106,7 +136,7 @@ bool MainWindow::loadFile(const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
 
 	try {
-		fob = manatools::fob::load(path.toStdWString());
+		bank = manatools::fob::load(path.toStdWString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
 		QMessageBox::warning(this, tr("Open FX output bank file"), tr("Failed to load FX output bank file: %1").arg(err.what()));
@@ -114,6 +144,7 @@ bool MainWindow::loadFile(const QString& path) {
 	}
 
 	setCurrentFile(path);
+	model->setBank(&bank);
 	return true;
 }
 
@@ -121,7 +152,7 @@ bool MainWindow::saveFile(const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
 
 	try {
-		fob.save(path.toStdWString());
+		bank.save(path.toStdWString());
 	} catch (const std::runtime_error& err) {
 		cursor.restore();
 		QMessageBox::warning(this, tr("Save FX output bank file"), tr("Failed to save FX output bank file: %1").arg(err.what()));
@@ -134,8 +165,9 @@ bool MainWindow::saveFile(const QString& path) {
 
 void MainWindow::newFile() {
 	if (maybeSave()) {
-		fob = {};
+		bank = {};
 		setCurrentFile();
+		model->setBank(&bank);
 	}
 }
 
@@ -200,14 +232,14 @@ void MainWindow::versionDialog() {
 		tr("Set bank version"),
 		tr("Version:"),
 		QLineEdit::Normal,
-		formatHex(fob.version),
+		formatHex(bank.version),
 		&ok
 	);
 
 	if (ok && !verStr.isEmpty()) {
 		u32 newVer = verStr.toUInt(&ok, 0);
-		if (ok && newVer != fob.version) {
-			fob.version = newVer;
+		if (ok && newVer != bank.version) {
+			bank.version = newVer;
 			setWindowModified(true);
 		}
 	}
