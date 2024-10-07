@@ -40,6 +40,66 @@ MainWindow::MainWindow(QWidget* parent) :
 	helpMenu->addAction(tr("About Qt"), this, [this]() { QMessageBox::aboutQt(this); });
 
 	setCurrentFile();
+
+	QFont headingFont = font();
+	headingFont.setBold(true);
+
+	QLabel* lblChannel = new QLabel(tr("Channel"));
+	lblChannel->setAlignment(Qt::AlignHCenter);
+	lblChannel->setFont(headingFont);
+
+	QLabel* lblFXLevel = new QLabel(tr("FX Level"));
+	lblFXLevel->setAlignment(Qt::AlignHCenter);
+	lblFXLevel->setFont(headingFont);
+
+	QLabel* lblFXPan = new QLabel(tr("FX Pan"));
+	lblFXPan->setAlignment(Qt::AlignHCenter);
+	lblFXPan->setFont(headingFont);
+
+	QGridLayout* mixerLayout = new QGridLayout();
+	mixerLayout->addWidget(lblChannel, 0, 0);
+	mixerLayout->addWidget(lblFXLevel, 0, 1, 1, 1);
+	mixerLayout->addWidget(lblFXPan, 0, 3, 1, 1);
+
+	for (uint i = 0; i < manatools::fob::CHANNELS; i++) {
+		QSlider* sliderLevel = new QSlider(Qt::Horizontal);
+		sliderLevel->setMaximum(15);
+
+		QLabel* lblLevel = new QLabel();
+
+		QSlider* sliderPan = new QSlider(Qt::Horizontal);
+		sliderPan->setMinimum(-15);
+		sliderPan->setMaximum(15);
+
+		QLabel* lblPan = new QLabel();
+
+		auto row = mixerLayout->rowCount();
+
+		mixerLayout->addWidget(new QLabel(tr("Channel %1").arg(i)), row, 0);
+		mixerLayout->addWidget(sliderLevel, row, 1);
+		mixerLayout->addWidget(lblLevel, row, 2);
+		mixerLayout->addWidget(sliderPan, row, 3);
+		mixerLayout->addWidget(lblPan, row, 4);
+
+		connect(sliderLevel, &QAbstractSlider::valueChanged, this, [lblLevel](int value) {
+			lblLevel->setNum(value);
+		});
+
+		connect(sliderPan, &QAbstractSlider::valueChanged, this, [lblPan](int value) {
+			lblPan->setNum(value);
+		});
+	}
+
+	mixerLayout->setRowStretch(mixerLayout->rowCount(), 1);
+	mixerLayout->setColumnMinimumWidth(2, 30);
+	mixerLayout->setColumnMinimumWidth(4, 30);
+
+	QHBoxLayout* mainLayout = new QHBoxLayout();
+	mainLayout->addLayout(mixerLayout);
+
+	QWidget* mainLayoutWidget = new QWidget();
+	mainLayoutWidget->setLayout(mainLayout);
+	setCentralWidget(mainLayoutWidget);
 }
 
 bool MainWindow::loadFile(const QString& path) {
@@ -225,7 +285,7 @@ void MainWindow::setCurrentFile(const QString& path) {
 
 void MainWindow::restoreSettings() {
 	if (!restoreGeometry(settings.value("MainWindow/Geometry").toByteArray())) {
-		resize(425, 400);
+		resize(480, 425);
 		move(QApplication::primaryScreen()->availableGeometry().center() - frameGeometry().center());
 	}
 }
