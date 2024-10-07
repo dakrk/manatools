@@ -353,21 +353,24 @@ bool MainWindow::importTone() {
 }
 
 bool MainWindow::exportTone() {
-	auto curIdx = ui.tblPrograms->currentIndex();
-	if (!curIdx.isValid())
-		return false;
+	const auto selRows = ui.tblPrograms->selectionModel()->selectedRows();
+	bool failed = false;
 
-	const auto& program = bank.programs[curIdx.row()];
-	auto metadata = tone::Metadata::fromOSB(program);
+	for (const auto& idx : selRows) {
+		const auto& program = bank.programs[idx.row()];
+		auto metadata = tone::Metadata::fromOSB(program);
 
-	return tone::exportDialog(
-		program.tone,
-		&metadata,
-		getOutPath(curFile, true),
-		QFileInfo(curFile).baseName(),
-		QString::number(curIdx.row()),
-		this
-	);
+		failed |= !tone::exportDialog(
+			program.tone,
+			&metadata,
+			getOutPath(curFile, true),
+			QFileInfo(curFile).baseName(),
+			QString::number(idx.row()),
+			this
+		);
+	}
+
+	return !failed;
 }
 
 void MainWindow::editProgram() {
