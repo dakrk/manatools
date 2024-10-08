@@ -30,6 +30,9 @@ protected:
 	void dropEvent(QDropEvent* event) override;
 
 private:
+	void loadMixerData(const manatools::fob::Mixer& mixer);
+	void saveMixerData(manatools::fob::Mixer& mixer);
+
 	QString maybeDropEvent(QDropEvent* event);
 	bool maybeSave();
 	void setCurrentFile(const QString& path = "");

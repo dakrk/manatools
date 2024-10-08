@@ -46,6 +46,18 @@ MainWindow::MainWindow(QWidget* parent) :
 	model = new FOBModel(&bank);
 	list->setModel(model);
 
+	connect(list->selectionModel(), &QItemSelectionModel::currentChanged, this,
+	        [&](const QModelIndex& current, const QModelIndex& previous)
+	{
+		if (previous.isValid()) {
+			saveMixerData(bank.mixers[previous.row()]);
+		}
+
+		if (current.isValid()) {
+			loadMixerData(bank.mixers[current.row()]);
+		}
+	});
+
 	QPushButton* btnAdd = new QPushButton(QIcon::fromTheme("list-add"), "");
 	QPushButton* btnDel = new QPushButton(QIcon::fromTheme("list-remove"), "");
 
@@ -109,12 +121,14 @@ MainWindow::MainWindow(QWidget* parent) :
 		mixerLayout->addWidget(sliderPan, row, 3);
 		mixerLayout->addWidget(lblPan, row, 4);
 
-		connect(sliderLevel, &QAbstractSlider::valueChanged, this, [lblLevel](int value) {
+		connect(sliderLevel, &QAbstractSlider::valueChanged, this, [this, lblLevel](int value) {
 			lblLevel->setNum(value);
+			setWindowModified(true);
 		});
 
-		connect(sliderPan, &QAbstractSlider::valueChanged, this, [lblPan](int value) {
+		connect(sliderPan, &QAbstractSlider::valueChanged, this, [this, lblPan](int value) {
 			lblPan->setNum(value);
+			setWindowModified(true);
 		});
 	}
 
@@ -262,6 +276,20 @@ void MainWindow::dropEvent(QDropEvent* event) {
 	const QString path = maybeDropEvent(event);
 	if (!path.isEmpty() && maybeSave()) {
 		loadFile(path);
+	}
+}
+
+void MainWindow::loadMixerData(const manatools::fob::Mixer& mixer) {
+	for (uint i = 0; i < manatools::fob::CHANNELS; i++) {
+		levelSliders[i]->setValue(mixer.level[i]);
+		panSliders[i]->setValue(mixer.pan[i]);
+	}
+}
+
+void MainWindow::saveMixerData(manatools::fob::Mixer& mixer) {
+	for (uint i = 0; i < manatools::fob::CHANNELS; i++) {
+		mixer.level[i] = levelSliders[i]->value();
+		mixer.pan[i] = panSliders[i]->value();
 	}
 }
 
