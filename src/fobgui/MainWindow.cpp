@@ -56,10 +56,23 @@ MainWindow::MainWindow(QWidget* parent) :
 		if (current.isValid()) {
 			loadMixerData(bank.mixers[current.row()]);
 		}
+
+		for (uint i = 0; i < manatools::fob::CHANNELS; i++) {
+			levelSliders[i]->setEnabled(current.isValid());
+			panSliders[i]->setEnabled(current.isValid());
+		}
 	});
 
 	QPushButton* btnAdd = new QPushButton(QIcon::fromTheme("list-add"), "");
 	QPushButton* btnDel = new QPushButton(QIcon::fromTheme("list-remove"), "");
+
+	connect(btnAdd, &QPushButton::clicked, this, [this]() {
+		insertItemRowHere(list);
+	});
+
+	connect(btnDel, &QPushButton::clicked, this, [this]() {
+		removeSelectedViewItems(list);
+	});
 
 	QHBoxLayout* listButtonsLayout = new QHBoxLayout();
 	listButtonsLayout->addWidget(btnAdd);
@@ -102,16 +115,20 @@ MainWindow::MainWindow(QWidget* parent) :
 	for (uint i = 0; i < manatools::fob::CHANNELS; i++) {
 		QSlider* sliderLevel = new QSlider(Qt::Horizontal);
 		sliderLevel->setMaximum(15);
+		sliderLevel->setEnabled(false);
 		levelSliders[i] = sliderLevel;
 
 		QLabel* lblLevel = new QLabel();
+		lblLevel->setNum(0);
 
 		QSlider* sliderPan = new QSlider(Qt::Horizontal);
 		sliderPan->setMinimum(-15);
 		sliderPan->setMaximum(15);
+		sliderPan->setEnabled(false);
 		panSliders[i] = sliderPan;
 
 		QLabel* lblPan = new QLabel();
+		lblPan->setNum(0);
 
 		auto row = mixerLayout->rowCount();
 
@@ -121,14 +138,24 @@ MainWindow::MainWindow(QWidget* parent) :
 		mixerLayout->addWidget(sliderPan, row, 3);
 		mixerLayout->addWidget(lblPan, row, 4);
 
-		connect(sliderLevel, &QAbstractSlider::valueChanged, this, [this, lblLevel](int value) {
+		connect(sliderLevel, &QAbstractSlider::valueChanged, this, [lblLevel](int value) {
 			lblLevel->setNum(value);
-			setWindowModified(true);
 		});
 
-		connect(sliderPan, &QAbstractSlider::valueChanged, this, [this, lblPan](int value) {
+		connect(sliderLevel, &QAbstractSlider::actionTriggered, this, [this](int action) {
+			if (action == QAbstractSlider::SliderMove) {
+				setWindowModified(true);
+			}
+		});
+
+		connect(sliderPan, &QAbstractSlider::valueChanged, this, [lblPan](int value) {
 			lblPan->setNum(value);
-			setWindowModified(true);
+		});
+
+		connect(sliderPan, &QAbstractSlider::actionTriggered, this, [this](int action) {
+			if (action == QAbstractSlider::SliderMove) {
+				setWindowModified(true);
+			}
 		});
 	}
 
