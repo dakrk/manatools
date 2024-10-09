@@ -47,6 +47,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	list = new QListView();
 	model = new FOBModel(&bank);
 	list->setModel(model);
+	list->setDragEnabled(true);
+	list->setDragDropMode(QAbstractItemView::InternalMove);
 
 	connect(list->selectionModel(), &QItemSelectionModel::currentChanged, this,
 	        [&](const QModelIndex& current, const QModelIndex& previous)

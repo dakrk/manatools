@@ -159,9 +159,11 @@ Qt::ItemFlags MLTModel::flags(const QModelIndex& index) const {
 		if (0 <= index.column() && index.column() <= 3) {
 			f |= Qt::ItemIsEditable;
 		}
+	} else {
+		f |= Qt::ItemIsDropEnabled;
 	}
 
-	return f | Qt::ItemIsDropEnabled;
+	return f;
 }
 
 bool MLTModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) {

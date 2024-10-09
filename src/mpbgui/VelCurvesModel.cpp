@@ -65,7 +65,9 @@ Qt::ItemFlags VelCurvesModel::flags(const QModelIndex& index) const {
 	Qt::ItemFlags f = QAbstractListModel::flags(index);
 	if (index.isValid())
 		f |= Qt::ItemIsDragEnabled;
-	return f | Qt::ItemIsDropEnabled;
+	else
+		f |= Qt::ItemIsDropEnabled;
+	return f;
 }
 
 bool VelCurvesModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) {

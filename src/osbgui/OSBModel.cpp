@@ -136,9 +136,11 @@ Qt::ItemFlags OSBModel::flags(const QModelIndex& index) const {
 		if (index.column() != 1) {
 			f |= Qt::ItemIsEditable;
 		}
+	} else {
+		f |= Qt::ItemIsDropEnabled;
 	}
 
-	return f | Qt::ItemIsDropEnabled;
+	return f;
 }
 
 bool OSBModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) {

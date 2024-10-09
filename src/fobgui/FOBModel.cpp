@@ -89,9 +89,11 @@ Qt::ItemFlags FOBModel::flags(const QModelIndex& index) const {
 		if (index.column() == 0) {
 			f |= Qt::ItemIsEditable;
 		}
+	} else {
+		f |= Qt::ItemIsDropEnabled;
 	}
 
-	return f | Qt::ItemIsDropEnabled;
+	return f;
 }
 
 bool FOBModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) {
