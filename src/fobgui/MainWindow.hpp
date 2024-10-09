@@ -36,6 +36,8 @@ private:
 	void loadMixerData(const manatools::fob::Mixer& mixer);
 	void saveMixerData(manatools::fob::Mixer& mixer);
 
+	void resetSliders();
+
 	bool mixerNameSet() const;
 	bool saveMappingsDialog();
 

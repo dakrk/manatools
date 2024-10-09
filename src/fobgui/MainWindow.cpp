@@ -57,6 +57,8 @@ MainWindow::MainWindow(QWidget* parent) :
 
 		if (current.isValid()) {
 			loadMixerData(bank.mixers[current.row()]);
+		} else {
+			loadMixerData({});
 		}
 
 		for (uint i = 0; i < manatools::fob::CHANNELS; i++) {
@@ -194,6 +196,13 @@ bool MainWindow::loadFile(const QString& path) {
 
 	setCurrentFile(path);
 	model->setBank(&bank);
+
+	if (!bank.mixers.empty()) {
+		list->setCurrentIndex(model->index(0, 0));
+	} else {
+		resetSliders();
+	}
+
 	saveMappings.reset();
 	return true;
 }
@@ -291,6 +300,7 @@ void MainWindow::newFile() {
 		bank = {};
 		setCurrentFile();
 		model->setBank(&bank);
+		resetSliders();
 		saveMappings.reset();
 	}
 }
@@ -401,6 +411,15 @@ void MainWindow::saveMixerData(manatools::fob::Mixer& mixer) {
 		mixer.level[i] = levelSliders[i]->value();
 		mixer.pan[i] = panSliders[i]->value();
 	}
+}
+
+void MainWindow::resetSliders() {
+	for (uint i = 0; i < manatools::fob::CHANNELS; i++) {
+		levelSliders[i]->setEnabled(false);
+		levelSliders[i]->setValue(0);
+		panSliders[i]->setEnabled(false);
+		panSliders[i]->setValue(0);
+	}	
 }
 
 bool MainWindow::mixerNameSet() const {
