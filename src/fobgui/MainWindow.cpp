@@ -69,6 +69,10 @@ MainWindow::MainWindow(QWidget* parent) :
 		}
 	});
 
+	connect(model, &QAbstractTableModel::rowsInserted, this, [this]() { setWindowModified(true); });
+	connect(model, &QAbstractTableModel::rowsMoved,    this, [this]() { setWindowModified(true); });
+	connect(model, &QAbstractTableModel::rowsRemoved,  this, [this]() { setWindowModified(true); });
+
 	QPushButton* btnAdd = new QPushButton(QIcon::fromTheme("list-add"), "");
 	QPushButton* btnDel = new QPushButton(QIcon::fromTheme("list-remove"), "");
 
@@ -301,8 +305,8 @@ void MainWindow::newFile() {
 	if (maybeSave()) {
 		bank = {};
 		setCurrentFile();
-		model->setBank(&bank);
 		resetSliders();
+		model->setBank(&bank);
 		saveMappings.reset();
 	}
 }
