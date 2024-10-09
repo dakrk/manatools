@@ -5,6 +5,7 @@
 #include <QSlider>
 #include <QVector>
 #include <manatools/fob.hpp>
+#include <optional>
 
 #include "FOBModel.hpp"
 
@@ -15,6 +16,8 @@ public:
 
 	bool loadFile(const QString& path);
 	bool saveFile(const QString& path);
+	bool loadMapFile(const QString& path);
+	bool saveMapFile(const QString& path);
 
 public slots:
 	void newFile();
@@ -33,6 +36,9 @@ private:
 	void loadMixerData(const manatools::fob::Mixer& mixer);
 	void saveMixerData(manatools::fob::Mixer& mixer);
 
+	bool mixerNameSet() const;
+	bool saveMappingsDialog();
+
 	QString maybeDropEvent(QDropEvent* event);
 	bool maybeSave();
 	void setCurrentFile(const QString& path = "");
@@ -50,4 +56,6 @@ private:
 	QVector<QSlider*> panSliders;
 
 	manatools::fob::Bank bank;
+
+	std::optional<bool> saveMappings;
 };

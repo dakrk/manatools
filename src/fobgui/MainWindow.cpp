@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QCheckBox>
 #include <QDropEvent>
 #include <QFileDialog>
 #include <QGridLayout>
@@ -12,6 +13,7 @@
 #include <QScreen>
 #include <QSlider>
 #include <manatools/io.hpp>
+#include <guicommon/CSV.hpp>
 #include <guicommon/CursorOverride.hpp>
 #include <guicommon/utils.hpp>
 
@@ -184,13 +186,26 @@ bool MainWindow::loadFile(const QString& path) {
 		return false;
 	}
 
+	cursor.restore();
+
+	if (!loadMapFile(path % ".csv")) {
+		loadMapFile(getOutPath(path, true) % "/manatools_fob_map.csv");
+	}
+
 	setCurrentFile(path);
 	model->setBank(&bank);
+	saveMappings.reset();
 	return true;
 }
 
 bool MainWindow::saveFile(const QString& path) {
+	bool doSaveMappings = saveMappingsDialog();
 	CursorOverride cursor(Qt::WaitCursor);
+
+	auto index = list->currentIndex();
+	if (index.isValid()) {
+		saveMixerData(bank.mixers[index.row()]);
+	}
 
 	try {
 		bank.save(path.toStdWString());
@@ -200,7 +215,74 @@ bool MainWindow::saveFile(const QString& path) {
 		return false;
 	}
 
+	if (doSaveMappings && !saveMapFile(path % ".csv")) {
+		QMessageBox::warning(this, tr("Save map file"), tr("Failed to save map file."));
+	}
+
 	setCurrentFile(path);
+	return true;
+}
+
+bool MainWindow::loadMapFile(const QString& path) {
+	CursorOverride cursor(Qt::WaitCursor);
+
+	QFile file(path);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+		return false;
+
+	CSV csv;
+	QTextStream stream(&file);
+	csv.read(stream);
+
+	for (qsizetype i = 1; i < csv.rows.size(); i++) {
+		const auto& cols = csv.rows[i];
+		if (cols.size() < 2) {
+			QMessageBox::warning(
+				this,
+				tr("Load map file"),
+				tr("Map file is invalid, has less than 2 columns.").arg(cols[0])
+			);
+			return false;
+		}
+
+		bool ok;
+		ulong index = cols[0].toULong(&ok);
+
+		if (!ok || index + 1 > bank.mixers.size()) {
+			QMessageBox::warning(
+				this,
+				tr("Load map file"),
+				tr("Map file contains invalid/out of bounds index: %1").arg(cols[0])
+			);
+			continue;
+		}
+
+		bank.mixers[index].userData = std::move(cols[1]);
+	}
+
+	return true;
+}
+
+bool MainWindow::saveMapFile(const QString& path) {
+	CursorOverride cursor(Qt::WaitCursor);
+
+	QFile file(path);
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+		return false;
+
+	CSV csv;
+	QTextStream stream(&file);
+
+	csv.rows.emplaceBack(QStringList { "path", "name" });
+
+	for (size_t i = 0; i < bank.mixers.size(); i++) {
+		const QString* name = std::any_cast<QString>(&bank.mixers[i].userData);
+		if (name && !name->isEmpty()) {
+			csv.rows.emplaceBack(QStringList { QString::number(i), *name });	
+		}
+	}
+
+	csv.write(stream);
 	return true;
 }
 
@@ -209,6 +291,7 @@ void MainWindow::newFile() {
 		bank = {};
 		setCurrentFile();
 		model->setBank(&bank);
+		saveMappings.reset();
 	}
 }
 
@@ -318,6 +401,42 @@ void MainWindow::saveMixerData(manatools::fob::Mixer& mixer) {
 		mixer.level[i] = levelSliders[i]->value();
 		mixer.pan[i] = panSliders[i]->value();
 	}
+}
+
+bool MainWindow::mixerNameSet() const {
+	for (const auto& mixer : bank.mixers) {
+		const QString* name = std::any_cast<QString>(&mixer.userData);
+		if (name && !name->isEmpty()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool MainWindow::saveMappingsDialog() {
+	if (saveMappings.has_value()) {
+		return *saveMappings;
+	} else if (mixerNameSet()) {
+		QMessageBox mb(
+			QMessageBox::Question,
+			tr("Save map file"),
+			tr("Mixer names were set in this bank. Would you like to save the mapping file with the bank?"),
+			QMessageBox::Yes | QMessageBox::No,
+			this
+		);
+
+		QCheckBox cb(tr("Don't ask me again this session"), &mb);
+		mb.setCheckBox(&cb);
+
+		bool ret = mb.exec() == QMessageBox::Yes;
+		if (cb.isChecked()) {
+			saveMappings = ret;
+		}
+
+		return ret;
+	}
+
+	return false;
 }
 
 QString MainWindow::maybeDropEvent(QDropEvent* event) {
