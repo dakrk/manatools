@@ -1,4 +1,5 @@
 #pragma once
+#include <any>
 #include <vector>
 
 #include "filesystem.hpp"
@@ -15,6 +16,7 @@ namespace manatools::fob {
 		static u8 toPanPot(s8 panPot);
 		u8 level[CHANNELS];
 		s8 pan[CHANNELS];
+		std::any userData;
 	};
 
 	struct Bank {

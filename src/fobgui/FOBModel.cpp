@@ -17,11 +17,30 @@ QVariant FOBModel::data(const QModelIndex& index, int role) const {
 	if (!index.isValid())
 		return {};
 
-	if (role == Qt::DisplayRole) {
-		return tr("Mixer %1").arg(index.row());
+	if ((role == Qt::DisplayRole || role == Qt::EditRole) && index.column() == 0) {
+		const auto& mixer = bank->mixers[index.row()];
+
+		const QString* name = std::any_cast<QString>(&mixer.userData);
+		if (name && !name->isEmpty()) {
+			return *name;
+		} else {
+			return tr("Mixer %1").arg(index.row());
+		}
 	}
 
 	return {};
+}
+
+bool FOBModel::setData(const QModelIndex& index, const QVariant& value, int role) {
+	if (!index.isValid())
+		return false;
+
+	if (role == Qt::EditRole && index.column() == 0) {
+		bank->mixers[index.row()].userData = value.toString();
+		return true;
+	}
+
+	return false;
 }
 
 bool FOBModel::insertRows(int row, int count, const QModelIndex& parent) {
@@ -63,8 +82,15 @@ bool FOBModel::removeRows(int row, int count, const QModelIndex& parent) {
 
 Qt::ItemFlags FOBModel::flags(const QModelIndex& index) const {
 	Qt::ItemFlags f = QAbstractListModel::flags(index);
-	if (index.isValid())
+
+	if (index.isValid()) {
 		f |= Qt::ItemIsDragEnabled;
+
+		if (index.column() == 0) {
+			f |= Qt::ItemIsEditable;
+		}
+	}
+
 	return f | Qt::ItemIsDropEnabled;
 }
 

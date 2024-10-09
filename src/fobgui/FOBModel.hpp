@@ -12,6 +12,7 @@ public:
 	int rowCount(const QModelIndex& parent = {}) const override;
 
 	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
 
 	bool insertRows(int row, int count, const QModelIndex& parent = {}) override;
 	bool moveRows(const QModelIndex& srcParent, int srcRow, int count, const QModelIndex& destParent, int destChild) override;
