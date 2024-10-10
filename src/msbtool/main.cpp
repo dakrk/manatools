@@ -32,6 +32,12 @@ struct NoteQueueItem {
 	}
 };
 
+static void printBytes(std::span<const u8> bytes) {
+	for (u8 b : bytes) {
+		printf("%02x ", b);
+	}
+}
+
 void msbExtractMSDs(const fs::path& msbPath, const fs::path& msdOutPath) {
 	auto msb = msb::load(msbPath);
 
@@ -96,6 +102,12 @@ void msbDumpMSDs(const fs::path& msbPath) {
 
 				[](const msd::TempoChange& msg) {
 					printf("        Tempo Change     : tempo=%u msecs/pqn (%.3f BPM) step=%u\n", msg.tempo, 60 * 1000.0 / msg.tempo, msg.step);
+				},
+
+				[](const msd::SysEx& msg) {
+					printf("        System Exclusive : data=");
+					printBytes(msg.data);
+					printf("unk1=%x step=%u\n", msg.unk1, msg.step);
 				},
 
 				[](const auto& msg) {

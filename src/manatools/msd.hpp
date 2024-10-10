@@ -79,7 +79,7 @@ namespace manatools::msd {
 	struct SysEx {
 		u32 step = 0;
 		std::vector<u8> data;
-		u16 stepRelated = 0;
+		u16 unk1 = 0;
 	};
 
 	using Message = std::variant<

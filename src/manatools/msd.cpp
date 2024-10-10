@@ -229,7 +229,7 @@ MSD load(io::DataIO& io) {
 				io.readVec(msg.data);
 
 				// Unknown, but seemingly changes value depending on step
-				msg.stepRelated = readVar(io, step);
+				msg.unk1 = readVar(io, step);
 
 				stepExt = 0;
 				msd.messages.push_back(msg);
