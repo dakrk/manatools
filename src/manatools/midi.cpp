@@ -78,6 +78,13 @@ void File::save(io::DataIO& io) {
 				io.writeU8(((event.pitch + 0x2000) & 0x3F80) >> 7);
 			},
 
+			// Doesn't support multi-packet messages, but that doesn't matter for us
+			[&](const SysEx& event) {
+				io.writeVLQ(event.delta);
+				io.writeU8(static_cast<u8>(Status::SysEx));
+				io.writeVec(event.data);
+			},
+
 			[&](const MetaEvent& e2) {
 				u8 status = static_cast<u8>(Status::MetaEvent);
 				std::visit(overloaded {

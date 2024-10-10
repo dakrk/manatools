@@ -211,6 +211,23 @@ void msbExportMIDIs(const fs::path& msbPath, const fs::path& midiOutPath) {
 					curTime += msg.step;
 				},
 
+				[&](const msd::SysEx& msg) {
+					/**
+					 * A bit confused here...
+					 * MIDI documents say messages are like:
+					 *   0xF0 <MMA> <Data (could contain size and 0xF7)>
+					 * Yet Sekaiju and whatever MIDI hexpat ImHex comes with seems to do it like:
+					 *   0xF0 <Size> <Data (could contain MMA and 0xF7)>
+					 * Not sure what's right here, and what I should do.
+					 */
+					auto data = msg.data;
+					data.insert(data.begin(), data.size() + 1);
+					data.push_back(static_cast<u8>(midi::Status::EndOfSysEx));
+
+					midiFile.events.push_back(midi::SysEx { delta, data });
+					curTime += msg.step;
+				},
+
 				[](const auto& msg) {
 					(void)msg;
 					assert(!"Recognised MSD message left unhandled");

@@ -30,7 +30,7 @@ namespace manatools::msd {
 		ProgramChange    = 0xC0, // 0xC0 ... 0xCF
 		ChannelPressure  = 0xD0, // 0xD0 ... 0xDF
 		PitchWheelChange = 0xE0, // 0xE0 ... 0xEF
-		SysEx            = 0xF0
+		SysEx            = 0xF0, // 0xF0
 	};
 
 	struct Note {

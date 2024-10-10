@@ -286,8 +286,8 @@ namespace msd {
                  * The data after that seems to be based on message step.
                  */
                 u8 step;
-                u8 length;
-                u8 data[length];
+                u8 size;
+                u8 data[size];
 
                 // Don't know what this is for
                 if (step & 0x80) {

@@ -20,7 +20,10 @@ namespace manatools::midi {
 		ProgramChange    = 0xC0, // 0xC0 ... 0xCF
 		ChannelPressure  = 0xD0, // 0xD0 ... 0xDF
 		PitchWheelChange = 0xE0, // 0xE0 ... 0xEF
+		SysEx            = 0xF0, // 0xF0
 		// Nothing else between this point matters for us
+		EndOfSysEx       = 0xF7, // 0xF7
+		// Or here...
 		MetaEvent        = 0xFF, // 0xFF
 	};
 
@@ -209,6 +212,11 @@ namespace manatools::midi {
 		s16 pitch; // -8192 ... 8191
 	};
 
+	struct SysEx {
+		u32 delta;
+		std::vector<u8> data;
+	};
+
 	struct Marker {
 		u32 delta;
 		std::string text;
@@ -237,6 +245,7 @@ namespace manatools::midi {
 		ProgramChange,
 		ChannelPressure,
 		PitchWheelChange,
+		SysEx,
 		MetaEvent
 	>;
 
