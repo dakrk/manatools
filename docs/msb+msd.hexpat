@@ -45,7 +45,8 @@ namespace msd {
         ControlChange    = 0xB0 ... 0xBF,
         ProgramChange    = 0xC0 ... 0xCF,
         ChannelPressure  = 0xD0 ... 0xDF,
-        PitchWheelChange = 0xE0 ... 0xEF
+        PitchWheelChange = 0xE0 ... 0xEF,
+        SysEx            = 0xF0
     };
     
     /**
@@ -276,6 +277,24 @@ namespace msd {
                     (0xE): { extendBy = 0x800;  }
                     (0xF): { extendBy = 0x1000; }
                 } */
+            }
+            
+            // Not so confident about this
+            (Status::SysEx): {
+                /**
+                 * Data length is seemingly always 4.
+                 * The data after that seems to be based on message step.
+                 */
+                u8 step;
+                u8 length;
+                u8 data[length];
+
+                // Don't know what this is for
+                if (step & 0x80) {
+                    u8 stepRelated[2];
+                } else {
+                    u8 stepRelated[1];
+                }
             }
 
             // Cannot reliably continue, message would be of unknown length
