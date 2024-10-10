@@ -217,6 +217,25 @@ MSD load(io::DataIO& io) {
 				return true;
 			}
 
+			case Status::SysEx: {
+				SysEx msg;
+
+				u8 step; io.readU8(&step);
+				msg.step = step + stepExt;
+
+				// TODO: Length could be VLQ, but no IO method to do that yet...
+				u8 len; io.readU8(&len);
+				msg.data.resize(len);
+				io.readVec(msg.data);
+
+				// Unknown, but seemingly changes value depending on step
+				msg.stepRelated = readVar(io, step);
+
+				stepExt = 0;
+				msd.messages.push_back(msg);
+				return true;
+			}
+
 			default: {
 				// shush
 			}

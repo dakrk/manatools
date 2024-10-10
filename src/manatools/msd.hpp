@@ -76,6 +76,12 @@ namespace manatools::msd {
 		u32 step = 0;
 	};
 
+	struct SysEx {
+		u32 step = 0;
+		std::vector<u8> data;
+		u16 stepRelated = 0;
+	};
+
 	using Message = std::variant<
 		Note,
 		ControlChange,
@@ -86,9 +92,10 @@ namespace manatools::msd {
 		// Reference,
 		Loop,
 		// EndOfTrack
-		TempoChange
+		TempoChange,
 		// GateExtend
 		// StepExtend
+		SysEx
 	>;
 
 	struct MSD {
