@@ -9,6 +9,7 @@ add_subdirectory(manatools)
 add_subdirectory(guicommon)
 
 add_subdirectory(findtool)
+add_subdirectory(fobtool)
 add_subdirectory(mlttool)
 add_subdirectory(mpbtool)
 add_subdirectory(msbtool)
@@ -25,6 +26,7 @@ install(
 		guicommon
 
 		findtool
+		fobtool
 		mlttool
 		mpbtool
 		msbtool
