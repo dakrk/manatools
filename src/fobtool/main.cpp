@@ -9,6 +9,8 @@ namespace fs = manatools::fs;
 void fobListMixers(const fs::path& path) {
 	auto fob = manatools::fob::load(path);
 
+	printf("Total mixers: %zu\n", fob.mixers.size());
+
 	for (size_t m = 0; m < fob.mixers.size(); m++) {
 		const auto& mixer = fob.mixers[m];
 		printf("Mixer %zu\n", m);
