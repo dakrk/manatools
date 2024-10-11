@@ -19,9 +19,13 @@ public:
 	bool saveMapFile(const QString& path);
 	bool exportSF2File(const QString& path);
 
-	void setProgram(size_t idx);
-	void setLayer(size_t idx);
-	void setSplit(size_t idx);
+	/**
+	 * Don't particularly like the fact that model indexes are passed,
+	 * but it makes things easier
+	 */
+	void setProgram(const QModelIndex& idx);
+	void setLayer(const QModelIndex& idx);
+	void setSplit(const QModelIndex& idx);
 
 public slots:
 	void newFile();
@@ -50,6 +54,7 @@ private:
 
 	void resetTableLayout();
 	void reloadTables();
+	void resetPiano();
 
 	bool programNameSet() const;
 	bool saveMappingsDialog();

@@ -301,26 +301,7 @@
          </layout>
         </widget>
        </widget>
-       <widget class="QFrame" name="keyMap">
-        <property name="frameShape">
-         <enum>QFrame::Shape::Box</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Shadow::Sunken</enum>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Key map should be here, eventually...</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
+       <widget class="PianoKeyboardWidget" name="keyMap" native="true"/>
       </widget>
      </widget>
     </item>
@@ -552,6 +533,14 @@ Requires reloading the file to take effect.</string>
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PianoKeyboardWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">guicommon/PianoKeyboardWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -41,8 +41,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	ui.splitProgramList->setSizes({ 190, 810 });
 	ui.splitProgramList->setStretchFactor(1, 1);
 
-	ui.splitProgramPanes->setStretchFactor(0, 1);
-	ui.splitProgramPanes->setStretchFactor(1, 6);
+	ui.splitProgramPanes->setStretchFactor(0, 6);
+	ui.splitProgramPanes->setStretchFactor(1, 3);
 	ui.splitProgramPanes->setCollapsible(0, false);
 
 	ui.splitSplitSelect->setStretchFactor(0, 2);
@@ -67,6 +67,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	setCurrentFile();
 	resetTableLayout();
+	resetPiano();
 
 	connectTableMutations(programsModel);
 	connectTableMutations(layersModel);
@@ -134,7 +135,7 @@ MainWindow::MainWindow(QWidget* parent) :
 		        	Q_UNUSED(previous); \
 		        	QPersistentModelIndex idx(current); \
 		        	QTimer::singleShot(0, this, [this, idx]() { \
-		        		callback(idx.isValid() ? idx.row() : 0); \
+		        		callback(idx); \
 		        	}); \
 		        });
 
@@ -169,9 +170,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	// Moving a row doesn't fire currentRowChanged, despite the current row having actually changed
 	connect(programsModel, &QAbstractItemModel::rowsMoved, this, [this]() {
-		QModelIndex cur = ui.tblPrograms->currentIndex();
-		if (cur.isValid())
-			setProgram(cur.row());
+		setProgram(ui.tblPrograms->currentIndex());
 	});
 
 	connect(splitsModel, &QAbstractTableModel::dataChanged, this,
@@ -180,9 +179,9 @@ MainWindow::MainWindow(QWidget* parent) :
 		// tad bit of a hack so tone gets reloaded after split changes
 		if (std::cmp_less_equal(tl.row(), splitIdx) &&
 		    (!br.isValid() || std::cmp_greater_equal(br.row(), splitIdx)) &&
-		    (roles.contains(Qt::DisplayRole) || roles.isEmpty())) 
+		    (roles.contains(Qt::DisplayRole) || roles.contains(Qt::EditRole) || roles.isEmpty()))
 		{
-			setSplit(splitIdx);
+			setSplit(splitsModel->index(splitIdx, 0));
 		}
 	});
 
@@ -234,6 +233,7 @@ bool MainWindow::loadFile(const QString& path) {
 	saveMappings.reset();
 	setCurrentFile(path);
 	reloadTables();
+	resetPiano();
 
 	if (bank.version != 2) {
 		QMessageBox::warning(
@@ -357,23 +357,39 @@ bool MainWindow::exportSF2File(const QString& path) {
 	return true;
 }
 
-void MainWindow::setProgram(size_t idx) {
-	programIdx = idx;
-	layersModel->setPath(programIdx);
-	ui.tblLayers->setCurrentIndex(layersModel->index(0, 0));
+void MainWindow::setProgram(const QModelIndex& idx) {
+	if (idx.isValid()) {
+		programIdx = idx.row();
+		layersModel->setPath(programIdx);
+		ui.tblLayers->setCurrentIndex(layersModel->index(0, 0));
+	}
 }
 
-void MainWindow::setLayer(size_t idx) {
-	layerIdx = idx;
-	splitsModel->setPath(programIdx, layerIdx);
-	ui.tblSplits->setCurrentIndex(splitsModel->index(0, 0));
+void MainWindow::setLayer(const QModelIndex& idx) {
+	if (idx.isValid()) {
+		layerIdx = idx.row();
+		splitsModel->setPath(programIdx, layerIdx);
+		ui.tblSplits->setCurrentIndex(splitsModel->index(0, 0));
+	}
 }
 
-void MainWindow::setSplit(size_t idx) {
-	splitIdx = idx;
-	const auto* split = bank.split(programIdx, layerIdx, splitIdx);
+void MainWindow::setSplit(const QModelIndex& idx) {
 	tonePlayer.stop();
-	tonePlayer.setTone(split ? split->tone : manatools::tone::Tone());
+
+	if (idx.isValid()) {
+		splitIdx = idx.row();
+		const auto* split = bank.split(programIdx, layerIdx, splitIdx);
+
+		if (split) {
+			ui.keyMap->setKeyRange(split->startNote, split->endNote);
+			ui.keyMap->setBaseKey(split->baseNote);
+			tonePlayer.setTone(split->tone);
+			return;
+		}
+	}
+
+	resetPiano();
+	tonePlayer.setTone({});
 }
 
 void MainWindow::newFile() {
@@ -383,6 +399,7 @@ void MainWindow::newFile() {
 		saveMappings.reset();
 		setCurrentFile();
 		reloadTables();
+		resetPiano();
 	}
 }
 
@@ -626,6 +643,12 @@ void MainWindow::reloadTables() {
 	ui.tblPrograms->setCurrentIndex(programsModel->index(0, 0));
 	ui.tblLayers->setCurrentIndex(layersModel->index(0, 0));
 	ui.tblSplits->setCurrentIndex(splitsModel->index(0, 0));
+}
+
+void MainWindow::resetPiano() {
+	// KeyMap won't just be a piano, but this'll do for now
+	ui.keyMap->setKeyRange(-1, -1);
+	ui.keyMap->setBaseKey(-1);
 }
 
 bool MainWindow::programNameSet() const {
