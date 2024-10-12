@@ -34,6 +34,8 @@ public:
 		keyRangeHigh_(range.second),
 		baseKey_(base) {}
 
+	QSize minimumSizeHint() const override;
+
 	QPair<int, int> keyRange() const {
 		return { keyRangeLow_, keyRangeHigh_ };
 	}
@@ -55,6 +57,19 @@ public:
 	void setBaseKey(int key) {
 		baseKey_ = key;
 		repaint();
+	}
+
+	bool keyIsWhite(int key) const;
+	qreal keyTypeWidth(bool white) const;
+	qreal keyTypeHeight(bool white) const;
+	qreal keyX(int key) const;
+
+	qreal keyWidth(int key) const {
+		return keyTypeWidth(keyIsWhite(key));
+	}
+
+	qreal keyHeight(int key) const {
+		return keyTypeHeight(keyIsWhite(key));
 	}
 
 protected:
