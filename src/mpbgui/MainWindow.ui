@@ -301,7 +301,19 @@
          </layout>
         </widget>
        </widget>
-       <widget class="PianoKeyboardWidget" name="keyMap" native="true"/>
+       <widget class="QWidget" name="verticalLayoutWidget_3">
+        <layout class="QVBoxLayout" name="vboxKeyMap" stretch="6,3">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="KeyMapView" name="keyMap" native="true"/>
+         </item>
+         <item>
+          <widget class="PianoKeyboardWidget" name="piano" native="true"/>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -538,6 +550,12 @@ Requires reloading the file to take effect.</string>
    <class>PianoKeyboardWidget</class>
    <extends>QWidget</extends>
    <header location="global">guicommon/PianoKeyboardWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>KeyMapView</class>
+   <extends>QWidget</extends>
+   <header>KeyMapView.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

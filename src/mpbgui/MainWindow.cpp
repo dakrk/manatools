@@ -61,6 +61,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	ui.tblPrograms->setDragDropMode(QAbstractItemView::InternalMove);
 	ui.tblPrograms->setStyle(new HorizontalLineItemDropStyle(ui.tblPrograms->style()));
 
+	ui.keyMap->setPiano(ui.piano);
+
 	setCommonTableProps(ui.tblPrograms);
 	setCommonTableProps(ui.tblLayers);
 	setCommonTableProps(ui.tblSplits);
@@ -370,6 +372,7 @@ void MainWindow::setLayer(const QModelIndex& idx) {
 		layerIdx = idx.row();
 		splitsModel->setPath(programIdx, layerIdx);
 		ui.tblSplits->setCurrentIndex(splitsModel->index(0, 0));
+		ui.keyMap->setLayer(&bank, programIdx, layerIdx);
 	}
 }
 
@@ -381,8 +384,8 @@ void MainWindow::setSplit(const QModelIndex& idx) {
 		const auto* split = bank.split(programIdx, layerIdx, splitIdx);
 
 		if (split) {
-			ui.keyMap->setKeyRange(split->startNote, split->endNote);
-			ui.keyMap->setBaseKey(split->baseNote);
+			ui.piano->setKeyRange(split->startNote, split->endNote);
+			ui.piano->setBaseKey(split->baseNote);
 			tonePlayer.setTone(split->tone);
 			return;
 		}
@@ -646,9 +649,8 @@ void MainWindow::reloadTables() {
 }
 
 void MainWindow::resetPiano() {
-	// KeyMap won't just be a piano, but this'll do for now
-	ui.keyMap->setKeyRange(-1, -1);
-	ui.keyMap->setBaseKey(-1);
+	ui.piano->setKeyRange(-1, -1);
+	ui.piano->setBaseKey(-1);
 }
 
 bool MainWindow::programNameSet() const {

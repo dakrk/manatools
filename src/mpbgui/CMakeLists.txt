@@ -10,6 +10,7 @@ add_executable(mpbgui
 	MainWindow.cpp
 	BankPropertiesDialog.ui
 	BankPropertiesDialog.cpp
+	KeyMapView.cpp
 	ProgramsModel.cpp
 	LayersModel.cpp
 	SplitsModel.cpp
