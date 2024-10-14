@@ -1,4 +1,5 @@
 #include <QPainter>
+#include <QPalette>
 #include "KeyMapView.hpp"
 
 KeyMapView::KeyMapView(QWidget* parent) :
@@ -8,8 +9,31 @@ KeyMapView::KeyMapView(QWidget* parent) :
 	layerIdx(0),
 	piano(nullptr) {}
 
+QSize KeyMapView::minimumSizeHint() const {
+	return { 512, 128 };
+}
+
 void KeyMapView::paintEvent(QPaintEvent* event) {
 	QWidget::paintEvent(event);
+
+	QPainter painter(this);
+	painter.setRenderHint(QPainter::Antialiasing);
+
+	qreal widthStep = width() / 127.0;
+	qreal heightStep = height() / 127.0;
+	qreal middleY = height() / 2.0;
+
+	const auto oldPen = painter.pen();
+	painter.setPen(palette().dark().color());
+	for (int i = 0; i < 128; i++) {
+		qreal x = i * widthStep;
+		painter.setOpacity(i % 12 ? 0.25 : 0.75);
+		painter.drawLine(QLineF(x, 0, x, height()));
+	}
+	painter.setOpacity(0.75);
+	painter.drawLine(QLineF(0, middleY, width(), middleY));
+	painter.setOpacity(1.0);
+	painter.setPen(oldPen);
 
 	if (!bank)
 		return;
@@ -19,10 +43,12 @@ void KeyMapView::paintEvent(QPaintEvent* event) {
 	if (!layer)
 		return;
 
-	QPainter painter(this);
-	painter.setRenderHint(QPainter::Antialiasing);
+	QColor rectColor = palette().midlight().color();
+	rectColor.setAlphaF(0.5);
+	QBrush rectBrush(rectColor);
 
-	qreal heightStep = height() / 127.0;
+	QColor borderColor = palette().dark().color();
+	QPen borderPen(borderColor);
 
 	for (size_t s = 0; s < layer->splits.size(); s++) {
 		const auto& split = layer->splits[s];
@@ -35,8 +61,11 @@ void KeyMapView::paintEvent(QPaintEvent* event) {
 
 		QRectF rect(tl, br);
 
-		painter.fillRect(rect, Qt::black);
+		const auto oldPen = painter.pen();
+		painter.setPen(borderPen);
+		painter.fillRect(rect, rectBrush);
 		painter.drawRect(rect);
+		painter.setPen(oldPen);
 
 		painter.drawText(rect, Qt::AlignCenter, QString::number(s));		
 	}

@@ -41,8 +41,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	ui.splitProgramList->setSizes({ 190, 810 });
 	ui.splitProgramList->setStretchFactor(1, 1);
 
-	ui.splitProgramPanes->setStretchFactor(0, 6);
-	ui.splitProgramPanes->setStretchFactor(1, 3);
+	ui.splitProgramPanes->setStretchFactor(0, 4);
+	ui.splitProgramPanes->setStretchFactor(1, 2);
 	ui.splitProgramPanes->setCollapsible(0, false);
 
 	ui.splitSplitSelect->setStretchFactor(0, 2);

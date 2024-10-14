@@ -9,6 +9,8 @@ public:
 	typedef manatools::mpb::Bank Bank;
 	explicit KeyMapView(QWidget* parent = nullptr);
 
+	QSize minimumSizeHint() const override;
+
 	void setLayer(Bank* newBank, size_t newProgramIdx, size_t newLayerIdx) {
 		bank = newBank;
 		programIdx = newProgramIdx;

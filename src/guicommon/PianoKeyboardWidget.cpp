@@ -47,6 +47,11 @@ void PianoKeyboardWidget::paintEvent(QPaintEvent* event) {
 
 			if (i < keyRangeLow_ || i > keyRangeHigh_) {
 				color = color.darker(250);
+			} else if (i == keyRangeLow_ || i == keyRangeHigh_) {
+				// Impossible to see where a range starts/ends on a black key otherwise
+				float h, s, v;
+				color.getHsvF(&h, &s, &v);
+				color.setHsvF(h, s, 0.15);
 			}
 
 			// still not accurate to a real keyboard, but looks perfectly fine at a small scale
