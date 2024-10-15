@@ -384,6 +384,7 @@ void MainWindow::setSplit(const QModelIndex& idx) {
 		const auto* split = bank.split(programIdx, layerIdx, splitIdx);
 
 		if (split) {
+			ui.keyMap->setSplit(splitIdx);
 			ui.piano->setKeyRange(split->startNote, split->endNote);
 			ui.piano->setBaseKey(split->baseNote);
 			tonePlayer.setTone(split->tone);
@@ -391,6 +392,7 @@ void MainWindow::setSplit(const QModelIndex& idx) {
 		}
 	}
 
+	ui.keyMap->setSplit(0);
 	resetPiano();
 	tonePlayer.setTone({});
 }

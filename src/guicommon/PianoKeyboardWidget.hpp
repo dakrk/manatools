@@ -43,7 +43,7 @@ public:
 	void setKeyRange(int low, int high) {
 		keyRangeLow_ = low;
 		keyRangeHigh_ = high;
-		repaint();
+		update();
 	}
 
 	void setKeyRange(QPair<int, int> range) {
@@ -56,7 +56,7 @@ public:
 
 	void setBaseKey(int key) {
 		baseKey_ = key;
-		repaint();
+		update();
 	}
 
 	bool keyIsWhite(int key) const;

@@ -15,12 +15,17 @@ public:
 		bank = newBank;
 		programIdx = newProgramIdx;
 		layerIdx = newLayerIdx;
-		repaint();
+		update();
+	}
+
+	void setSplit(size_t newSplitIdx) {
+		splitIdx = newSplitIdx;
+		update();
 	}
 
 	void setPiano(PianoKeyboardWidget* newPiano) {
 		piano = newPiano;
-		repaint();
+		update();
 	}
 
 protected:
@@ -35,6 +40,7 @@ private:
 	Bank* bank;
 	size_t programIdx;
 	size_t layerIdx;
+	size_t splitIdx;
 
 	PianoKeyboardWidget* piano;
 };

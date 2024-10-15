@@ -18,7 +18,7 @@ void VelCurveWidget::mouseMoveEvent(QMouseEvent* event) {
 	int x = qBound(0, (pos.x() * 127) / width(), 127);
 	int y = qBound(0, 127 - ((pos.y() * 127) / height()), 127);
 	vel.data[x] = y;
-	repaint();
+	update();
 }
 
 void VelCurveWidget::paintEvent(QPaintEvent* event) {

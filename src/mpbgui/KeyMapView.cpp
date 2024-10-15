@@ -7,6 +7,7 @@ KeyMapView::KeyMapView(QWidget* parent) :
 	bank(nullptr),
 	programIdx(0),
 	layerIdx(0),
+	splitIdx(0),
 	piano(nullptr) {}
 
 QSize KeyMapView::minimumSizeHint() const {
@@ -44,8 +45,11 @@ void KeyMapView::paintEvent(QPaintEvent* event) {
 		return;
 
 	QColor rectColor = palette().midlight().color();
-	rectColor.setAlphaF(0.5);
+	rectColor.setAlphaF(0.4);
 	QBrush rectBrush(rectColor);
+
+	rectColor.setAlphaF(0.75);
+	QBrush curRectBrush(rectColor);
 
 	QColor borderColor = palette().dark().color();
 	QPen borderPen(borderColor);
@@ -63,7 +67,7 @@ void KeyMapView::paintEvent(QPaintEvent* event) {
 
 		const auto oldPen = painter.pen();
 		painter.setPen(borderPen);
-		painter.fillRect(rect, rectBrush);
+		painter.fillRect(rect, s == splitIdx ? curRectBrush : rectBrush);
 		painter.drawRect(rect);
 		painter.setPen(oldPen);
 

@@ -12,7 +12,7 @@ public:
 
 	void setVelocity(const Velocity& curve) {
 		vel = curve;
-		repaint();
+		update();
 	}
 
 	Velocity& velocity() {
