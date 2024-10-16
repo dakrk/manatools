@@ -33,7 +33,7 @@ namespace msd {
     };
     
     enum Status : u8 {
-        Note             = 0x00 ... 0x3F,
+        Note             = 0x00 ... 0x7F,
         
         Reference        = 0x81,
         Loop             = 0x82,
@@ -143,10 +143,16 @@ namespace msd {
              * MSD also doesn't have note off commands, and instead relies on gate time, which
              * is the time until the note should be turned off.
              */
-            (Status::Note | 0x00 ... 0x3F): {
+            (Status::Note | 0x00 ... 0x7F): {
                 u8 note;
                 u8 velocity;
-                
+
+                /**
+                 * After a disassembly of MANATEE.DRV, these seem right.
+                 * Gate bytes = (status >> 5) (add 1 to this)
+                 * Step bytes = (status & 0x10) (1 to 2 byte switch)
+                 * Located at 0x6c04 on version 2.50.04.
+                 */
                 match (statusBits.type) {
                     (0x0): {
                         u8 gate;
@@ -165,6 +171,30 @@ namespace msd {
                     
                     (0x3): {
                         u16 gate;
+                        u16 step;
+                    }
+
+                    /**
+                     * Messages past 0x3 are unusual, as usually I've seen gate extend
+                     * messages instead to compensate. Resident Evil 2 uses 0x4.
+                     */
+                    (0x4): {
+                        u24 gate;
+                        u8 step;
+                    }
+
+                    (0x5): {
+                        u24 gate;
+                        u16 step;
+                    }
+                    
+                    (0x6): {
+                        u32 gate;
+                        u8 step;
+                    }
+                    
+                    (0x7): {
+                        u32 gate;
                         u16 step;
                     }
                     
