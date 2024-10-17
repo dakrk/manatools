@@ -19,7 +19,7 @@ namespace manatools::msd {
 
 	// For statuses with ranges, the last 4 bits indicates channel
 	enum class Status : u8 {
-		Note             = 0x00, // 0x00 ... 0x3F
+		Note             = 0x00, // 0x00 ... 0x7F
 		Reference        = 0x81, // 0x81
 		Loop             = 0x82, // 0x82
 		EndOfTrack       = 0x83, // 0x83

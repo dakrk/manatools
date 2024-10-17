@@ -47,52 +47,40 @@ MSD load(io::DataIO& io) {
 		u8 status = statusByte & 0xF0;
 
 		// Note event
-		if (IN_RANGE(status, 0x00, 0x3F)) {
+		if (IN_RANGE(status, 0x00, 0x7F)) {
 			Note msg(channel);
 			io.readU8(&msg.note);
 			io.readU8(&msg.velocity);
+
+			u32 gate = 0;
+			u32 step = 0;
+			int gateBytes = (status >> 5) + 1;
+
+			while (gateBytes-- > 0) {
+				u8 g; io.readU8(&g);
+				gate = (gate << 8) | g;
+			}
+
+			/**
+			 * So much would be cleaner if the IO API actually returned the value,
+			 * so conversion would automatically take place...
+			 * Should be able to do that with function overloading, though, as to
+			 * not replace the `bool` return value ones that still have a use.
+			 */
+			if (status & 0x10) {
+				u16 s; io.readU16BE(&s);
+				step = s;
+			} else {
+				u8 s; io.readU8(&s);
+				step = s;
+			}
 
 			/**
 			 * No sort of protection to prevent gate/step time overflows, but realistically
 			 * nothing would/can be above 32 bits in size anyway
 			 */
-			switch (status) {
-				case 0x00: {
-					u8 gate; io.readU8(&gate);
-					u8 step; io.readU8(&step);
-					msg.gate = gate + gateExt;
-					msg.step = step + stepExt;
-					break;
-				}
-
-				case 0x10: {
-					u8 gate; io.readU8(&gate);
-					u16 step; io.readU16BE(&step);
-					msg.gate = gate + gateExt;
-					msg.step = step + stepExt;
-					break;
-				}
-
-				case 0x20: {
-					u16 gate; io.readU16BE(&gate);
-					u8 step; io.readU8(&step);
-					msg.gate = gate + gateExt;
-					msg.step = step + stepExt;
-					break;
-				}
-
-				case 0x30: {
-					u16 gate; io.readU16BE(&gate);
-					u16 step; io.readU16BE(&step);
-					msg.gate = gate + gateExt;
-					msg.step = step + stepExt;
-					break;
-				}
-
-				default: {
-					std::unreachable();
-				}
-			}
+			msg.gate = gate + gateExt;
+			msg.step = step + stepExt;
 
 			gateExt = stepExt = 0;
 			msd.messages.push_back(msg);
