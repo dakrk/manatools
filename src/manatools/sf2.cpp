@@ -1,6 +1,7 @@
 #include <cmath>
 #include <string>
 
+#include "aica.hpp"
 #include "sf2.hpp"
 #include "filesystem.hpp"
 #include "mpb.hpp"
@@ -47,15 +48,16 @@ SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
 					sampleData,
 					split.loopStart,
 					split.loopEnd,
-					22050,
-					split.baseNote - 12, // 1 octave down
+					aica::SAMPLE_RATE,
+					split.baseNote,
 					static_cast<s8>(roundf(utils::remap(split.fineTune, -128, 127, -48, 47)))
 				);
 
 				std::vector<SFGeneratorItem> generatorItems = {
 					{ SFGenerator::kKeyRange, RangesType(split.startNote, split.endNote) },
 					{ SFGenerator::kVelRange, RangesType(split.velocityLow, split.velocityHigh) },
-					{ SFGenerator::kPan, static_cast<s16>(roundf(utils::remap(split.panPot, -15, 15, -500, 500))) }
+					{ SFGenerator::kPan, static_cast<s16>(roundf(utils::remap(split.panPot, -15, 15, -500, 500))) },
+					{ SFGenerator::kExclusiveClass, split.drumGroupID }
 				};
 
 				if (split.loop)
@@ -69,20 +71,13 @@ SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
 				 * equivalent. directLevel could be doable though, however from what I see there doesn't seem to be
 				 * some readily available thing to use for that.
 				 *
-				 * DLS seems to be a much more compatible format, especially because of the drum mode stuff mentioned
-				 * below. I wish to aim to support it in the future, but unfortunately hardly as many things support
-				 * it and it seems like quite a bit of effort to implement.
+				 * DLS seems to be a much more compatible format.
+				 * I wish to aim to support it in the future, but unfortunately hardly as many things support it and it
+				 * seems like quite a bit of effort to implement.
 				 * 
 				 * (A while after writing this I discovered libgig which can read/write DLS files and also *load* SF2s,
 				 * which is something sf2cute can't do, however for some reason it still uses SVN in the year 2024 so
 				 * would require me making my own Git mirror, gah.)
-				 */
-
-				/**
-				 * TODO: Drum mode & group ID
-				 * According to the DLS 1 spec, if note-on is received while things with the same key group are active,
-				 * note-off should be issued to the others.
-				 * However, we're outputting an SF2, not a DLS, so I'm not sure if there's an equivalent.
 				 */
 
 				instrument->AddZone({ sample, std::move(generatorItems), {} });
