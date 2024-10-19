@@ -486,7 +486,9 @@ bool MainWindow::importUnit(manatools::mlt::Unit& unit, const QString& path) {
 		}
 
 		// Should be padded 'n' all by a subsequent adjust call
-		unit.aicaDataSize = fileSize;
+		if (fileSize > unit.aicaDataSize) {
+			unit.aicaDataSize = fileSize;
+		}
 
 		unit.data.resize(fileSize);
 		file.jump(0);
