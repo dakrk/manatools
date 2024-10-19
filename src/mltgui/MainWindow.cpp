@@ -383,7 +383,7 @@ bool MainWindow::exportUnitDialog() {
 	auto genOutPath = [&fileName, &outDir](const manatools::mlt::Unit& unit, const QString& ext, int row) {
 		return outDir.filePath(
 			QString("%1_%2-%3.%4")
-				.arg(fileName)
+				.arg(fileName.isEmpty() ? "untitled" : fileName)
 				.arg(row)
 				.arg(unit.bank)
 				.arg(ext.toLower())
