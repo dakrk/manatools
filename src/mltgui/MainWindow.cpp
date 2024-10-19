@@ -391,9 +391,11 @@ bool MainWindow::exportUnitDialog() {
 	};
 
 	if (selRows.size() > 1) {
-		outDir = QFileDialog::getExistingDirectory(this, tr("Export units to directory"), defDir);
-		if (outDir.isEmpty())
+		const QString dir = QFileDialog::getExistingDirectory(this, tr("Export units to directory"), defDir);
+		if (dir.isEmpty())
 			return false;
+
+		outDir = dir;
 
 		for (const auto& idx : selRows) {
 			const auto& unit = mlt.units[idx.row()];
@@ -504,7 +506,7 @@ bool MainWindow::exportUnit(const manatools::mlt::Unit& unit, const QString& pat
 	// This should be done the moment you click the button but, redundant checks much?
 	if (unit.fileDataPtr() == manatools::mlt::UNUSED) {
 		cursor.restore();
-		QMessageBox::warning(this, tr("Export unit"), tr("Selected unit has no data (no file offset), cannot export."));
+		QMessageBox::warning(this, tr("Export unit"), tr("A selected unit has no data (no file offset), cannot export it."));
 		return false;
 	}
 
