@@ -59,8 +59,8 @@ namespace manatools::tone {
 			return data ? std::ceil((data->size() * 8.0) / bitdepth()) : 0;
 		}
 
-		Format format{Format::PCM16};
-		double sampleRate;
+		Format format = Format::PCM16;
+		double sampleRate = 0;
 		DataPtr data;
 	};
 } // namespace manatools::tone

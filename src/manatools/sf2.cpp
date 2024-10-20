@@ -56,12 +56,14 @@ SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
 				std::vector<SFGeneratorItem> generatorItems = {
 					{ SFGenerator::kKeyRange, RangesType(split.startNote, split.endNote) },
 					{ SFGenerator::kVelRange, RangesType(split.velocityLow, split.velocityHigh) },
-					{ SFGenerator::kPan, static_cast<s16>(roundf(utils::remap(split.panPot, -15, 15, -500, 500))) },
-					{ SFGenerator::kExclusiveClass, split.drumGroupID }
+					{ SFGenerator::kPan, static_cast<s16>(roundf(utils::remap(split.panPot, -15, 15, -500, 500))) }
 				};
 
 				if (split.loop)
 					generatorItems.emplace_back(SFGenerator::kSampleModes, u16(SampleMode::kLoopContinuously));
+
+				if (split.drumMode)
+					generatorItems.emplace_back(SFGenerator::kExclusiveClass, split.drumGroupID);
 
 				/**
 				 * TODO: Envelopes, LFO, direct level, all that stuff
