@@ -38,7 +38,10 @@ MainWindow::MainWindow(QWidget* parent) :
 	fileMenu->addAction(QIcon::fromTheme("application-exit"), tr("&Quit"), QKeySequence::Quit, this, &QApplication::quit);
 
 	QMenu* editMenu = menuBar()->addMenu(tr("&Edit"));
-	editMenu->addAction(QIcon::fromTheme("edit-delete"), tr("&Delete"), QKeySequence::Delete, this, &MainWindow::delUnit);
+	importUnitAction = editMenu->addAction(QIcon::fromTheme("document-open"), tr("&Import Data"), this, &MainWindow::importUnitDialog);
+	exportUnitAction = editMenu->addAction(QIcon::fromTheme("document-save-as"), tr("&Export Data"), this, &MainWindow::exportUnitDialog);
+	clearUnitAction = editMenu->addAction(QIcon::fromTheme("edit-clear"), tr("&Clear Data"), this, &MainWindow::clearUnitData);
+	deleteUnitAction = editMenu->addAction(QIcon::fromTheme("edit-delete"), tr("&Delete"), QKeySequence::Delete, this, &MainWindow::delUnit);
 	editMenu->addAction(QIcon::fromTheme("edit-select-all"), tr("Select &All"), QKeySequence::SelectAll, this, &MainWindow::selectAll);
 	editMenu->addSeparator();
 	editMenu->addAction(QIcon::fromTheme("document-properties"), tr("MLT &Version"), this, &MainWindow::versionDialog);
@@ -75,10 +78,23 @@ MainWindow::MainWindow(QWidget* parent) :
 	table->setSelectionBehavior(QAbstractItemView::SelectRows);
 	table->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	table->setStyle(new HorizontalLineItemDropStyle(table->style()));
+	table->setContextMenuPolicy(Qt::CustomContextMenu);
 
 	setCurrentFile();
 	resetTableLayout();
 	updateRAMStatus();
+
+	connect(editMenu, &QMenu::aboutToShow, this, [this]() {
+		const auto selRows = table->selectionModel()->selectedRows();
+		importUnitAction->setEnabled(selRows.size() == 1);
+		exportUnitAction->setEnabled(selRows.size());
+		clearUnitAction->setEnabled(selRows.size());
+		deleteUnitAction->setEnabled(selRows.size());
+	});
+
+	connect(table, &QWidget::customContextMenuRequested, this, [this, editMenu](const QPoint& pos) {
+		editMenu->popup(table->viewport()->mapToGlobal(pos));
+	});
 
 	connect(table->selectionModel(), &QItemSelectionModel::selectionChanged, this,
 	        [this](const QItemSelection& selected, const QItemSelection& deselected) {
@@ -282,6 +298,23 @@ void MainWindow::versionDialog() {
 }
 
 void MainWindow::packMLT(bool useAICASizes) {
+	if (!useAICASizes) {
+		const auto btn = QMessageBox::warning(
+			this,
+			tr("Pack MLT"),
+			tr(
+				"Packing an MLT by file size can potentially break titles that reload units from "
+				"other sources, as the target block in AICA RAM may then not have enough space to "
+				"fit the new data. Would you like to continue?"
+			),
+			QMessageBox::Yes | QMessageBox::No
+		);
+
+		if (btn != QMessageBox::Yes) {
+			return;
+		}		
+	}
+
 	if (mlt.pack(useAICASizes)) {
 		/**
 		 * Getting all rows that actually changed is a bit ugh, but it's inevitable

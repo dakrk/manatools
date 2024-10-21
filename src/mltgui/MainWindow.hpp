@@ -63,5 +63,10 @@ private:
 	QLabel* ramStatus;
 	QLabel* curUnitStatus;
 
+	QAction* importUnitAction;
+	QAction* exportUnitAction;
+	QAction* clearUnitAction;
+	QAction* deleteUnitAction;
+
 	manatools::mlt::MLT mlt;
 };
