@@ -280,7 +280,7 @@ invalid:
 		"\n"
 		"Usage: %s extract <in.msb> <outdir>\n"
 		"       %s dump <in.msb>\n"
-		"       %s exportmidis <in.mlt> <outdir>\n"
+		"       %s exportmidis <in.msb> <outdir>\n"
 		"\n"
 		"An MSB file is a collection of sequences of MIDI messages.\n"
 		"Typically these are packed inside an MLT, and are used for music.\n"
