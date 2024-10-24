@@ -12,6 +12,21 @@ using namespace sf2cute;
 
 namespace manatools::sf2 {
 
+/**
+ * TODO: Mend inaccuracies
+ * A direct level of 0 should give no output, but this doesn't do that.
+ * (In that case that's probably a good thing because we can't do FX.)
+ * Corlett's documentation says every 0x10 in TL is 3 dB, but the AICA_E.HTM
+ * table says 3 dB is 0x8?
+ * SF2 spec says this is in centibels, which is a tenth of a decibel, yet
+ * Polyphone has "real dB" which they convert to by (10 * sourceDB / 0.4)?
+ */
+static s16 calcAttenuation(u8 directLevel, u8 oscLevel) {
+	s16 a = (15 - directLevel) * 3;
+	a += (oscLevel / 16) * 3;
+	return 10 * a;
+}
+
 SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
 	SoundFont sf2;
 
@@ -56,7 +71,8 @@ SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
 				std::vector<SFGeneratorItem> generatorItems = {
 					{ SFGenerator::kKeyRange, RangesType(split.startNote, split.endNote) },
 					{ SFGenerator::kVelRange, RangesType(split.velocityLow, split.velocityHigh) },
-					{ SFGenerator::kPan, static_cast<s16>(roundf(utils::remap(split.panPot, -15, 15, -500, 500))) }
+					{ SFGenerator::kPan, static_cast<s16>(roundf(utils::remap(split.panPot, -15, 15, -500, 500))) },
+					{ SFGenerator::kInitialAttenuation, calcAttenuation(split.directLevel, ~split.oscillatorLevel) }
 				};
 
 				if (split.loop)

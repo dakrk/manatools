@@ -467,7 +467,8 @@ bool MainWindow::exportSF2() {
 		tr(
 			"<p>SF2 conversion is currently incomplete and inaccurate, and may never be accurate due to "
 			"fundamental incompatibilities between the formats.</p>"
-			"<p>Envelope, LFO, velocity, layer delay and bend range data will not be preserved.</p>"
+			"<p>Envelope, LFO, velocity, layer delay and bend range data will not be preserved accurately, "
+			"if at all.</p>"
 		)
 	);
 

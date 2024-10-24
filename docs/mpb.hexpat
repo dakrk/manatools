@@ -151,7 +151,7 @@ namespace mpb {
          * This is an attenuation level, so 0 means full volume, while 255 is
          * lowest. Tools invert this to be clearer (a binary NOT should work). 
          */
-        u8 oscillatorLevel; // [0 -> 255] [def. 255]
+        u8 oscillatorLevel; // [0 -> 255] [def. 0]
         
         u16 filterStartLevel;   // [0 -> 8184] [def. 8184]    The slider in the editor only goes down to 8, but typing can go down to 0.
         u16 filterAttackLevel;  // [0 -> 8184] [def. 8184]    ^^
