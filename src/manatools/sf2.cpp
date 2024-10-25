@@ -30,8 +30,8 @@ static double timecentClamp(double v, bool high) {
 	return std::clamp<double>(v, -12000, high ? 8000 : 5000);
 }
 
-static double msecsToTimecent(double msecs, bool high) {
-	return timecentClamp(1200 * std::log2(msecs / 1000), high);
+static s16 msecsToTimecent(double msecs, bool high) {
+	return std::roundf(timecentClamp(1200 * std::log2(msecs / 1000), high));
 }
 
 SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
