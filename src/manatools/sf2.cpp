@@ -75,7 +75,8 @@ SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
 					static_cast<s8>(roundf(utils::remap(split.fineTune, -128, 127, -48, 47)))
 				);
 
-				u8 ampEffRate = split.effectiveRate(split.amp.attackRate);
+				u8 ampAtkEffRate = split.effectiveRate(split.amp.attackRate);
+				u8 ampRelEffRate = split.effectiveRate(split.amp.releaseRate);
 
 				std::vector<SFGeneratorItem> generatorItems = {
 					{ SFGenerator::kKeyRange, RangesType(split.startNote, split.endNote) },
@@ -83,7 +84,8 @@ SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
 					{ SFGenerator::kPan, static_cast<s16>(roundf(utils::remap(split.panPot, -15, 15, -500, 500))) },
 					{ SFGenerator::kInitialAttenuation, calcAttenuation(split.directLevel, ~split.oscillatorLevel) },
 					{ SFGenerator::kDelayVolEnv, msecsToTimecent(layer->delay * 4, false) },
-					{ SFGenerator::kAttackVolEnv, msecsToTimecent(aica::AEGAttackTime[ampEffRate], true) }
+					{ SFGenerator::kAttackVolEnv, msecsToTimecent(aica::AEGAttackTime[ampAtkEffRate], true) },
+					{ SFGenerator::kReleaseVolEnv, msecsToTimecent(aica::AEGDSRTime[ampRelEffRate], true) }
 				};
 
 				if (split.loop)
