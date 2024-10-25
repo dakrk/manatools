@@ -3,7 +3,6 @@
 
 #include "aica.hpp"
 #include "sf2.hpp"
-#include "filesystem.hpp"
 #include "mpb.hpp"
 #include "tonedecoder.hpp"
 #include "utils.hpp"
@@ -25,6 +24,14 @@ static s16 calcAttenuation(u8 directLevel, u8 oscLevel) {
 	s16 a = (15 - directLevel) * 3;
 	a += (oscLevel / 16) * 3;
 	return 10 * a;
+}
+
+static double timecentClamp(double v, bool high) {
+	return std::clamp<double>(v, -12000, high ? 8000 : 5000);
+}
+
+static double msecsToTimecent(double msecs, bool high) {
+	return timecentClamp(1200 * std::log2(msecs / 1000), high);
 }
 
 SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
@@ -68,11 +75,15 @@ SoundFont fromMPB(const mpb::Bank& mpb, const std::string& bankName) {
 					static_cast<s8>(roundf(utils::remap(split.fineTune, -128, 127, -48, 47)))
 				);
 
+				u8 ampEffRate = split.effectiveRate(split.amp.attackRate);
+
 				std::vector<SFGeneratorItem> generatorItems = {
 					{ SFGenerator::kKeyRange, RangesType(split.startNote, split.endNote) },
 					{ SFGenerator::kVelRange, RangesType(split.velocityLow, split.velocityHigh) },
 					{ SFGenerator::kPan, static_cast<s16>(roundf(utils::remap(split.panPot, -15, 15, -500, 500))) },
-					{ SFGenerator::kInitialAttenuation, calcAttenuation(split.directLevel, ~split.oscillatorLevel) }
+					{ SFGenerator::kInitialAttenuation, calcAttenuation(split.directLevel, ~split.oscillatorLevel) },
+					{ SFGenerator::kDelayVolEnv, msecsToTimecent(layer->delay * 4, false) },
+					{ SFGenerator::kAttackVolEnv, msecsToTimecent(aica::AEGAttackTime[ampEffRate], true) }
 				};
 
 				if (split.loop)

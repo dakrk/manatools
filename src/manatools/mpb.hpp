@@ -4,6 +4,7 @@
 #include <optional>
 #include <vector>
 
+#include "aica.hpp"
 #include "common.hpp"
 #include "filesystem.hpp"
 #include "fourcc.hpp"
@@ -71,6 +72,10 @@ namespace manatools::mpb {
 
 		u32 ptrToneData_   = 0;     // Only for presentation post-load
 		tone::Tone tone;
+
+		u8 effectiveRate(u8 rate) const {
+			return aica::calcEffectiveRate(amp.keyRateScaling, pitch, rate);
+		}
 	};
 
 	// Max 4 Layers per Program
