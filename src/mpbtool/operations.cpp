@@ -172,6 +172,12 @@ void mpbListInfo(const fs::path& mpbPath) {
 					printfDepth(3, "No tone data\n");
 				}
 
+				printfDepth(3, "Amp attack rate     = %u\n", split.amp.attackRate);
+				printfDepth(3, "Amp decay rate 1    = %u\n", split.amp.decayRate1);
+				printfDepth(3, "Amp decay rate 2    = %u\n", split.amp.decayRate2);
+				printfDepth(3, "Amp release rate    = %u\n", split.amp.releaseRate);
+				printfDepth(3, "Key rate scaling    = %u\n", split.amp.keyRateScaling);
+
 				printfDepth(3, "Velocity curve ID   = %u\n", split.velocityCurveID);
 				printfDepth(3, "Velocity low        = %u\n", split.velocityLow);
 				printfDepth(3, "Velocity high       = %u\n", split.velocityHigh);
