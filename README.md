@@ -25,7 +25,7 @@ Please view [BUILDING.md](BUILDING.md).
 | MIDI Sequence Bank     | .msb           | MSB files store data for MIDI sequences. Despite its name, the data doesn't seem very MIDI compliant.          | Extractable, cannot modify yet.                           |
 | Multi-Unit             | .mlt           | MLT files are a collection of these file formats, to get mapped into the AICA sound processor's RAM.           | Extractable, modifiable.                                  |
 | One Shot Bank          | .osb           | OSB files are used for SFX. They share similar parameters with MPB, minus the MIDI note/velocity stuff.        | Extractable, modifiable.                                  |
-| FX Output Bank         | .fob           | FOB files are a bank of output/mixer data. Mixer data stores level and panning values for up to 16 channels.   | Documented, no tools available yet.                       |
+| FX Output Bank         | .fob           | FOB files are a bank of output/mixer data. Mixer data stores level and panning values for up to 16 channels.   | Viewable, modifiable.                                     |
 | FX Program Bank        | .fpb           | FPB files store DSP programs for FX.                                                                           | Not enough information yet.                               |
 
 ## Acknowledgements
