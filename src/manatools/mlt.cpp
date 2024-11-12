@@ -126,10 +126,7 @@ void MLT::save(const fs::path& path) {
 	 * this is.
 	 */
 	auto pos = io.tell();
-	int padding = utils::roundUp(pos, UNIT_ALIGN) - pos;
-	for (int i = 0; i < padding; i++) {
-		io.writeU8(0);
-	}
+	io.writeN<u8>(0x00, utils::roundUp(pos, UNIT_ALIGN) - pos);
 }
 
 bool MLT::adjust() {

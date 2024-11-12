@@ -78,6 +78,16 @@ namespace manatools::io {
 		template <typename T, size_t Extent>
 		bool writeSpan(const std::span<T, Extent> in)      { return write(in.data(), sizeof(T), in.size()) == in.size(); }
 
+		template <typename T>
+		bool writeN(T in, size_t count) {
+			while (count--) {
+				if (write(&in, sizeof(in), 1) != 1) {
+					return false;
+				}
+			}
+			return true;
+		}
+
 		/* ======================== *
 		 *      Error handling      *
 		 * ======================== */

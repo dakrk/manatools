@@ -347,9 +347,20 @@ void Bank::save(const fs::path& path) {
 				throw std::runtime_error(err);
 			}
 
+			/**
+			 * Pad on data import or pad when exporting, hmm...
+			 * The latter seems more robust so likely best choice.
+			 * This padding is required, presumably because Manatee can't read the
+			 * start/end of data magic otherwise due to read alignment requirements.
+			 * (Would a repeated value of 0 cause ADPCM drift? That shouldn't matter
+			 * though as it's only for a few samples, and those should never play
+			 * anyway as the loopEnd/tone length is left untouched.)
+			 */
+			size_t padding = utils::roundUp(toneData->size(), 4) - toneData->size();
 			io.writeFourCC(OSD_MAGIC);
 			tonePtrs[toneData] = io.tell();
 			io.writeVec(*toneData);
+			io.writeN<u8>(0x00, padding);
 			io.writeFourCC(OSD_END);
 		}
 
@@ -383,10 +394,7 @@ void Bank::save(const fs::path& path) {
 	io.writeFourCC(OSB_END);
 
 	auto pos = io.tell();
-	int padding = utils::roundUp(pos, 32l) - pos;
-	for (int i = 0; i < padding; i++) {
-		io.writeU8(0);
-	}
+	io.writeN<u8>(0xFF, utils::roundUp(pos, 32) - pos);
 
 	io::FileIO file(path, "wb");
 	file.writeVec(io.vec());

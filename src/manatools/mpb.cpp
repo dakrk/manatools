@@ -587,6 +587,11 @@ void Bank::save(const fs::path& path) {
 						throw std::runtime_error(err);
 					}
 					
+					/**
+					 * OSB requires padding, presumably because Manatee requires the magic to be
+					 * aligned to read it, but MPB doesn't have data magic so I wouldn't think that
+					 * to be applicable, and after inspecting numerous files this seems to be true.
+					 */
 					tonePtrs[toneData] = io.tell();
 					io.writeVec(*toneData);
 				}
@@ -626,10 +631,7 @@ void Bank::save(const fs::path& path) {
 
 	// Almost same situation as MLT, I hope this is right though
 	auto pos = io.tell();
-	int padding = utils::roundUp(pos, 32l) - pos;
-	for (int i = 0; i < padding; i++) {
-		io.writeU8(0);
-	}
+	io.writeN<u8>(0x00, utils::roundUp(pos, 32) - pos);
 
 	// Finally write the file
 	io::FileIO file(path, "wb");
