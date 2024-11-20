@@ -25,13 +25,13 @@ void KeyMapView::paintEvent(QPaintEvent* event) {
 	qreal middleY = height() / 2.0;
 
 	const auto oldPen = painter.pen();
-	painter.setPen(palette().dark().color());
+	painter.setPen(palette().shadow().color());
 	for (int i = 0; i < 128; i++) {
 		qreal x = i * widthStep;
-		painter.setOpacity(i % 12 ? 0.25 : 0.75);
+		painter.setOpacity(i % 12 ? 0.25 : 0.5);
 		painter.drawLine(QLineF(x, 0, x, height()));
 	}
-	painter.setOpacity(0.75);
+	painter.setOpacity(0.5);
 	painter.drawLine(QLineF(0, middleY, width(), middleY));
 	painter.setOpacity(1.0);
 	painter.setPen(oldPen);

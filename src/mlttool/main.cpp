@@ -41,7 +41,7 @@ void mltExtractUnits(const fs::path& mltPath, const fs::path& unitOutPath) {
 		const auto& unit = mlt.units[u];
 
 		if (!unit.data.size()) {
-			char msg[40];
+			char msg[60];
 			snprintf(msg, std::size(msg), "Warning: Unit %zu (%s) has no data\n", u, unit.fourCC.data());
 			fputs(msg, stderr);
 			continue;
