@@ -169,7 +169,14 @@ bool MLT::pack(bool useAICASizes) {
 
 	for (auto& unit : units) {
 		u32 origPtr = unit.aicaDataPtr;
-		u32 origSize = useAICASizes ? unit.aicaDataSize : unit.data.size();
+		u32 origSize;
+
+		// Don't read the file sizes for units that don't store data in the file
+		if (useAICASizes || !unit.shouldHaveData()) {
+			origSize = unit.aicaDataSize;
+		} else {
+			origSize = unit.data.size();
+		}
 
 		unit.aicaDataPtr = utils::roundUp(curAICAOffset, unit.alignment());
 		unit.aicaDataSize = utils::roundUp(origSize, UNIT_ALIGN);
