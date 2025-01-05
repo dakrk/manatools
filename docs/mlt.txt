@@ -1,2 +1,24 @@
-- SFPW starts at a multiple of 0x1000 (4096)
-- All other units at 0x20 (32)
+Alignment:
+	- SFPW starts at a multiple of 0x1000 (4096)
+	- All other units at 0x20 (32)
+
+Maximum unit bank values (remembering they begin at 0):
+	SMSB = 15
+	SMPB = 15
+	SMDB = 1
+	SOSB = 15
+	SFPB = 0
+	SFOB = 0
+	SFPW = 0
+	SPSR = 15
+
+	(See sdSndMemBlockAllocate.)
+	Oddly though for SFPB, they allocated enough space to fit 16 units in its area map.
+	SFPB's area map starts at 0x14200 and SFOB starts at 0x14280.
+	An area map stores two dwords per unit: Data pointer and size.
+	With this we can calculate where a specific bank will be in a data type's area map.
+	Doing (0x14200 + 15 * (4 + 4)) gives us 0x14278. Two more dwords after this will surely give us 0x14280.
+	The area map after SFOB is SFPW, which is sensibly located at 0x14288, meaning SFOB doesn't over-allocate.
+
+	This being a signed byte in the hexpat is no mistake: the API passes it as this, it uses signed comparison instructions on it (CMP/GE),
+	and explicitly checks if the bank value is not less than 0.

@@ -16,7 +16,8 @@ namespace mlt {
     // Each unit header, including that of the MLT file, should be 32 bytes each.
     struct Unit {
         char fourCC[4];
-        u32 bank;         // presumably
+        s8 bank;          // See mlt.txt for data type specific limits
+        padding[3];
         u32 aicaDataPtr;  // location of unit in AICA RAM
         u32 aicaDataSize; // size of unit in AICA RAM
         u32 fileDataPtr;  // location of unit in MLT file
