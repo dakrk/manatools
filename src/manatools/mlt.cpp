@@ -10,6 +10,26 @@
 
 namespace manatools::mlt {
 
+/**
+ * GCC and Clang optimises FourCC stuff to integer comparisons as it should be,
+ * so this ends up being very efficient. Clang seems to be quite a lot smarter
+ * than GCC when it comes to passing them. Not sure about MSVC though.
+ */
+s8 maxBank(FourCC type) {
+	if (type == "SMDB") {
+		return 1;
+	} else if (type == "SFPB" || type == "SFOB" || type == "SFPW") {
+		return 0;
+	} else {
+		/**
+		 * SMSB, SMPB, SOSB and SPSR all have this limit.
+		 * sdSndMemBlockAllocate in the SDK also uses this as the default,
+		 * so it makes sense to do it like that here.
+		 */
+		return 15;
+	}
+}
+
 MLT MLT::load(const fs::path& path) {
 	io::FileIO io(path, "rb");
 	MLT mlt;
@@ -31,7 +51,8 @@ MLT MLT::load(const fs::path& path) {
 		u32 fileDataSize;
 
 		io.readFourCC(&unit.fourCC);
-		io.readU32LE(&unit.bank);
+		io.readS8(&unit.bank);
+		io.forward(3);
 		io.readU32LE(&unit.aicaDataPtr);
 		io.readU32LE(&unit.aicaDataSize);
 		io.readU32LE(&unit.fileDataPtr_);
@@ -58,6 +79,7 @@ MLT MLT::load(const fs::path& path) {
 
 void MLT::save(const fs::path& path) {
 	io::FileIO io(path, "wb");
+	char err[80];
 
 	io.writeFourCC(MLT_MAGIC);
 	io.writeU32LE(version);
@@ -74,15 +96,21 @@ void MLT::save(const fs::path& path) {
 
 	/**
 	 * Seemingly there can be up to 16 of a Unit type.
-	 * (MPB and MDB are treated as the same though)
+	 * (MPB and MDB are treated as the same in the SDK tools though)
 	 */
 	std::vector<u32> unitOffsets(units.size());
 	for (size_t i = 0; i < units.size(); i++) {
 		auto& unit = units[i];
 
-		// Trust that the AICA fields are valid and aligned
+		if (!unit.bankInRange()) {
+			snprintf(err, std::size(err), "MLT unit %zu's bank is not in range for its type (0 -> %hhd)", i, maxBank(unit.fourCC));
+			throw std::runtime_error(err);
+		}
+
+		// Trust that the AICA fields are valid and aligned.
 		io.writeFourCC(unit.fourCC);
-		io.writeU32LE(unit.bank);
+		io.writeS8(unit.bank);
+		io.forward(3);
 		io.writeU32LE(unit.aicaDataPtr);
 		io.writeU32LE(unit.aicaDataSize);
 
@@ -238,6 +266,21 @@ uintptr_t MLT::aicaUsed() const {
 	}
 
 	return lastTotal;
+}
+
+/**
+ * Yeah... currentBank returning negative values when an MLT bank can technically
+ * store them isn't so good, but they're not valid anyway so bleh.
+ */
+s8 MLT::currentBank(FourCC type) const {
+	s8 bank = -1;
+	for (const auto& unit : units) {
+		if (unit.fourCC != type)
+			continue;
+		if (unit.bank > bank)
+			bank = unit.bank;
+	}
+	return bank;
 }
 
 u32 Unit::alignment() const {

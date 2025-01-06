@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <cstring>
 #include <string_view>
 
 namespace manatools {
@@ -51,3 +52,17 @@ namespace manatools {
 		char data_[5];
 	};
 } // namespace manatools
+
+namespace std {
+	template<> struct hash<manatools::FourCC> {
+		/**
+		 * Not allowed to just cast.
+		 * Compiler should absolutely get the hint, though.
+		 */
+		size_t operator()(const manatools::FourCC& s) const {
+			size_t h;
+			memcpy(&h, s.data(), 4);
+			return h;
+		}
+	};
+} // namespace std

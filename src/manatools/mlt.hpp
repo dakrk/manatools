@@ -17,21 +17,30 @@ namespace manatools::mlt {
 	constexpr u32 UNIT_ALIGN = 0x20;
 	constexpr u32 FPW_ALIGN  = 0x1000;
 
+	s8 maxBank(FourCC type);
+
+	inline constexpr bool bankInRange(FourCC type, s8 bank) {
+		return bank >= 0 && bank <= maxBank(type);
+	}
+
 	class Unit {
 	public:
 		Unit() : bank(0), aicaDataPtr(0), aicaDataSize(0) {}
 
-		Unit(FourCC fourCC, u32 bank = 0, u32 aicaDataPtr = 0, u32 aicaDataSize = 0) :
+		Unit(FourCC fourCC, s8 bank = 0, u32 aicaDataPtr = 0, u32 aicaDataSize = 0) :
 			fourCC(fourCC), bank(bank), aicaDataPtr(aicaDataPtr), aicaDataSize(aicaDataSize) {}
 
-		Unit(FourCC fourCC, const std::vector<u8>& data, u32 bank = 0, u32 aicaDataPtr = 0, u32 aicaDataSize = 0) :
+		Unit(FourCC fourCC, const std::vector<u8>& data, s8 bank = 0, u32 aicaDataPtr = 0, u32 aicaDataSize = 0) :
 			fourCC(fourCC), bank(bank), aicaDataPtr(aicaDataPtr), aicaDataSize(aicaDataSize), data(data) {}
 
 		FourCC fourCC;
-		u32 bank;
+		s8 bank;
 		u32 aicaDataPtr;
 		u32 aicaDataSize;
 		std::vector<u8> data;
+
+		s8 maxBank() const { return mlt::maxBank(fourCC); }
+		bool bankInRange() const { return mlt::bankInRange(fourCC, bank); }
 
 		u32 fileDataPtr() const { return fileDataPtr_; }
 		u32 alignment() const;
@@ -48,8 +57,11 @@ namespace manatools::mlt {
 		bool adjust();
 		bool pack(bool useAICASizes);
 		void move(size_t srcIdx, size_t count, size_t destIdx);
+
 		u32 aicaNextOffset(u32 offset) const;
 		uintptr_t aicaUsed() const;
+
+		s8 currentBank(FourCC type) const;
 
 		// Version 1 isn't 0x1, instead it's 0x0101???
 		u32 version = 2;

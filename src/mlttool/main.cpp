@@ -28,7 +28,7 @@ void mltListUnits(const fs::path& mltPath) {
 		const auto& unit = mlt.units[u];
 
 		// Will become misaligned if something is too big, but such chances are low
-		printf("%4zu  %4s  %4u  %13x  %11u  %13x  %11zu\n",
+		printf("%4zu  %4s  %4hhd  %13x  %11u  %13x  %11zu\n",
 		       u, unit.fourCC.data(), unit.bank, unit.aicaDataPtr, unit.aicaDataSize,
 		       unit.fileDataPtr(), unit.data.size());
 	}
