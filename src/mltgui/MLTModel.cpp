@@ -58,6 +58,10 @@ QVariant MLTModel::data(const QModelIndex& index, int role) const {
 			case 5: return monoFont;
 		}
 	} else if (role == Qt::ForegroundRole) {
+		if (index.column() == 1 && !unit.bankInRange()) {
+			return QColorConstants::Red;
+		}
+
 		if (unit.fileDataPtr() == manatools::mlt::UNUSED) {
 			return dimmedTextColor;
 		}
@@ -93,16 +97,23 @@ bool MLTModel::setData(const QModelIndex& index, const QVariant& value, int role
 
 	if (role == Qt::EditRole) {
 		QString str = value.toString();
+		bool ok = false;
+
 		if (index.column() == 0)
 			return changeData(index, unit.fourCC, str.toUtf8().data());
 
-		bool ok = false;
+		if (index.column() == 1) {
+			int val = str.toInt(&ok, 0);
+			if (!ok)
+				return false;
+			return changeData(index, unit.bank, val);
+		}
+
 		uint val = str.toUInt(&ok, 0);
 		if (!ok)
 			return false;
 
 		switch (index.column()) {
-			case 1: return changeData(index, unit.bank,         val);
 			case 2: return changeData(index, unit.aicaDataPtr,  val);
 			case 3: return changeData(index, unit.aicaDataSize, val);
 		}
@@ -112,8 +123,9 @@ bool MLTModel::setData(const QModelIndex& index, const QVariant& value, int role
 }
 
 bool MLTModel::insertUnits(int row, int count, const manatools::FourCC fourCC) {
+	s8 bank = mlt->currentBank(fourCC);
 	beginInsertRows({}, row, row + count - 1);
-	mlt->units.insert(mlt->units.begin() + row, count, { fourCC });
+	mlt->units.insert(mlt->units.begin() + row, count, { fourCC, ++bank });
 	endInsertRows();
 	return true;
 }

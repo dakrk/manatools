@@ -44,6 +44,7 @@ private:
 	void emitRowChanged(QAbstractItemModel* model, int row);
 	void updateRAMStatus();
 	void updateUnitStatus();
+	bool checkUnitBanksValid(QString* log = nullptr);
 
 	void resetTableLayout();
 	void reloadTable();

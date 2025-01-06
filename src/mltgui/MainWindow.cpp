@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QDropEvent>
 #include <QFileDialog>
+#include <QHash>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QInputDialog>
@@ -17,6 +18,7 @@
 #include <guicommon/FourCCDelegate.hpp>
 #include <guicommon/HorizontalLineItemDropStyle.hpp>
 #include <guicommon/utils.hpp>
+#include <array>
 #include <functional>
 
 #include "MainWindow.hpp"
@@ -176,9 +178,33 @@ bool MainWindow::loadFile(const QString& path) {
 
 bool MainWindow::saveFile(const QString& path) {
 	CursorOverride cursor(Qt::WaitCursor);
+	QMessageBox::StandardButton btn;
+	QString msg;
+
+	/**
+	 * All in all, can't say I'm really satisfied with how I approach the bank validity stuff,
+	 * but the bank incrementing when adding, invalid banks being red, and this message should
+	 * make stuff sufficiently clear.
+	 */
+	if (!checkUnitBanksValid(&msg)) {
+		btn = QMessageBox::warning(
+			this,
+			tr("Save Multi-Unit file"),
+			tr(
+				"The file failed validity checks:\n"
+				"%1\n"
+				"Saving will fail or produce a file with unexpected results. Continue?"
+			).arg(msg),
+			QMessageBox::Yes | QMessageBox::No
+		);
+
+		if (btn != QMessageBox::Yes) {
+			return false;
+		}
+	}
 
 	if (mlt.aicaUsed() > manatools::mlt::AICA_MAX) {
-		const auto btn = QMessageBox::warning(
+		btn = QMessageBox::warning(
 			this,
 			tr("Save Multi-Unit file"),
 			tr("The current file exceeds the maximum amount of AICA RAM, continue saving?"),
@@ -187,7 +213,7 @@ bool MainWindow::saveFile(const QString& path) {
 
 		if (btn != QMessageBox::Yes) {
 			return false;
-		}	
+		}
 	}
 
 	try {
@@ -600,6 +626,46 @@ void MainWindow::updateUnitStatus() {
 	}
 
 	curUnitStatus->setText(str);
+}
+
+// Would something like this make more sense being in the MLT library code instead?
+bool MainWindow::checkUnitBanksValid(QString* log) {
+	// Qt doesn't seem to have an equivalent to std::array
+	QHash<manatools::FourCC, std::array<bool, 256>> usedMap;
+	bool valid = true;
+
+	for (size_t i = 0; i < mlt.units.size(); i++) {
+		const auto& unit = mlt.units[i];
+		bool inRange = unit.bankInRange();
+		std::array<bool, 256>* usedArray;
+		u8 uBank = static_cast<u8>(unit.bank);
+
+		// We need to zero the array in the map first, it's not done for us
+		if (auto it = usedMap.find(unit.fourCC); it == usedMap.end()) {
+			usedArray = &usedMap[unit.fourCC];
+			usedArray->fill(false);
+		} else {
+			usedArray = &it.value();
+		}
+
+		if (log) {
+			if ((*usedArray)[uBank]) {
+				log->append(tr("Unit %1's bank (%2) is already being used by another unit of the same type.\n").arg(i).arg(unit.bank));
+			}
+
+			if (!inRange) {
+				log->append(tr("Unit %1's bank is not in range for its type (0 -> %2).\n").arg(i).arg(unit.maxBank()));
+			}
+		}
+
+		if ((*usedArray)[uBank] || !inRange) {
+			valid = false;
+		}
+
+		(*usedArray)[uBank] = true;
+	}
+
+	return valid;
 }
 
 void MainWindow::resetTableLayout() {
