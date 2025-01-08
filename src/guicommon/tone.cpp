@@ -1,3 +1,4 @@
+#include <QComboBox>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <guicommon/ChannelSelectDialog.hpp>
@@ -158,6 +159,52 @@ bool importFile(Tone& tone, Metadata* metadata, const QString& path, QWidget* pa
 	return true;
 }
 
+QString exportFolderDialog(const QString& basePath, FileType* type, QWidget* parent) {
+	QFileDialog* dialog = new QFileDialog(parent, tr("Export tones"), basePath);
+	QLabel* lbl = new QLabel(tr("Export type:"));
+	QComboBox* cb = new QComboBox();
+
+	cb->addItem(tr("WAV file (*.wav)"), QVariant::fromValue(FileType::WAV));
+	cb->addItem(tr("Raw tone data (*.dat)"), QVariant::fromValue(FileType::DAT));
+
+	dialog->setAcceptMode(QFileDialog::AcceptSave);
+	dialog->setFileMode(QFileDialog::Directory);
+	dialog->setOption(QFileDialog::DontUseNativeDialog); // inconsistency much? needed for custom widget
+	dialog->setSupportedSchemes({ QStringLiteral("file") });
+
+	/**
+	 * This is probably prone to breaking between Qt versions, relying on the
+	 * layout to be suitable enough to just be able to do this.
+	 */
+	dialog->layout()->addWidget(lbl);
+	dialog->layout()->addWidget(cb);
+
+	if (dialog->exec() == QDialog::Accepted) {
+		const auto urls = dialog->selectedUrls();
+		if (urls.empty()) {
+			return QString();
+		}
+
+		const auto& url = urls[0];
+		if (url.isEmpty() || !url.isLocalFile()) {
+			return QString();
+		}
+
+		const auto cbData = cb->currentData();
+		if (!cbData.canConvert<FileType>()) {
+			return QString();
+		}
+
+		if (type) {
+			*type = cbData.value<FileType>();
+		}
+
+		return url.toLocalFile();
+	}
+
+	return QString();
+}
+
 bool exportDialog(const Tone& tone, const Metadata* metadata, const QString& basePath,
                   const QString& baseName, const QString& tonePath, QWidget* parent)
 {
@@ -171,7 +218,7 @@ bool exportDialog(const Tone& tone, const Metadata* metadata, const QString& bas
 	const QString bankName = baseName.isEmpty() ? "untitled" : baseName;
 
 	const QString defPath = QDir(basePath).filePath(
-		tonePath.isEmpty() ? bankName : QString("%1_%2.wav").arg(bankName).arg(tonePath)		
+		tonePath.isEmpty() ? bankName : QString("%1_%2.wav").arg(bankName).arg(tonePath)
 	);
 
 	const QString path = QFileDialog::getSaveFileName(

@@ -77,6 +77,7 @@ namespace tone {
 	GUICOMMON_EXPORT bool importDialog(Tone& tone, Metadata* metadata, const QString& basePath, QWidget* parent = nullptr);
 	GUICOMMON_EXPORT bool importFile(Tone& tone, Metadata* metadata, const QString& path, QWidget* parent = nullptr);
 
+	GUICOMMON_EXPORT QString exportFolderDialog(const QString& basePath, FileType* type, QWidget* parent = nullptr);
 	GUICOMMON_EXPORT bool exportDialog(const Tone& tone, const Metadata* metadata, const QString& basePath,
 	                                   const QString& baseName, const QString& tonePath, QWidget* parent = nullptr);
 	GUICOMMON_EXPORT bool exportFile(const Tone& tone, const Metadata* metadata, const QString& path, FileType type, QWidget* parent = nullptr);
