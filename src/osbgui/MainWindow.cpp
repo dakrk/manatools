@@ -352,22 +352,62 @@ bool MainWindow::importTone() {
 	return success;
 }
 
+// a bit messy
 bool MainWindow::exportTone() {
+	QString bankName = curFile.isEmpty() ? "untitled" : QFileInfo(curFile).baseName();
 	const auto selRows = ui.tblPrograms->selectionModel()->selectedRows();
 	bool failed = false;
 
-	for (const auto& idx : selRows) {
-		const auto& program = bank.programs[idx.row()];
+	if (selRows.size() == 1) {
+		int row = selRows[0].row();
+		const auto& program = bank.programs[row];
 		auto metadata = tone::Metadata::fromOSB(program);
 
-		failed |= !tone::exportDialog(
+		failed = !tone::exportDialog(
 			program.tone,
 			&metadata,
 			getOutPath(curFile, true),
 			QFileInfo(curFile).baseName(),
-			QString::number(idx.row()),
+			QString::number(row),
 			this
 		);
+	} else if (selRows.size()) {
+		tone::FileType fileType;
+		QString fileExt;
+		QString basePath;
+		QDir baseDir;
+
+		basePath = tone::exportFolderDialog(
+			getOutPath(curFile, true),
+			&fileType,
+			this
+		);
+
+		if (basePath.isEmpty()) {
+			return false;
+		}
+
+		baseDir = basePath;
+
+		switch (fileType) {
+			case tone::FileType::WAV: { fileExt = QStringLiteral("wav"); break; }
+			case tone::FileType::DAT: { fileExt = QStringLiteral("dat"); break; }
+			default: return false;
+		}
+
+		for (const auto& idx : selRows) {
+			const auto& program = bank.programs[idx.row()];
+			auto metadata = tone::Metadata::fromOSB(program);
+			QString outPath = baseDir.filePath(QStringLiteral("%1_%2.%3").arg(bankName).arg(idx.row()).arg(fileExt));
+
+			failed |= !tone::exportFile(
+				program.tone,
+				&metadata,
+				outPath,
+				fileType,
+				this
+			);
+		}
 	}
 
 	return !failed;
