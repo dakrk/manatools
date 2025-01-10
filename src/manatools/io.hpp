@@ -93,11 +93,12 @@ namespace manatools::io {
 		 * ======================== */
 
 		bool good() const                                  { return !error_ && !eof_; }
-		inline bool eof() const                            { return eof_; }
+		bool eof() const                                   { return eof_; }
 		std::error_code error() const                      { return error_; }
 
 		explicit operator bool() const                     { return !error(); }
 
+		// hmm, I could optimise even more by making this not virtual
 		virtual void clear() {
 			eof_ = false;
 			error_.clear();
@@ -136,12 +137,12 @@ namespace manatools::io {
 			CloseError
 		};
 
-		class ErrorCategoryImpl final : public std::error_category {
+		class ErrorCategory final : public std::error_category {
 			virtual const char* name() const noexcept override;
 			virtual std::string message(int e) const override;
 		};
-		
-		const std::error_category& ErrorCategory();
+
+		// inconsistent name, yeah.
 		std::error_code make_error_code(Error e);
 
 	protected:
@@ -149,20 +150,7 @@ namespace manatools::io {
 			exceptions_(exceptions),
 			eofErrors_(eofErrors) {}
 
-		/**
-		 * errors in this are a bit flawed in the sense that I planned them so
-		 * you could pass any instance of these to anything, but the whole
-		 * difference in error handling you can choose makes that more difficult
-		 */
-		void setError(std::error_code err) {
-			if (!eofErrors_ && err == make_error_code(Error::EndOfFile))
-				return;
-
-			error_ = err;
-
-			if (error_ && exceptions_)
-				throw std::system_error(error_);
-		}
+		void setError(std::error_code err);
 
 		void setError(Error err) {
 			setError(make_error_code(err));
@@ -172,8 +160,8 @@ namespace manatools::io {
 		bool eof_ = false;
 		std::error_code error_;
 
-		bool exceptions_ = true;
-		bool eofErrors_ = false;
+		bool exceptions_;
+		bool eofErrors_;
 	};
 
 	#define DEFINE_READ_FUNC(type, endian, name) \
@@ -235,18 +223,21 @@ namespace manatools::io {
 	#undef DEFINE_READ_FUNC
 	#undef DEFINE_WRITE_FUNC
 
+	// god damn all these function declarations are messy
 	class FileIO : public DataIO {
 	public:
+		FileIO(bool exceptions = true, bool eofErrors = true) : DataIO(exceptions, eofErrors) {}
+
 		FileIO(const char* path, const char* mode, bool exceptions = true, bool eofErrors = true) : DataIO(exceptions, eofErrors) {
 			open(path, mode);
 		}
 
 		FileIO(const std::string& path, const char* mode, bool exceptions = true, bool eofErrors = true) : DataIO(exceptions, eofErrors) {
-			open(path.c_str(), mode);
+			open(path, mode);
 		}
 
 		FileIO(const fs::path& path, const char* mode, bool exceptions = true, bool eofErrors = true) : DataIO(exceptions, eofErrors) {
-			open(path.native().c_str(), mode);
+			open(path, mode);
 		}
 
 		// all this wide char and string stuff. i hate windows
@@ -256,11 +247,31 @@ namespace manatools::io {
 		}
 
 		FileIO(const std::wstring& path, const char* mode, bool exceptions = true, bool eofErrors = true) : DataIO(exceptions, eofErrors) {
-			open(path.c_str(), mode);
+			open(path, mode);
 		}
 		#endif
 
 		~FileIO() override;
+
+		bool open(const char* path, const char* mode);
+
+		bool open(const std::string& path, const char* mode) {
+			return open(path.c_str(), mode);
+		}
+
+		bool open(const fs::path& path, const char* mode) {
+			return open(path.native().c_str(), mode);
+		}
+
+		#ifdef _WIN32
+		bool open(const wchar_t* path, const char* mode);
+
+		bool open(const std::wstring& path, const char* mode) {
+			return open(path.c_str(), mode);
+		}
+		#endif
+
+		bool isOpen() const { return handle_; }
 
 		size_t read(void* buf, size_t size, size_t count) override;
 		size_t write(const void* buf, size_t size, size_t count) override;
@@ -270,14 +281,7 @@ namespace manatools::io {
 		bool flush();
 		bool close();
 
-		bool isOpen() const { return handle_; }
-
 	private:
-		void open(const char* path, const char* mode);
-		#ifdef _WIN32
-		void open(const wchar_t* path, const char* mode);
-		#endif
-
 		FILE* handle_ = nullptr;
 	};
 

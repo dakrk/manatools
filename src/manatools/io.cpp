@@ -10,11 +10,17 @@
 
 namespace manatools::io {
 
-const char* DataIO::ErrorCategoryImpl::name() const noexcept {
-	return "dataio";
+/* ======================== *
+ *          DataIO          *
+ * ======================== */
+
+static DataIO::ErrorCategory DataIOErrorCategory;
+
+const char* DataIO::ErrorCategory::name() const noexcept {
+	return "DataIO";
 }
 
-std::string DataIO::ErrorCategoryImpl::message(int e) const {
+std::string DataIO::ErrorCategory::message(int e) const {
 	switch (static_cast<Error>(e)) {
 		case Error::InvalidOperation: return "Invalid operation";
 		case Error::FileNotOpen:      return "File not open";
@@ -27,24 +33,43 @@ std::string DataIO::ErrorCategoryImpl::message(int e) const {
 	}
 }
 
-const std::error_category& DataIO::ErrorCategory() {
-	static ErrorCategoryImpl instance;
-	return instance;
+std::error_code DataIO::make_error_code(Error e) {
+	return { static_cast<int>(e), DataIOErrorCategory };
 }
 
-std::error_code DataIO::make_error_code(Error e) {
-	return { static_cast<int>(e), ErrorCategory() };
+/**
+ * Errors in this are a bit flawed in the sense that I planned them so you
+ * could pass any instance of these to anything, but the whole difference in
+ * error handling you can choose makes that more difficult.
+ * We mark this function as to not be inlined, because it avoids a lot of
+ * bloat from creating exceptions in functions that use this, which is not
+ * desirable as exceptions should not happen in the first place.
+ */
+__attribute__((noinline)) void DataIO::setError(std::error_code err) {
+	if (!eofErrors_ && err == make_error_code(Error::EndOfFile)) {
+		return;
+	}
+
+	error_ = err;
+
+	if (error_ && exceptions_) {
+		throw std::system_error(error_);
+	}
 }
 
 /* ======================== *
  *          FileIO          *
  * ======================== */
 
-void FileIO::open(const char* path, const char* mode) {
+bool FileIO::open(const char* path, const char* mode) {
 	handle_ = fopen(path, mode);
 
-	if (!handle_)
+	if (!handle_) {
 		setError(POSIX_ERROR_CODE(errno));
+		return false;
+	}
+
+	return true;
 }
 
 #ifdef _WIN32
@@ -55,8 +80,12 @@ void FileIO::open(const wchar_t* path, const char* mode) {
 
 	handle_ = _wfopen(path, modeW);
 
-	if (!handle_)
+	if (!handle_) {
 		setError(POSIX_ERROR_CODE(errno));
+		return false;
+	}
+
+	return true;
 }
 #endif
 
