@@ -12,6 +12,16 @@
 	cls(cls&&) = delete; \
 	cls& operator=(cls&&) = delete;
 
+/**
+ * A perhaps more portable way to solve the need for this is to put the relevant
+ * code into another TU instead, but that's more work :P
+ */
+#ifdef _MSC_VER
+	#define MT_NOINLINE __declspec(noinline)
+#else
+	#define MT_NOINLINE __attribute__((noinline))
+#endif
+
 namespace manatools::utils {
 	template <std::integral T, std::integral T2>
 	constexpr T roundUp(T num, T2 mul) {

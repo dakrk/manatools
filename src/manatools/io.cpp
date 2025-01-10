@@ -5,6 +5,7 @@
 #include <system_error>
 
 #include "io.hpp"
+#include "utils.hpp"
 
 #define POSIX_ERROR_CODE(err) std::error_code{err, std::generic_category()}
 
@@ -45,7 +46,7 @@ std::error_code DataIO::make_error_code(Error e) {
  * bloat from creating exceptions in functions that use this, which is not
  * desirable as exceptions should not happen in the first place.
  */
-__attribute__((noinline)) void DataIO::setError(std::error_code err) {
+MT_NOINLINE void DataIO::setError(std::error_code err) {
 	if (!eofErrors_ && err == make_error_code(Error::EndOfFile)) {
 		return;
 	}
