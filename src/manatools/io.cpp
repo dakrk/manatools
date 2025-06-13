@@ -74,7 +74,7 @@ bool FileIO::open(const char* path, const char* mode) {
 }
 
 #ifdef _WIN32
-void FileIO::open(const wchar_t* path, const char* mode) {
+bool FileIO::open(const wchar_t* path, const char* mode) {
 	wchar_t modeW[10];
 	size_t len = mbstowcs(modeW, mode, std::size(modeW));
 	modeW[len] = '\0';
