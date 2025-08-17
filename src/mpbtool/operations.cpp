@@ -16,7 +16,7 @@ namespace io = manatools::io;
 
 static void mpbVersionCheck(u32 version) {
 	if (version != 2) {
-		fprintf(stderr, "Unsupported MPB version %u, there may be inaccuracies\n", version);
+		fprintf(stderr, "Unsupported MPB version %x, there may be inaccuracies\n", version);
 	}
 }
 
@@ -127,7 +127,7 @@ void mpbListInfo(const fs::path& mpbPath) {
 
 	mpbVersionCheck(mpb.version);
 
-	printf("Version   = %u\n", mpb.version);
+	printf("Version   = %x\n", mpb.version);
 	printf("Drum bank = %s\n", BOOLSTR(mpb.drum));
 
 	for (size_t p = 0; p < mpb.programs.size(); p++) {

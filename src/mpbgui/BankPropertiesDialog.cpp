@@ -1,3 +1,4 @@
+#include <guicommon/utils.hpp>
 #include "BankPropertiesDialog.hpp"
 
 BankPropertiesDialog::BankPropertiesDialog(Bank* bank, QWidget* parent) :
@@ -25,7 +26,7 @@ void BankPropertiesDialog::loadData() {
 	assert(typeIndex != -1);
 	ui.comboType->setCurrentIndex(typeIndex);
 
-	ui.comboVersion->setCurrentText(QString::number(bank->version));
+	ui.comboVersion->setCurrentText(formatHex(bank->version));
 	ui.lblTotalProgramsVal->setText(QString::number(bank->programs.size()));
 
 	size_t totalSplits = 0;
@@ -46,5 +47,5 @@ void BankPropertiesDialog::loadData() {
 
 void BankPropertiesDialog::setData() {
 	bank->drum = ui.comboType->currentData().toBool();
-	bank->version = ui.comboVersion->currentText().toUInt();
+	bank->version = ui.comboVersion->currentText().toUInt(nullptr, 16);
 }

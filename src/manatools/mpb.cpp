@@ -41,9 +41,15 @@ Bank load(const fs::path& path, bool guessToneSize) {
 		throw std::runtime_error("Invalid MPB file");
 	}
 
+	/**
+	 * It may be worth changing this to only check if the first byte (major version) is over 2?
+	 * I wouldn't think minor/patch version differences to cause any breaking changes.
+	 */
 	io.readU32LE(&bank.version);
-	if (bank.version != 1 && bank.version != 2) {
-		throw std::runtime_error("Invalid MPB version: " + std::to_string(bank.version));
+	if (bank.version != 0x01 && bank.version != 0x5001 && bank.version != 0x02) {
+		char err[32];
+		snprintf(err, std::size(err), "Invalid MPB version: %x", bank.version);
+		throw std::runtime_error(err);
 	}
 
 	io.readU32LE(&fileSize);
@@ -276,7 +282,7 @@ Bank load(const fs::path& path, bool guessToneSize) {
 			if (it2 != tonePtrMap.end()) {
 				size = it2->first - start;
 			} else {
-				size = (bank.version >= 2 ? fileSize - 8 : fileSize - 4) - start;
+				size = ((bank.version & 0xFF) >= 2 ? fileSize - 8 : fileSize - 4) - start;
 			}
 		} else {
 			size = it->second;
@@ -614,11 +620,11 @@ void Bank::save(const fs::path& path) {
 
 	auto endPos = io.tell();
 	io.jump(fileSizePos);
-	io.writeU32LE(version >= 2 ? endPos + 8 : endPos + 4);
+	io.writeU32LE((version & 0xFF) >= 2 ? endPos + 8 : endPos + 4);
 	io.jump(endPos);
 
 	// Version 1 does not store a checksum
-	if (version >= 2) {
+	if ((version & 0xFF) >= 2) {
 		u32 checksum = 0;
 		for (long i = 4; i < endPos; i++) {
 			checksum += io.vec()[i];
@@ -696,7 +702,7 @@ s8 Split::fromPanPot(u8 in) {
 }
 
 u8 Split::toPanPot(s8 in, u32 version) {
-	if (version == 2)
+	if (version == 2 || version == 0x5001)
 		return in >= 0 ? in + 32 : 16 - in;
 	else if (version == 1)
 		return in >= 0 ? in : 16 - in;

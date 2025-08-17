@@ -242,7 +242,7 @@ bool MainWindow::loadFile(const QString& path) {
 			this,
 			tr("Unsupported file version"),
 			tr("Loaded bank is of an untested version. There may be inaccuracies. (Expected 2, got %1)")
-				.arg(bank.version)
+				.arg(bank.version, 0, 16)
 		);
 	}
 
@@ -255,7 +255,7 @@ bool MainWindow::saveFile(const QString& path) {
 			this,
 			tr("Unsupported file version"),
 			tr("Bank is being saved as an untested version. There may be inaccuracies. (Expected 2, got %1)")
-				.arg(bank.version)
+				.arg(bank.version, 0, 16)
 		);
 	}
 
